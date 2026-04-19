@@ -1,18 +1,36 @@
 export default async function handler(req, res) {
-  // Only allow POST
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'API key not configured' });
+    console.error('ANTHROPIC_API_KEY is not set');
+    return res.status(500).json({ error: 'API key not configured on server' });
   }
 
-  const { system, messages } = req.body;
+  let body = req.body;
 
-  if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: 'Invalid request body' });
+  // Vercel sometimes doesn't parse JSON body — handle raw string
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body); } catch (e) {
+      return res.status(400).json({ error: 'Invalid JSON body' });
+    }
+  }
+
+  const { system, messages } = body || {};
+
+  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'messages array is required' });
   }
 
   try {
@@ -31,21 +49,24 @@ export default async function handler(req, res) {
       }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
+      console.error('Anthropic error:', data);
       return res.status(response.status).json({
-        error: err?.error?.message || 'Anthropic API error',
+        error: data?.error?.message || 'Anthropic API error',
       });
     }
 
-    const data = await response.json();
     const reply = (data.content || [])
       .map((block) => block.text || '')
       .join('')
       .trim();
 
     return res.status(200).json({ reply });
+
   } catch (err) {
-    return res.status(500).json({ error: err.message || 'Server error' });
+    console.error('Server error:', err);
+    return res.status(500).json({ error: err.message || 'Internal server error' });
   }
 }
