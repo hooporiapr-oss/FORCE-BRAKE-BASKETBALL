@@ -1298,16 +1298,15 @@
       </div>
       <div class="msg-bubble">Hey, I'm your BForce Advisor — a specialist in isoinertial training, force development, and basketball braking mechanics. What do you want to know?</div>
     </div>
-  </div>
-
-  <div class="msg advisor typing-indicator" id="typingIndicator">
-    <div class="msg-icon">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-    </div>
-    <div class="msg-bubble typing-dots">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
+    <div class="msg advisor typing-indicator" id="typingIndicator">
+      <div class="msg-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      </div>
+      <div class="msg-bubble typing-dots">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
     </div>
   </div>
 
@@ -1486,7 +1485,11 @@ Si te preguntan algo fuera de tu área, reconócelo brevemente y redirige a lo q
       div.innerHTML = `<div class="msg-bubble"></div>`;
     }
 
-    msgWrap.insertBefore(div, typing);
+    if (typing && typing.parentNode === msgWrap) {
+      msgWrap.insertBefore(div, typing);
+    } else {
+      msgWrap.appendChild(div);
+    }
     const bubble = div.querySelector('.msg-bubble');
     if (isAdvisor && text === '__stream__') return bubble;
     bubble.textContent = text;
@@ -1554,6 +1557,7 @@ Si te preguntan algo fuera de tu área, reconócelo brevemente y redirige a lo q
 
     isLoading = false;
     sendBtn.disabled = false;
+    typing.classList.remove('visible');
     input.focus();
   }
 
