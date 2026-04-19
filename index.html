@@ -1516,21 +1516,24 @@ Si te preguntan algo fuera de tu área, reconócelo brevemente y redirige a lo q
     const systemPrompt = chatLang === 'es' ? SYSTEM_ES : SYSTEM_EN;
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
           system: systemPrompt,
           messages: history
         })
       });
 
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Request failed');
+      }
+
       const data = await res.json();
       typing.classList.remove('visible');
 
-      const reply = data.content?.[0]?.text || CHAT_COPY[chatLang].fallbackMsg;
+      const reply = data.reply || CHAT_COPY[chatLang].fallbackMsg;
       history.push({ role: 'assistant', content: reply });
 
       const bubble = addMessage('advisor', '__stream__');
@@ -1546,7 +1549,7 @@ Si te preguntan algo fuera de tu área, reconócelo brevemente y redirige a lo q
 
     } catch (err) {
       typing.classList.remove('visible');
-      addMessage('advisor', CHAT_COPY[chatLang].errorMsg);
+      addMessage('advisor', CHAT_COPY[chatLang].errorMsg + (err.message ? ' — ' + err.message : ''));
     }
 
     isLoading = false;
