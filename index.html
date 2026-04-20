@@ -352,48 +352,75 @@
     background: var(--gray-mid);
     max-width: var(--max); margin: 0 auto;
   }
+
+  /* Accordion pillar card */
   .pillar-card {
     background: var(--gray);
-    padding: clamp(24px, 4vw, 36px) clamp(20px, 4vw, 40px);
-    cursor: none; transition: background 0.3s;
+    cursor: pointer;
     position: relative; overflow: hidden;
     text-align: left;
-    display: grid; grid-template-columns: auto 1fr; gap: 0 20px;
-    align-items: start;
+    transition: background 0.25s;
+    -webkit-tap-highlight-color: transparent;
   }
+  .pillar-card:hover { background: rgba(232,93,36,0.05); }
+  .pillar-card.active { background: rgba(232,93,36,0.07); }
+
+  /* Orange bottom line sweep on active */
   .pillar-card::after {
     content: '';
     position: absolute; bottom: 0; left: 0; right: 0;
     height: 2px; background: var(--orange);
     transform: scaleX(0); transform-origin: left;
     transition: transform 0.4s ease;
-    grid-column: 1 / -1;
   }
-  .pillar-card:hover::after { transform: scaleX(1); }
-  .pillar-card:hover { background: rgba(232,93,36,0.04); }
+  .pillar-card.active::after { transform: scaleX(1); }
+
+  /* Trigger row */
+  .pillar-trigger {
+    display: flex; align-items: center; gap: 16px;
+    padding: clamp(20px, 3.5vw, 28px) clamp(20px, 4vw, 36px);
+    user-select: none;
+  }
   .pillar-index {
     font-family: 'DM Mono', monospace;
     font-size: 10px; letter-spacing: 0.15em;
-    color: var(--orange); margin-bottom: 0;
-    grid-column: 1; grid-row: 1;
-    padding-top: 4px; min-width: 72px;
+    color: var(--orange); min-width: 68px; flex-shrink: 0;
   }
   .pillar-name {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(22px, 3.5vw, 28px);
-    letter-spacing: 0.05em;
-    grid-column: 2; grid-row: 1; margin-bottom: 8px;
+    font-size: clamp(22px, 4vw, 30px);
+    letter-spacing: 0.05em; flex: 1;
+    color: var(--white);
+  }
+  .pillar-card.active .pillar-name { color: var(--orange); }
+  .pillar-chevron {
+    width: 22px; height: 22px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.3s ease;
+  }
+  .pillar-chevron svg { width: 16px; height: 16px; stroke: var(--gray-light); fill: none; stroke-width: 2; stroke-linecap: round; }
+  .pillar-card.active .pillar-chevron { transform: rotate(180deg); }
+  .pillar-card.active .pillar-chevron svg { stroke: var(--orange); }
+
+  /* Collapsible body */
+  .pillar-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 clamp(20px, 4vw, 36px) 0 calc(clamp(20px, 4vw, 36px) + 84px);
+  }
+  .pillar-card.active .pillar-body {
+    max-height: 400px;
+    padding-bottom: clamp(20px, 3.5vw, 28px);
   }
   .pillar-sub {
-    font-size: clamp(12px, 1.8vw, 13px);
-    line-height: 1.7; color: var(--gray-light);
-    grid-column: 2; grid-row: 2; margin-bottom: 16px;
+    font-size: clamp(15px, 2.2vw, 17px);
+    line-height: 1.75; color: #fff;
+    font-weight: 300; margin-bottom: 16px;
   }
   .pillar-insight {
     font-family: 'DM Mono', monospace;
-    font-size: 11px; line-height: 1.6; color: var(--orange);
+    font-size: 12px; line-height: 1.6; color: var(--orange);
     padding-top: 14px; border-top: 1px solid var(--gray-mid);
-    grid-column: 2; grid-row: 3;
   }
 
   /* ── PLAYER TYPES ── */
@@ -568,11 +595,6 @@
 
   /* ── RESPONSIVE FINE-TUNING ── */
   @media (max-width: 480px) {
-    .pillar-card { grid-template-columns: 1fr; }
-    .pillar-index { grid-column: 1; grid-row: 1; }
-    .pillar-name  { grid-column: 1; grid-row: 2; }
-    .pillar-sub   { grid-column: 1; grid-row: 3; }
-    .pillar-insight { grid-column: 1; grid-row: 4; }
     .yoyo-metric-grid { grid-template-columns: 1fr; }
   }
 </style>
@@ -710,34 +732,59 @@
   </div>
   <div class="pillars-grid">
     <div class="pillar-card reveal">
-      <div class="pillar-index">01 / PILLAR</div>
-      <div class="pillar-name">Force Production</div>
-      <div class="pillar-sub">Rate of Force Development, directional force, contextual application. Output with timing and direction.</div>
-      <div class="pillar-insight">Output without timing and direction has limited transfer.</div>
+      <div class="pillar-trigger">
+        <span class="pillar-index">01 / PILLAR</span>
+        <span class="pillar-name">Force Production</span>
+        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="pillar-body">
+        <p class="pillar-sub">Rate of Force Development, directional force, contextual application. Output with timing and direction.</p>
+        <div class="pillar-insight">Output without timing and direction has limited transfer.</div>
+      </div>
     </div>
     <div class="pillar-card reveal">
-      <div class="pillar-index">02 / PILLAR</div>
-      <div class="pillar-name">Force Absorption</div>
-      <div class="pillar-sub">Eccentric strength, braking mechanics, landing efficiency, deceleration strategy.</div>
-      <div class="pillar-insight">The best movers are often the best brakers.</div>
+      <div class="pillar-trigger">
+        <span class="pillar-index">02 / PILLAR</span>
+        <span class="pillar-name">Force Absorption</span>
+        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="pillar-body">
+        <p class="pillar-sub">Eccentric strength, braking mechanics, landing efficiency, deceleration strategy.</p>
+        <div class="pillar-insight">The best movers are often the best brakers.</div>
+      </div>
     </div>
     <div class="pillar-card reveal">
-      <div class="pillar-index">03 / PILLAR</div>
-      <div class="pillar-name">Force Control</div>
-      <div class="pillar-sub">Balance under load, center of mass control, stability in motion. Organization under force.</div>
-      <div class="pillar-insight">Force is only useful if it can be controlled.</div>
+      <div class="pillar-trigger">
+        <span class="pillar-index">03 / PILLAR</span>
+        <span class="pillar-name">Force Control</span>
+        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="pillar-body">
+        <p class="pillar-sub">Balance under load, center of mass control, stability in motion. Organization under force.</p>
+        <div class="pillar-insight">Force is only useful if it can be controlled.</div>
+      </div>
     </div>
     <div class="pillar-card reveal">
-      <div class="pillar-index">04 / PILLAR</div>
-      <div class="pillar-name">Force Redirection</div>
-      <div class="pillar-sub">Change of direction, transition efficiency, lateral movement. Efficiency of changing force vectors.</div>
-      <div class="pillar-insight">Slow redirection limits game speed more than raw speed.</div>
+      <div class="pillar-trigger">
+        <span class="pillar-index">04 / PILLAR</span>
+        <span class="pillar-name">Force Redirection</span>
+        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="pillar-body">
+        <p class="pillar-sub">Change of direction, transition efficiency, lateral movement. Efficiency of changing force vectors.</p>
+        <div class="pillar-insight">Slow redirection limits game speed more than raw speed.</div>
+      </div>
     </div>
     <div class="pillar-card reveal">
-      <div class="pillar-index">05 / PILLAR</div>
-      <div class="pillar-name">Force Repeatability</div>
-      <div class="pillar-sub">Fatigue resistance, repeated sprint ability, neuromuscular consistency across time.</div>
-      <div class="pillar-insight">Breakdown under fatigue reveals true capacity.</div>
+      <div class="pillar-trigger">
+        <span class="pillar-index">05 / PILLAR</span>
+        <span class="pillar-name">Force Repeatability</span>
+        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="pillar-body">
+        <p class="pillar-sub">Fatigue resistance, repeated sprint ability, neuromuscular consistency across time.</p>
+        <div class="pillar-insight">Breakdown under fatigue reveals true capacity.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -1191,10 +1238,17 @@
   document.querySelectorAll('.cont-step').forEach(step => {
     step.querySelector('.cont-trigger').addEventListener('click', () => {
       const isOpen = step.classList.contains('active');
-      // Close all
       document.querySelectorAll('.cont-step').forEach(s => s.classList.remove('active'));
-      // Open clicked if it was closed
       if (!isOpen) step.classList.add('active');
+    });
+  });
+
+  // ── PILLARS ACCORDION ─────────────────────────────────────────────────────
+  document.querySelectorAll('.pillar-card').forEach(card => {
+    card.querySelector('.pillar-trigger').addEventListener('click', () => {
+      const isOpen = card.classList.contains('active');
+      document.querySelectorAll('.pillar-card').forEach(c => c.classList.remove('active'));
+      if (!isOpen) card.classList.add('active');
     });
   });
 
