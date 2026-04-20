@@ -1519,8 +1519,12 @@
     .chat-panel.open {
       transform: translateY(0);
     }
-    /* Hide FAB when chat is open */
-    body.chat-open .chat-fab { display: none; }
+    /* Hide FAB when chat is open — bulletproof */
+    body.chat-open .chat-fab {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
     .chat-header {
       padding: 20px 20px;
       padding-top: max(20px, env(safe-area-inset-top));
@@ -1712,13 +1716,15 @@ Si te preguntan algo fuera de tu área, reconócelo brevemente y redirige a lo q
   function openChat()  {
     panel.classList.add('open');
     document.body.classList.add('chat-open');
-    fab.style.display = 'none';
+    fab.style.setProperty('display', 'none', 'important');
+    fab.style.setProperty('visibility', 'hidden', 'important');
     if (input) input.focus();
   }
   function closeChat() {
     panel.classList.remove('open');
     document.body.classList.remove('chat-open');
-    fab.style.display = '';
+    fab.style.removeProperty('display');
+    fab.style.removeProperty('visibility');
   }
 
   // ── TOGGLE PANEL ──────────────────────────────────────────────────────────
