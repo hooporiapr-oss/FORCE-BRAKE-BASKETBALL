@@ -429,6 +429,9 @@
     border-top: 1px solid var(--gray);
     text-align: center;
   }
+  .types-header {
+    margin-bottom: 40px;
+  }
   .types-big {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(36px, 8vw, 60px);
@@ -437,30 +440,75 @@
   .types-desc {
     font-size: clamp(13px, 2vw, 15px);
     line-height: 1.8; color: var(--gray-light);
-    max-width: var(--max); margin: 0 auto 40px;
+    max-width: var(--max); margin: 0 auto;
   }
-  .types-right { max-width: var(--max); margin: 0 auto; }
   .types-left { display: none; }
-  .type-row {
-    display: grid; grid-template-columns: 32px 1fr;
-    gap: 20px; padding: clamp(20px, 3vw, 32px) 0;
-    border-bottom: 1px solid var(--gray);
-    text-align: left; cursor: none;
-    transition: padding-left 0.3s;
+  .types-right {
+    max-width: var(--max); margin: 0 auto;
+    display: flex; flex-direction: column; gap: 1px;
+    background: var(--gray);
   }
-  .type-row:first-child { border-top: 1px solid var(--gray); }
-  .type-row:hover { padding-left: 8px; }
+  .type-row {
+    background: var(--black);
+    text-align: left; cursor: pointer;
+    position: relative;
+    transition: background 0.25s;
+    -webkit-tap-highlight-color: transparent;
+    border: none;
+  }
+  .type-row:hover { background: rgba(232,93,36,0.05); }
+  .type-row.active { background: rgba(232,93,36,0.07); }
+  .type-row::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px; background: var(--orange);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .type-row.active::after { transform: scaleX(1); }
+
+  /* Trigger row */
+  .type-trigger {
+    display: flex; align-items: center; gap: 16px;
+    padding: clamp(20px, 3.5vw, 28px) clamp(20px, 4vw, 36px);
+    user-select: none;
+  }
   .type-num {
     font-family: 'DM Mono', monospace;
-    font-size: 11px; color: var(--gray-mid); padding-top: 6px;
+    font-size: 11px; color: var(--orange); min-width: 28px;
+    flex-shrink: 0;
   }
   .type-name {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(24px, 4vw, 32px);
-    letter-spacing: 0.06em; margin-bottom: 8px;
+    letter-spacing: 0.06em; color: var(--white); flex: 1;
   }
-  .type-desc-text { font-size: clamp(13px, 1.8vw, 14px); color: var(--gray-light); line-height: 1.7; }
-  .type-bar { display: flex; gap: 4px; margin-top: 14px; }
+  .type-row.active .type-name { color: var(--orange); }
+  .type-chevron {
+    width: 22px; height: 22px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.3s ease;
+  }
+  .type-chevron svg { width: 16px; height: 16px; stroke: var(--gray-light); fill: none; stroke-width: 2; stroke-linecap: round; }
+  .type-row.active .type-chevron { transform: rotate(180deg); }
+  .type-row.active .type-chevron svg { stroke: var(--orange); }
+
+  /* Collapsible body */
+  .type-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 clamp(20px, 4vw, 36px) 0 calc(clamp(20px, 4vw, 36px) + 44px);
+  }
+  .type-row.active .type-body {
+    max-height: 300px;
+    padding-bottom: clamp(20px, 3.5vw, 28px);
+  }
+  .type-desc-text {
+    font-size: clamp(15px, 2.2vw, 17px);
+    color: #fff; line-height: 1.75; font-weight: 300;
+    margin-bottom: 16px;
+  }
+  .type-bar { display: flex; gap: 4px; }
   .type-bar-seg { height: 3px; flex: 1; background: var(--gray-mid); border-radius: 2px; }
   .type-bar-seg.filled { background: var(--orange); }
 
@@ -791,82 +839,65 @@
 
 <!-- PLAYER TYPES -->
 <section class="section-types" id="players">
-  <div class="types-layout">
-    <div class="types-left reveal">
-      <div class="section-label" data-key="typesLabel">Player force identity</div>
-      <h2 class="types-big" data-key="typesTitle">WHO ARE YOU ON THE COURT?</h2>
-      <p class="types-desc" data-key="typesDesc">Every athlete can be classified by their force behavior profile. Understanding your identity is the starting point for targeted development.</p>
+  <div class="types-header reveal">
+    <div class="section-label" data-key="typesLabel">Player force identity</div>
+    <h2 class="types-big" data-key="typesTitle">WHO ARE YOU ON THE COURT?</h2>
+    <p class="types-desc" data-key="typesDesc">Every athlete can be classified by their force behavior profile. Understanding your identity is the starting point for targeted development.</p>
+  </div>
+  <div class="types-right">
+    <div class="type-row reveal">
+      <div class="type-trigger">
+        <span class="type-num">01</span>
+        <span class="type-name">PRODUCER</span>
+        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="type-body">
+        <p class="type-desc-text">High force output, low control. Explosive and powerful, but lacks the organization to translate output into consistent game performance.</p>
+        <div class="type-bar"><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg"></div></div>
+      </div>
     </div>
-    <div class="types-right">
-      <div class="type-row reveal">
-        <div class="type-num">01</div>
-        <div class="type-content">
-          <div class="type-name">PRODUCER</div>
-          <div class="type-desc-text">High force output, low control. Explosive and powerful, but lacks the organization to translate output into consistent game performance.</div>
-          <div class="type-bar">
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg"></div>
-          </div>
-        </div>
+    <div class="type-row reveal">
+      <div class="type-trigger">
+        <span class="type-num">02</span>
+        <span class="type-name">ABSORBER</span>
+        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
       </div>
-      <div class="type-row reveal">
-        <div class="type-num">02</div>
-        <div class="type-content">
-          <div class="type-name">ABSORBER</div>
-          <div class="type-desc-text">Strong braking, limited explosiveness. Exceptional at receiving and dissipating force — but needs more production to be truly threatening.</div>
-          <div class="type-bar">
-            <div class="type-bar-seg"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg"></div>
-          </div>
-        </div>
+      <div class="type-body">
+        <p class="type-desc-text">Strong braking, limited explosiveness. Exceptional at receiving and dissipating force — but needs more production to be truly threatening.</p>
+        <div class="type-bar"><div class="type-bar-seg"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg"></div></div>
       </div>
-      <div class="type-row reveal">
-        <div class="type-num">03</div>
-        <div class="type-content">
-          <div class="type-name">REACTOR</div>
-          <div class="type-desc-text">Fast decisions, low physical force. Exceptional perception-action coupling but needs physical force development to maximize potential.</div>
-          <div class="type-bar">
-            <div class="type-bar-seg"></div>
-            <div class="type-bar-seg"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-          </div>
-        </div>
+    </div>
+    <div class="type-row reveal">
+      <div class="type-trigger">
+        <span class="type-num">03</span>
+        <span class="type-name">REACTOR</span>
+        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
       </div>
-      <div class="type-row reveal">
-        <div class="type-num">04</div>
-        <div class="type-content">
-          <div class="type-name">ELASTIC MOVER</div>
-          <div class="type-desc-text">Efficient, fluid, reactive. Excels at reusing stored energy through the stretch-shortening cycle. The most economical mover on the court.</div>
-          <div class="type-bar">
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-          </div>
-        </div>
+      <div class="type-body">
+        <p class="type-desc-text">Fast decisions, low physical force. Exceptional perception-action coupling but needs physical force development to maximize potential.</p>
+        <div class="type-bar"><div class="type-bar-seg"></div><div class="type-bar-seg"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div></div>
       </div>
-      <div class="type-row reveal">
-        <div class="type-num">05</div>
-        <div class="type-content">
-          <div class="type-name" style="color: var(--orange);">COMPLETE PLAYER</div>
-          <div class="type-desc-text">Balanced across all five domains. Produces, absorbs, controls, redirects, and repeats force under real game pressure. The development target.</div>
-          <div class="type-bar">
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-            <div class="type-bar-seg filled"></div>
-          </div>
-        </div>
+    </div>
+    <div class="type-row reveal">
+      <div class="type-trigger">
+        <span class="type-num">04</span>
+        <span class="type-name">ELASTIC MOVER</span>
+        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="type-body">
+        <p class="type-desc-text">Efficient, fluid, reactive. Excels at reusing stored energy through the stretch-shortening cycle. The most economical mover on the court.</p>
+        <div class="type-bar"><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div></div>
+      </div>
+    </div>
+    <div class="type-row reveal">
+      <div class="type-trigger">
+        <span class="type-num">05</span>
+        <span class="type-name" style="color:var(--orange)">COMPLETE PLAYER</span>
+        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="type-body">
+        <p class="type-desc-text">Balanced across all five domains. Produces, absorbs, controls, redirects, and repeats force under real game pressure. The development target.</p>
+        <div class="type-bar"><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div></div>
       </div>
     </div>
   </div>
@@ -1249,6 +1280,15 @@
       const isOpen = card.classList.contains('active');
       document.querySelectorAll('.pillar-card').forEach(c => c.classList.remove('active'));
       if (!isOpen) card.classList.add('active');
+    });
+  });
+
+  // ── PLAYER IDENTITY ACCORDION ────────────────────────────────────────────
+  document.querySelectorAll('.type-row').forEach(row => {
+    row.querySelector('.type-trigger').addEventListener('click', () => {
+      const isOpen = row.classList.contains('active');
+      document.querySelectorAll('.type-row').forEach(r => r.classList.remove('active'));
+      if (!isOpen) row.classList.add('active');
     });
   });
 
