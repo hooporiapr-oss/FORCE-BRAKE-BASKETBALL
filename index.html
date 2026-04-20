@@ -127,7 +127,7 @@
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     text-align: center;
-    padding: 120px var(--pad) 100px;
+    padding: 120px 0 100px;
     position: relative; overflow: hidden;
   }
   .hero-bg {
@@ -151,8 +151,23 @@
     opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
     position: relative;
   }
-  .hero-image-wrap { display: none; }
-  .hero-device-img { display: none; }
+  .hero-image-wrap {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 24px 0 32px;
+    line-height: 0;
+    opacity: 0;
+    animation: fadeUp 1s 0.4s forwards;
+  }
+  .hero-device-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    filter: brightness(0.97) contrast(1.03);
+  }
   .hero-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(64px, 14vw, 140px);
@@ -585,12 +600,6 @@
     <span>Scroll</span>
     <div class="scroll-line"></div>
   </div>
-</section>
-
-<!-- FEATURED PRODUCT -->
-<section class="section-featured">
-  <img src="yoyo-01.png" alt="Wheeler YoYo isoinertial device on basketball court" class="featured-img" />
-  <span class="featured-label">Wheeler Isoinertial YoYo</span>
 </section>
 
 <!-- DEFINITION -->
