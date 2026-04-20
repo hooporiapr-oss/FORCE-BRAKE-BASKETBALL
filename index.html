@@ -147,19 +147,18 @@
   .hero-eyebrow {
     font-family: 'DM Mono', monospace;
     font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--orange); margin-bottom: 28px;
+    color: var(--orange); margin-bottom: 12px;
     opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
     position: relative;
+    padding: 0 var(--pad);
   }
   .hero-image-wrap {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 24px 0 32px;
+    width: 100%;
+    margin: 8px 0 0;
     line-height: 0;
     opacity: 0;
     animation: fadeUp 1s 0.4s forwards;
+    flex-shrink: 0;
   }
   .hero-device-img {
     width: 100%;
@@ -174,7 +173,8 @@
     line-height: 0.9; letter-spacing: 0.02em;
     color: var(--white); position: relative;
     opacity: 0; animation: fadeUp 0.9s 0.6s forwards;
-    margin-bottom: 28px;
+    margin: 0 0 28px;
+    padding: 16px var(--pad) 0;
   }
   .hero-title .outline { -webkit-text-stroke: 1px rgba(245,242,237,0.3); color: transparent; }
   .hero-title .accent  { color: var(--orange); }
@@ -184,6 +184,7 @@
     max-width: 520px;
     opacity: 0; animation: fadeUp 0.9s 0.8s forwards;
     position: relative;
+    padding: 0 var(--pad);
   }
   .hero-sub strong { color: var(--white); font-weight: 400; }
   .hero-stat-group { display: none; }
