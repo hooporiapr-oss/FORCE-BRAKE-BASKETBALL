@@ -1181,9 +1181,17 @@
   }
   .chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 32px rgba(232,93,36,0.65); }
   .chat-fab svg { width: 26px; height: 26px; fill: #fff; }
-  .chat-fab .fab-close { display: none; }
-  .chat-fab.open .fab-icon { display: none; }
-  .chat-fab.open .fab-close { display: block; }
+
+  /* Close button inside header */
+  .chat-close-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.12); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .chat-close-btn:hover { background: rgba(255,255,255,0.22); }
 
   /* ── CHAT PANEL — DESKTOP ── */
   .chat-panel {
@@ -1367,8 +1375,7 @@
 
 <!-- FAB BUTTON -->
 <button class="chat-fab" id="chatFab" aria-label="Open BForce Advisor">
-  <svg class="fab-icon" viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
-  <svg class="fab-close" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+  <svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
 </button>
 
 <!-- CHAT PANEL -->
@@ -1381,6 +1388,9 @@
       <div class="chat-name">BFORCE ADVISOR</div>
       <div class="chat-status"><span class="chat-dot"></span>Online</div>
     </div>
+    <button class="chat-close-btn" id="chatCloseBtn" aria-label="Close chat">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+    </button>
   </div>
   <div class="chat-lang-row">
     <button class="chat-lang-btn active" id="chatLangEn" onclick="setChatLang('en')">English</button>
@@ -1535,12 +1545,14 @@ Si te preguntan algo fuera de tu área, reconócelo brevemente y redirige a lo q
   // exposed so the inline onclick can call it
   window.setChatLang = updateChatLang;
 
+  function openChat()  { panel.classList.add('open');    if (input) input.focus(); }
+  function closeChat() { panel.classList.remove('open'); }
+
   // ── TOGGLE PANEL ──────────────────────────────────────────────────────────
-  fab.addEventListener('click', () => {
-    fab.classList.toggle('open');
-    panel.classList.toggle('open');
-    if (panel.classList.contains('open')) input.focus();
-  });
+  fab.addEventListener('click', openChat);
+
+  const closeBtn = document.getElementById('chatCloseBtn');
+  if (closeBtn) closeBtn.addEventListener('click', closeChat);
 
   // ── AUTO-RESIZE TEXTAREA ──────────────────────────────────────────────────
   input.addEventListener('input', () => {
