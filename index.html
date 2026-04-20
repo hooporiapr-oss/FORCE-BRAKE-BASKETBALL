@@ -1150,21 +1150,24 @@
   /* ── CHAT LANG TOGGLE ── */
   .chat-lang-row {
     display: flex; align-items: center; justify-content: center;
-    gap: 12px; padding: 10px 20px;
-    background: #f7f7f5;
-    border-bottom: 1px solid #ebebeb;
+    gap: 16px; padding: 11px 20px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
     flex-shrink: 0;
   }
   .chat-lang-btn {
     font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
-    background: none; border: none; border-bottom: 1.5px solid transparent;
-    color: #aaa; cursor: pointer; padding: 2px 0;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    color: #999; cursor: pointer; padding: 3px 2px;
+    font-weight: 500;
     transition: color 0.2s, border-color 0.2s;
     -webkit-tap-highlight-color: transparent;
   }
+  .chat-lang-btn:hover { color: #333; }
   .chat-lang-btn.active { color: var(--orange); border-color: var(--orange); }
-  .chat-lang-sep { font-size: 11px; color: #ccc; font-family: 'DM Mono', monospace; }
+  .chat-lang-sep { font-size: 14px; color: #ccc; line-height: 1; }
 
   /* ── CHAT FAB ── */
   .chat-fab {
@@ -1433,7 +1436,7 @@
       ]
     },
     es: {
-      greeting: '¡Hola! Soy tu Asesor BForce — especialista en entrenamiento isoinercial, desarrollo de fuerza y mecánica de frenado en baloncesto. ¿Qué quieres saber?',
+      greeting: '¡Wepa! Soy tu Asesor BForce — especialista en entrenamiento isoinercial, desarrollo de fuerza y mecánica de frenado en baloncesto. ¿Qué quieres saber, campeón?',
       placeholder: 'Pregunta sobre fuerza, frenado, isoinercial…',
       status: 'En línea',
       errorMsg: 'Error de conexión. Inténtalo de nuevo.',
@@ -1520,10 +1523,12 @@ Si te preguntan algo fuera de tu área, reconócelo brevemente y redirige a lo q
     // Status dot text
     if (statusEl) statusEl.innerHTML = `<span class="chat-dot"></span>${copy.status}`;
 
-    // If chat hasn't been used yet, swap the greeting too
-    const existingMsgs = msgWrap.querySelectorAll('.msg.advisor .msg-bubble');
-    if (existingMsgs.length === 1 && history.length === 0) {
-      existingMsgs[0].textContent = copy.greeting;
+    // Swap greeting — target the first non-typing advisor bubble
+    if (history.length === 0) {
+      const allAdvisorBubbles = msgWrap.querySelectorAll('.msg.advisor:not(.typing-indicator) .msg-bubble');
+      if (allAdvisorBubbles.length > 0) {
+        allAdvisorBubbles[0].textContent = copy.greeting;
+      }
     }
   }
 
