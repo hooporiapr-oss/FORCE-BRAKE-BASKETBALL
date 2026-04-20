@@ -274,29 +274,59 @@
   }
   .cont-step {
     background: var(--black);
-    padding: clamp(24px, 4vw, 36px) clamp(20px, 4vw, 40px);
-    display: flex; align-items: flex-start; gap: 24px;
     text-align: left;
-    transition: background 0.3s; cursor: none;
+    cursor: pointer;
     position: relative;
+    transition: background 0.25s;
+    -webkit-tap-highlight-color: transparent;
   }
-  .cont-step:hover { background: rgba(232,93,36,0.04); }
+  .cont-step:hover { background: rgba(232,93,36,0.05); }
+  .cont-step.active { background: rgba(232,93,36,0.06); }
   .cont-arrow { display: none; }
+
+  /* Accordion trigger row */
+  .cont-trigger {
+    display: flex; align-items: center; gap: 20px;
+    padding: clamp(20px, 3.5vw, 28px) clamp(20px, 4vw, 36px);
+    user-select: none;
+  }
   .cont-num {
     font-family: 'DM Mono', monospace;
-    font-size: 11px; letter-spacing: 0.1em;
-    color: var(--orange); min-width: 40px; padding-top: 6px;
+    font-size: 11px; letter-spacing: 0.12em;
+    color: var(--orange); min-width: 36px;
     flex-shrink: 0;
   }
-  .cont-body { flex: 1; }
   .cont-name {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(24px, 4vw, 32px);
-    letter-spacing: 0.06em; color: var(--white); margin-bottom: 8px;
+    font-size: clamp(26px, 5vw, 36px);
+    letter-spacing: 0.06em; color: var(--white);
+    flex: 1;
+  }
+  .cont-step.active .cont-name { color: var(--orange); }
+  .cont-chevron {
+    width: 22px; height: 22px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.3s ease;
+  }
+  .cont-chevron svg { width: 16px; height: 16px; stroke: var(--gray-light); fill: none; stroke-width: 2; stroke-linecap: round; }
+  .cont-step.active .cont-chevron { transform: rotate(180deg); }
+  .cont-step.active .cont-chevron svg { stroke: var(--orange); }
+
+  /* Accordion body */
+  .cont-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 clamp(20px, 4vw, 36px) 0 calc(clamp(20px, 4vw, 36px) + 56px);
+  }
+  .cont-step.active .cont-body {
+    max-height: 300px;
+    padding-bottom: clamp(20px, 3.5vw, 28px);
   }
   .cont-desc {
-    font-size: clamp(13px, 1.8vw, 14px);
-    line-height: 1.7; color: var(--gray-light);
+    font-size: clamp(15px, 2.2vw, 17px);
+    line-height: 1.75; color: #fff;
+    font-weight: 300;
   }
 
   /* ── PILLARS ── */
@@ -627,17 +657,45 @@
   </div>
   <div class="continuum-steps">
     <div class="cont-step reveal">
-      <div class="cont-num">01 —</div><div class="cont-body"><div class="cont-name">PRODUCE</div><div class="cont-desc">Generation of force — vertical, horizontal, lateral. The foundation most systems over-prioritize.</div></div><div class="cont-arrow">›</div></div>
+      <div class="cont-trigger">
+        <span class="cont-num">01 —</span>
+        <span class="cont-name" data-en="PRODUCE" data-es="PRODUCIR">PRODUCE</span>
+        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="cont-body"><p class="cont-desc">Generation of force — vertical, horizontal, lateral. The foundation most systems over-prioritize.</p></div>
+    </div>
     <div class="cont-step reveal">
-      <div class="cont-num">02 —</div><div class="cont-body"><div class="cont-name">ABSORB</div><div class="cont-desc">The ability to receive and dissipate force safely and efficiently. The best movers are often the best brakers.</div></div><div class="cont-arrow">›</div></div>
+      <div class="cont-trigger">
+        <span class="cont-num">02 —</span>
+        <span class="cont-name" data-en="ABSORB" data-es="ABSORBER">ABSORB</span>
+        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="cont-body"><p class="cont-desc">The ability to receive and dissipate force safely and efficiently. The best movers are often the best brakers.</p></div>
+    </div>
     <div class="cont-step reveal">
-      <div class="cont-num">03 —</div><div class="cont-body"><div class="cont-name">CONTROL</div><div class="cont-desc">Maintenance of structure, balance, and coordination under load. Force is only useful if it can be controlled.</div></div><div class="cont-arrow">›</div></div>
+      <div class="cont-trigger">
+        <span class="cont-num">03 —</span>
+        <span class="cont-name" data-en="CONTROL" data-es="CONTROLAR">CONTROL</span>
+        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="cont-body"><p class="cont-desc">Maintenance of structure, balance, and coordination under load. Force is only useful if it can be controlled.</p></div>
+    </div>
     <div class="cont-step reveal">
-      <div class="cont-num">04 —</div><div class="cont-body"><div class="cont-name">REDIRECT</div><div class="cont-desc">Transition of force into new movement direction. Slow redirection limits game speed more than raw speed.</div></div><div class="cont-arrow">›</div></div>
+      <div class="cont-trigger">
+        <span class="cont-num">04 —</span>
+        <span class="cont-name" data-en="REDIRECT" data-es="REDIRIGIR">REDIRECT</span>
+        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="cont-body"><p class="cont-desc">Transition of force into new movement direction. Slow redirection limits game speed more than raw speed.</p></div>
+    </div>
     <div class="cont-step reveal">
-      <div class="cont-num">05 —</div>
-      <div class="cont-name">REPEAT</div>
-      <div class="cont-desc">Sustaining performance across time, possessions, and fatigue. Performance breakdown under fatigue reveals true capacity.</div></div>
+      <div class="cont-trigger">
+        <span class="cont-num">05 —</span>
+        <span class="cont-name" data-en="REPEAT" data-es="REPETIR">REPEAT</span>
+        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
+      </div>
+      <div class="cont-body"><p class="cont-desc">Sustaining performance across time, possessions, and fatigue. Performance breakdown under fatigue reveals true capacity.</p></div>
+    </div>
   </div>
 </section>
 
@@ -780,6 +838,7 @@
   <div class="yoyo-layout">
     <!-- IMAGE SIDE -->
     <div class="yoyo-image-wrap reveal">
+      <div class="yoyo-img-label" data-key="yoyoImgLabel">Wheeler Isoinertial YoYo</div>
       <img src="yoyo-02.png" alt="Wheeler YoYo isoinertial training device on basketball court" class="yoyo-img" />
       <div class="yoyo-img-caption">
         <span class="tech-tag" style="margin-bottom:0">Eccentric · Isoinertial</span>
@@ -790,8 +849,8 @@
     <!-- CONTENT SIDE -->
     <div class="yoyo-content">
       <div class="reveal">
-        <div class="section-label" data-key="featuredLabel">Isoinertial</div>
-        <h3 class="yoyo-title" data-key="yoyoTitle">YOYO<br><span style="color:var(--orange)">FLYWHEEL</span></h3>
+        <div class="section-label" data-key="featuredLabel">Featured technology</div>
+        <h3 class="yoyo-title" data-key="yoyoTitle">WHEELER<br><span style="color:var(--orange)">YOYO</span></h3>
         <p class="yoyo-desc">A lower-body strength training system built on flywheel resistance — no spinal load required. The resistance is determined by flywheel speed; intensity is scaled by adding or removing weights. The integrated software measures concentric and eccentric phase strength in real time, enabling objective tracking of athlete evolution.</p>
         <p class="yoyo-desc">The eccentric overload generated by the device triggers musculoskeletal adaptations that improve protection mechanisms at myotendinous and joint levels, directly reducing the risk of injury.</p>
       </div>
@@ -1127,6 +1186,17 @@
     q('[data-key="footerMid"]') && (q('[data-key="footerMid"]').innerHTML = t.footerMid);
     q('[data-key="footerCopy"]') && (q('[data-key="footerCopy"]').textContent = t.footerCopy);
   }
+
+  // ── CONTINUUM ACCORDION ───────────────────────────────────────────────────
+  document.querySelectorAll('.cont-step').forEach(step => {
+    step.querySelector('.cont-trigger').addEventListener('click', () => {
+      const isOpen = step.classList.contains('active');
+      // Close all
+      document.querySelectorAll('.cont-step').forEach(s => s.classList.remove('active'));
+      // Open clicked if it was closed
+      if (!isOpen) step.classList.add('active');
+    });
+  });
 
   // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
