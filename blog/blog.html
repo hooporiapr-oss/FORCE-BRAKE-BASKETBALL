@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BPM Blog</title>
+  <meta name="description" content="Performance insight, product intelligence, and modern training ideas from BPM Basketball.">
+  <style>
+    :root{
+      --bg:#0b0b0f;
+      --panel:#11131a;
+      --panel-2:#171a22;
+      --text:#f5f7fb;
+      --muted:#b8c0d4;
+      --gold:#f0b90b;
+      --line:rgba(255,255,255,.08);
+      --max:1180px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--max);margin:0 auto;padding:24px}
+    .topbar{
+      display:flex;justify-content:space-between;align-items:center;gap:16px;
+      flex-wrap:wrap;padding:8px 0 24px;
+    }
+    .brand{
+      font-size:1rem;color:var(--muted);letter-spacing:.04em
+    }
+    .toggle-row{display:flex;gap:8px;align-items:center}
+    .lang-btn{
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:700;
+      letter-spacing:.02em;
+    }
+    .lang-btn.active{background:var(--gold);color:#111}
+    .hero{
+      background:
+        radial-gradient(circle at top right, rgba(240,185,11,.14), transparent 28%),
+        linear-gradient(180deg,var(--panel),var(--panel-2));
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:44px 28px;
+      box-shadow:0 12px 30px rgba(0,0,0,.24);
+      margin-bottom:24px;
+    }
+    .eyebrow{
+      color:var(--gold);
+      font-size:.86rem;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin:0 0 12px;
+    }
+    h1{
+      margin:0 0 14px;
+      font-size:clamp(2.2rem,5vw,4rem);
+      line-height:1.05;
+      max-width:900px;
+    }
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      font-size:1.1rem;
+      line-height:1.75;
+      max-width:800px;
+    }
+    .section{
+      margin:28px 0 0;
+    }
+    .section-head{
+      display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+    .section h2{
+      margin:0;
+      font-size:1.55rem;
+      line-height:1.2;
+    }
+    .section-sub{
+      margin:0;color:var(--muted)
+    }
+    .featured{
+      display:grid;
+      grid-template-columns:1.25fr .9fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 10px 24px rgba(0,0,0,.18);
+      transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .card:hover{
+      transform:translateY(-3px);
+      border-color:rgba(240,185,11,.22);
+      box-shadow:0 14px 30px rgba(0,0,0,.24);
+    }
+    .card.feature-main{
+      min-height:310px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .category{
+      display:inline-flex;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--gold);
+      font-size:.85rem;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .card h3{
+      margin:16px 0 12px;
+      font-size:clamp(1.45rem,2.2vw,2.1rem);
+      line-height:1.14;
+    }
+    .card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.75;
+      font-size:1rem;
+    }
+    .read{
+      margin-top:22px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-weight:800;
+      color:#111;
+      background:var(--gold);
+      padding:12px 16px;
+      border-radius:999px;
+    }
+    .side-stack{
+      display:grid;
+      gap:18px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:18px;
+    }
+    .mini h3{
+      font-size:1.25rem;
+      margin:14px 0 10px;
+    }
+    .mini .read{
+      margin-top:18px;
+      background:transparent;
+      border:1px solid var(--line);
+      color:var(--text);
+    }
+    .category-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:16px;
+    }
+    .category-box{
+      background:linear-gradient(180deg,var(--panel),var(--panel-2));
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:22px;
+    }
+    .category-box h4{
+      margin:0 0 10px;
+      font-size:1.12rem;
+    }
+    .category-box p{
+      margin:0;color:var(--muted);line-height:1.7
+    }
+    footer{
+      color:var(--muted);
+      text-align:center;
+      padding:34px 0 10px;
+      font-size:.95rem;
+    }
+    [data-lang]{display:none}
+    [data-lang].show{display:block}
+    @media (max-width: 960px){
+      .featured,.grid,.category-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <span data-lang="en" class="show">BPM Basketball / Blog</span>
+        <span data-lang="es">BPM Basketball / Blog</span>
+      </div>
+      <div class="toggle-row" aria-label="Language toggle">
+        <button class="lang-btn active" data-set-lang="en" type="button">English</button>
+        <button class="lang-btn" data-set-lang="es" type="button">Español</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <p class="eyebrow">
+        <span data-lang="en" class="show">BPM Blog</span>
+        <span data-lang="es">Blog BPM</span>
+      </p>
+      <h1>
+        <span data-lang="en" class="show">Performance insight, product intelligence, and modern training ideas.</span>
+        <span data-lang="es">Visión de rendimiento, inteligencia de producto e ideas modernas de entrenamiento.</span>
+      </h1>
+      <p>
+        <span data-lang="en" class="show">This is where BPM Basketball breaks down the force, perception, response quality, and training logic that shape better athletes.</span>
+        <span data-lang="es">Aquí es donde BPM Basketball presenta la fuerza, la percepción, la calidad de respuesta y la lógica de entrenamiento que forman mejores atletas.</span>
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>
+            <span data-lang="en" class="show">Featured Article</span>
+            <span data-lang="es">Artículo Destacado</span>
+          </h2>
+          <p class="section-sub">
+            <span data-lang="en" class="show">Start with the big idea, then move into the product benefits.</span>
+            <span data-lang="es">Empieza con la idea central y luego pasa a los beneficios del producto.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="featured">
+        <a class="card feature-main" href="better-performance-better-dosed-complexity.html">
+          <div>
+            <span class="category">
+              <span data-lang="en" class="show">Performance Thinking</span>
+              <span data-lang="es">Pensamiento de Rendimiento</span>
+            </span>
+            <h3>
+              <span data-lang="en" class="show">Why Better Performance Depends on Better-Dosed Complexity</span>
+              <span data-lang="es">Por Qué un Mejor Rendimiento Depende de una Complejidad Mejor Dosificada</span>
+            </h3>
+            <p>
+              <span data-lang="en" class="show">Smarter training is not about adding more. It is about dosing the right complexity at the right time.</span>
+              <span data-lang="es">Entrenar mejor no se trata de añadir más. Se trata de dosificar la complejidad correcta en el momento correcto.</span>
+            </p>
+          </div>
+          <span class="read">
+            <span data-lang="en" class="show">Read Article</span>
+            <span data-lang="es">Leer Artículo</span>
+          </span>
+        </a>
+
+        <div class="side-stack">
+          <a class="card mini" href="beyond-raw-strength-fly-wheeler-yoyo.html">
+            <span class="category">Fly-Wheeler YoYo</span>
+            <h3>
+              <span data-lang="en" class="show">Beyond Raw Strength: The Real Value of Fly-Wheeler YoYo</span>
+              <span data-lang="es">Más Allá de la Fuerza Bruta: El Verdadero Valor del Fly-Wheeler YoYo</span>
+            </h3>
+            <p>
+              <span data-lang="en" class="show">Real lower-body development is not just about force production. It is about building force you can actually use.</span>
+              <span data-lang="es">El verdadero desarrollo del tren inferior no se trata solo de producir fuerza. Se trata de desarrollar una fuerza que realmente puedas usar.</span>
+            </p>
+            <span class="read">
+              <span data-lang="en" class="show">Read Article</span>
+              <span data-lang="es">Leer Artículo</span>
+            </span>
+          </a>
+
+          <a class="card mini" href="beyond-faster-feet-reaction-lights.html">
+            <span class="category">Reaction Lights</span>
+            <h3>
+              <span data-lang="en" class="show">Beyond Faster Feet: The Real Value of Reaction Lights</span>
+              <span data-lang="es">Más Allá de los Pies Rápidos: El Verdadero Valor de las Reaction Lights</span>
+            </h3>
+            <p>
+              <span data-lang="en" class="show">Reaction training is not just about speed. It is about sharper perception, attention, and response quality.</span>
+              <span data-lang="es">El entrenamiento de reacción no se trata solo de velocidad. Se trata de una percepción más aguda, mejor atención y mejor calidad de respuesta.</span>
+            </p>
+            <span class="read">
+              <span data-lang="en" class="show">Read Article</span>
+              <span data-lang="es">Leer Artículo</span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>
+            <span data-lang="en" class="show">Latest Articles</span>
+            <span data-lang="es">Artículos Recientes</span>
+          </h2>
+          <p class="section-sub">
+            <span data-lang="en" class="show">Three focused reads to build authority and product value.</span>
+            <span data-lang="es">Tres lecturas enfocadas para construir autoridad y valor de producto.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <a class="card mini" href="better-performance-better-dosed-complexity.html">
+          <span class="category">
+            <span data-lang="en" class="show">Performance Thinking</span>
+            <span data-lang="es">Pensamiento de Rendimiento</span>
+          </span>
+          <h3>
+            <span data-lang="en" class="show">Why Better Performance Depends on Better-Dosed Complexity</span>
+            <span data-lang="es">Por Qué un Mejor Rendimiento Depende de una Complejidad Mejor Dosificada</span>
+          </h3>
+          <p>
+            <span data-lang="en" class="show">A smarter performance model begins with better organization of challenge, not more random difficulty.</span>
+            <span data-lang="es">Un modelo de rendimiento más inteligente comienza con una mejor organización del reto, no con más dificultad al azar.</span>
+          </p>
+          <span class="read">
+            <span data-lang="en" class="show">Read Article</span>
+            <span data-lang="es">Leer Artículo</span>
+          </span>
+        </a>
+
+        <a class="card mini" href="beyond-raw-strength-fly-wheeler-yoyo.html">
+          <span class="category">Fly-Wheeler YoYo</span>
+          <h3>
+            <span data-lang="en" class="show">Beyond Raw Strength: The Real Value of Fly-Wheeler YoYo</span>
+            <span data-lang="es">Más Allá de la Fuerza Bruta: El Verdadero Valor del Fly-Wheeler YoYo</span>
+          </h3>
+          <p>
+            <span data-lang="en" class="show">The lower body needs more than output. It needs usable force, control, stability, and transfer.</span>
+            <span data-lang="es">El tren inferior necesita más que producción. Necesita fuerza útil, control, estabilidad y transferencia.</span>
+          </p>
+          <span class="read">
+            <span data-lang="en" class="show">Read Article</span>
+            <span data-lang="es">Leer Artículo</span>
+          </span>
+        </a>
+
+        <a class="card mini" href="beyond-faster-feet-reaction-lights.html">
+          <span class="category">Reaction Lights</span>
+          <h3>
+            <span data-lang="en" class="show">Beyond Faster Feet: The Real Value of Reaction Lights</span>
+            <span data-lang="es">Más Allá de los Pies Rápidos: El Verdadero Valor de las Reaction Lights</span>
+          </h3>
+          <p>
+            <span data-lang="en" class="show">Real reaction training is about perception, attention, cue recognition, and sharper response quality.</span>
+            <span data-lang="es">El entrenamiento de reacción real se trata de percepción, atención, reconocimiento de estímulos y una respuesta más aguda.</span>
+          </p>
+          <span class="read">
+            <span data-lang="en" class="show">Read Article</span>
+            <span data-lang="es">Leer Artículo</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>
+            <span data-lang="en" class="show">Browse by Category</span>
+            <span data-lang="es">Explorar por Categoría</span>
+          </h2>
+          <p class="section-sub">
+            <span data-lang="en" class="show">A simple structure you can keep expanding as the blog grows.</span>
+            <span data-lang="es">Una estructura simple que puedes seguir ampliando a medida que el blog crezca.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="category-grid">
+        <div class="category-box">
+          <h4>
+            <span data-lang="en" class="show">Performance Thinking</span>
+            <span data-lang="es">Pensamiento de Rendimiento</span>
+          </h4>
+          <p>
+            <span data-lang="en" class="show">Big-picture ideas on training quality, complexity, force, perception, and modern performance logic.</span>
+            <span data-lang="es">Ideas amplias sobre calidad de entrenamiento, complejidad, fuerza, percepción y lógica moderna de rendimiento.</span>
+          </p>
+        </div>
+
+        <div class="category-box">
+          <h4>Fly-Wheeler YoYo</h4>
+          <p>
+            <span data-lang="en" class="show">Articles focused on usable force, braking strength, deceleration, control, and lower-body transfer.</span>
+            <span data-lang="es">Artículos enfocados en fuerza útil, fuerza de frenado, desaceleración, control y transferencia del tren inferior.</span>
+          </p>
+        </div>
+
+        <div class="category-box">
+          <h4>Reaction Lights</h4>
+          <p>
+            <span data-lang="en" class="show">Articles focused on perception, attention, response quality, cue recognition, and visual load.</span>
+            <span data-lang="es">Artículos enfocados en percepción, atención, calidad de respuesta, reconocimiento de estímulos y carga visual.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span data-lang="en" class="show">BPM Basketball Blog</span>
+      <span data-lang="es">Blog de BPM Basketball</span>
+    </footer>
+  </div>
+
+  <script>
+    const savedLang = localStorage.getItem('bpmBlogLang') || 'en';
+    function setLang(lang){
+      document.querySelectorAll('[data-lang]').forEach(el=>{
+        el.classList.toggle('show', el.getAttribute('data-lang')===lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn=>{
+        btn.classList.toggle('active', btn.dataset.setLang===lang);
+      });
+      document.documentElement.lang = lang === 'es' ? 'es' : 'en';
+      localStorage.setItem('bpmBlogLang', lang);
+    }
+    document.addEventListener('DOMContentLoaded', ()=>{
+      document.querySelectorAll('.lang-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>setLang(btn.dataset.setLang));
+      });
+      setLang(savedLang);
+    });
+  </script>
+</body>
+</html>
