@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Better Performance Depends on Better-Dosed Complexity | BPM Blog</title>
+  <meta name="description" content="Smarter training is not about adding more. It is about dosing the right complexity at the right time.">
+  <style>
+    :root{
+      --bg:#0b0b0f;
+      --panel:#11131a;
+      --panel-2:#171a22;
+      --text:#f5f7fb;
+      --muted:#b8c0d4;
+      --gold:#f0b90b;
+      --line:rgba(255,255,255,.08);
+      --max:900px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.7}
+    a{color:var(--gold);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:var(--max);margin:0 auto;padding:24px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:8px 0 22px}
+    .crumb{font-size:.95rem;color:var(--muted)}
+    .toggle-row{display:flex;gap:8px;align-items:center}
+    .lang-btn{
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:700;
+      letter-spacing:.02em;
+    }
+    .lang-btn.active{background:var(--gold);color:#111}
+    .hero{
+      background:linear-gradient(180deg,var(--panel),var(--panel-2));
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:34px 24px;
+      margin-bottom:24px;
+      box-shadow:0 10px 30px rgba(0,0,0,.22);
+    }
+    .eyebrow{
+      color:var(--gold);
+      font-size:.86rem;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin:0 0 10px;
+    }
+    h1{
+      margin:0 0 12px;
+      font-size:clamp(2rem,4vw,3.2rem);
+      line-height:1.1;
+    }
+    .dek{
+      margin:0;
+      color:var(--muted);
+      font-size:1.08rem;
+      max-width:760px;
+    }
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:.92rem;
+    }
+    article{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:30px 24px;
+      box-shadow:0 10px 30px rgba(0,0,0,.18);
+    }
+    article p{
+      margin:0 0 18px;
+      font-size:1.05rem;
+      color:#eef2fb;
+    }
+    article p.lead{
+      font-size:1.12rem;
+      color:#fff;
+    }
+    .back{
+      display:inline-block;
+      margin-top:22px;
+      border:1px solid var(--line);
+      background:var(--panel-2);
+      padding:12px 16px;
+      border-radius:999px;
+      color:var(--text);
+      font-weight:700;
+    }
+    footer{
+      color:var(--muted);
+      text-align:center;
+      padding:28px 0 8px;
+      font-size:.95rem;
+    }
+    [data-lang]{display:none}
+    [data-lang].show{display:block}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="crumb">
+        <span data-lang="en" class="show">BPM Blog / Performance Thinking</span>
+        <span data-lang="es">Blog BPM / Pensamiento de Rendimiento</span>
+      </div>
+      <div class="toggle-row" aria-label="Language toggle">
+        <button class="lang-btn active" data-set-lang="en" type="button">English</button>
+        <button class="lang-btn" data-set-lang="es" type="button">Español</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <p class="eyebrow">
+        <span data-lang="en" class="show">Performance Thinking</span>
+        <span data-lang="es">Pensamiento de Rendimiento</span>
+      </p>
+      <h1>
+        <span data-lang="en" class="show">Why Better Performance Depends on Better-Dosed Complexity</span>
+        <span data-lang="es">Por Qué un Mejor Rendimiento Depende de una Complejidad Mejor Dosificada</span>
+      </h1>
+      <p class="dek">
+        <span data-lang="en" class="show">Smarter training is not about adding more. It is about dosing the right complexity at the right time.</span>
+        <span data-lang="es">Entrenar mejor no se trata de añadir más. Se trata de dosificar la complejidad correcta en el momento correcto.</span>
+      </p>
+      <div class="meta">
+        <span class="pill">
+          <span data-lang="en" class="show">BPM Basketball</span>
+          <span data-lang="es">BPM Basketball</span>
+        </span>
+        <span class="pill">
+          <span data-lang="en" class="show">Performance Insight</span>
+          <span data-lang="es">Visión de Rendimiento</span>
+        </span>
+      </div>
+    </section>
+
+    <article>
+      <div data-lang="en" class="show">
+        
+        <p class="lead">One of the biggest problems in training is the idea that complexity has to keep climbing.</p>
+        <p>Easy. Then harder. Then advanced. Then elite.</p>
+        <p>That sounds organized, but it often produces the wrong kind of overload.</p>
+        <p>Better performance does not come from constantly piling on more challenge. It comes from placing the right amount of complexity at the right moment.</p>
+        <p>That is why <strong>better-dosed complexity</strong> matters.</p>
+        <p>The goal is not to make every session look advanced. The goal is to create enough demand to sharpen attention, movement, perception, and decision-making without drowning the athlete in unnecessary noise.</p>
+        <p>That is a major advantage for product-based training.</p>
+        <p>The best tools are not only valuable because of what they can do at maximum. They are valuable because of how precisely they can shape load, timing, interaction, and response quality.</p>
+        <p>Sometimes the smartest session is simple. Sometimes it adds a brief visual layer. Sometimes it combines multiple demands for a short, high-quality exposure. The point is not to accumulate complexity. The point is to organize it.</p>
+        <p><strong>Complexity should be managed, not just added.</strong></p>
+        <p>That is why better performance depends on better-dosed complexity. It protects quality while still exposing the athlete to meaningful challenge. It keeps training adaptive instead of chaotic. And it helps performance grow without forcing every session into the same formula.</p>
+    
+        <a class="back" href="../blog.html">← Back to Blog</a>
+      </div>
+
+      <div data-lang="es">
+        
+        <p class="lead">Uno de los problemas más grandes en el entrenamiento es la idea de que la complejidad siempre tiene que seguir subiendo.</p>
+        <p>Fácil. Luego más difícil. Luego avanzado. Luego élite.</p>
+        <p>Eso suena organizado, pero muchas veces produce el tipo equivocado de sobrecarga.</p>
+        <p>Un mejor rendimiento no viene de seguir amontonando más dificultad. Viene de colocar la cantidad correcta de complejidad en el momento correcto.</p>
+        <p>Por eso importa la <strong>complejidad bien dosificada</strong>.</p>
+        <p>La meta no es que cada sesión se vea avanzada. La meta es crear suficiente demanda para afinar la atención, el movimiento, la percepción y la toma de decisiones sin ahogar al atleta en ruido innecesario.</p>
+        <p>Esa es una gran ventaja del entrenamiento basado en productos.</p>
+        <p>Las mejores herramientas no son valiosas solo por lo que pueden hacer al máximo. Son valiosas por la precisión con la que pueden moldear la carga, el timing, la interacción y la calidad de respuesta.</p>
+        <p>A veces la sesión más inteligente es simple. A veces añade una capa visual breve. A veces combina múltiples demandas en una exposición corta y de alta calidad. El punto no es acumular complejidad. El punto es organizarla.</p>
+        <p><strong>La complejidad debe manejarse, no simplemente añadirse.</strong></p>
+        <p>Por eso un mejor rendimiento depende de una complejidad mejor dosificada. Protege la calidad mientras expone al atleta a un reto significativo. Mantiene el entrenamiento adaptable en vez de caótico. Y ayuda a que el rendimiento crezca sin obligar a que cada sesión siga la misma fórmula.</p>
+    
+        <a class="back" href="../blog.html">← Volver al Blog</a>
+      </div>
+    </article>
+
+    <footer>
+      <span data-lang="en" class="show">BPM Basketball Blog</span>
+      <span data-lang="es">Blog de BPM Basketball</span>
+    </footer>
+  </div>
+  
+  <script>
+    const savedLang = localStorage.getItem('bpmBlogLang') || 'en';
+    function setLang(lang){
+      document.querySelectorAll('[data-lang]').forEach(el=>{
+        el.classList.toggle('show', el.getAttribute('data-lang')===lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn=>{
+        btn.classList.toggle('active', btn.dataset.setLang===lang);
+      });
+      document.documentElement.lang = lang === 'es' ? 'es' : 'en';
+      localStorage.setItem('bpmBlogLang', lang);
+    }
+    document.addEventListener('DOMContentLoaded', ()=>{
+      document.querySelectorAll('.lang-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>setLang(btn.dataset.setLang));
+      });
+      setLang(savedLang);
+    });
+  </script>
+
+</body>
+</html>
