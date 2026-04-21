@@ -16,18 +16,53 @@
       --line:rgba(255,255,255,.08);
       --max:1180px;
     }
+
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:var(--max);margin:0 auto;padding:24px}
+
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Arial,Helvetica,sans-serif;
+    }
+
+    body{
+      line-height:1.6;
+    }
+
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:24px;
+    }
+
     .topbar{
-      display:flex;justify-content:space-between;align-items:center;gap:16px;
-      flex-wrap:wrap;padding:8px 0 24px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      padding:8px 0 24px;
     }
+
     .brand{
-      font-size:1rem;color:var(--muted);letter-spacing:.04em
+      font-size:1rem;
+      color:var(--muted);
+      letter-spacing:.04em;
     }
-    .toggle-row{display:flex;gap:8px;align-items:center}
+
+    .toggle-row{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
     .lang-btn{
       border:1px solid var(--line);
       background:var(--panel);
@@ -38,7 +73,12 @@
       font-weight:700;
       letter-spacing:.02em;
     }
-    .lang-btn.active{background:var(--gold);color:#111}
+
+    .lang-btn.active{
+      background:var(--gold);
+      color:#111;
+    }
+
     .hero{
       background:
         radial-gradient(circle at top right, rgba(240,185,11,.14), transparent 28%),
@@ -49,6 +89,7 @@
       box-shadow:0 12px 30px rgba(0,0,0,.24);
       margin-bottom:24px;
     }
+
     .eyebrow{
       color:var(--gold);
       font-size:.86rem;
@@ -57,12 +98,14 @@
       text-transform:uppercase;
       margin:0 0 12px;
     }
+
     h1{
       margin:0 0 14px;
       font-size:clamp(2.2rem,5vw,4rem);
       line-height:1.05;
       max-width:900px;
     }
+
     .hero p{
       margin:0;
       color:var(--muted);
@@ -70,27 +113,39 @@
       line-height:1.75;
       max-width:800px;
     }
+
     .section{
       margin:28px 0 0;
     }
+
     .section-head{
-      display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;
+      display:flex;
+      justify-content:space-between;
+      align-items:end;
+      gap:14px;
+      flex-wrap:wrap;
       margin-bottom:16px;
     }
+
     .section h2{
       margin:0;
       font-size:1.55rem;
       line-height:1.2;
     }
+
     .section-sub{
-      margin:0;color:var(--muted)
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
     }
+
     .featured{
       display:grid;
       grid-template-columns:1.25fr .9fr;
       gap:18px;
       align-items:stretch;
     }
+
     .card{
       background:var(--panel);
       border:1px solid var(--line);
@@ -99,17 +154,20 @@
       box-shadow:0 10px 24px rgba(0,0,0,.18);
       transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
     }
+
     .card:hover{
       transform:translateY(-3px);
       border-color:rgba(240,185,11,.22);
       box-shadow:0 14px 30px rgba(0,0,0,.24);
     }
+
     .card.feature-main{
       min-height:310px;
       display:flex;
       flex-direction:column;
       justify-content:space-between;
     }
+
     .category{
       display:inline-flex;
       padding:8px 12px;
@@ -122,17 +180,20 @@
       letter-spacing:.06em;
       text-transform:uppercase;
     }
+
     .card h3{
       margin:16px 0 12px;
       font-size:clamp(1.45rem,2.2vw,2.1rem);
       line-height:1.14;
     }
+
     .card p{
       margin:0;
       color:var(--muted);
       line-height:1.75;
       font-size:1rem;
     }
+
     .read{
       margin-top:22px;
       display:inline-flex;
@@ -144,53 +205,70 @@
       padding:12px 16px;
       border-radius:999px;
     }
+
     .side-stack{
       display:grid;
       gap:18px;
     }
+
     .grid{
       display:grid;
       grid-template-columns:repeat(3,minmax(0,1fr));
       gap:18px;
     }
+
     .mini h3{
       font-size:1.25rem;
       margin:14px 0 10px;
     }
+
     .mini .read{
       margin-top:18px;
       background:transparent;
       border:1px solid var(--line);
       color:var(--text);
     }
+
     .category-grid{
       display:grid;
       grid-template-columns:repeat(3,minmax(0,1fr));
       gap:16px;
     }
+
     .category-box{
       background:linear-gradient(180deg,var(--panel),var(--panel-2));
       border:1px solid var(--line);
       border-radius:22px;
       padding:22px;
     }
+
     .category-box h4{
       margin:0 0 10px;
       font-size:1.12rem;
     }
+
     .category-box p{
-      margin:0;color:var(--muted);line-height:1.7
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
     }
+
     footer{
       color:var(--muted);
       text-align:center;
       padding:34px 0 10px;
       font-size:.95rem;
     }
+
     [data-lang]{display:none}
     [data-lang].show{display:block}
+
     @media (max-width: 960px){
-      .featured,.grid,.category-grid{grid-template-columns:1fr}
+      .featured,
+      .grid,
+      .category-grid{
+        grid-template-columns:1fr;
+      }
     }
   </style>
 </head>
@@ -217,8 +295,8 @@
         <span data-lang="es">Visión de rendimiento, inteligencia de producto e ideas modernas de entrenamiento.</span>
       </h1>
       <p>
-        <span data-lang="en" class="show">This is where BPM Basketball breaks down the force, perception, response quality, and training logic that shape better athletes.</span>
-        <span data-lang="es">Aquí es donde BPM Basketball presenta la fuerza, la percepción, la calidad de respuesta y la lógica de entrenamiento que forman mejores atletas.</span>
+        <span data-lang="en" class="show">This is where BPM Basketball breaks down force, perception, response quality, and the training logic that shapes better athletes.</span>
+        <span data-lang="es">Aquí es donde BPM Basketball presenta la fuerza, la percepción, la calidad de respuesta y la lógica de entrenamiento que forma mejores atletas.</span>
       </p>
     </section>
 
@@ -230,7 +308,8 @@
             <span data-lang="es">Artículo Destacado</span>
           </h2>
           <p class="section-sub">
-            <span data-lang="es">Empieza con la idea central y luego pasa a los beneficios del producto.</span>
+            <span data-lang="en" class="show">Start with the core idea, then move directly into product value.</span>
+            <span data-lang="es">Empieza con la idea central y luego pasa directamente al valor del producto.</span>
           </p>
         </div>
       </div>
@@ -413,20 +492,25 @@
 
   <script>
     const savedLang = localStorage.getItem('bpmBlogLang') || 'en';
+
     function setLang(lang){
-      document.querySelectorAll('[data-lang]').forEach(el=>{
-        el.classList.toggle('show', el.getAttribute('data-lang')===lang);
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        el.classList.toggle('show', el.getAttribute('data-lang') === lang);
       });
-      document.querySelectorAll('.lang-btn').forEach(btn=>{
-        btn.classList.toggle('active', btn.dataset.setLang===lang);
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.setLang === lang);
       });
+
       document.documentElement.lang = lang === 'es' ? 'es' : 'en';
       localStorage.setItem('bpmBlogLang', lang);
     }
-    document.addEventListener('DOMContentLoaded', ()=>{
-      document.querySelectorAll('.lang-btn').forEach(btn=>{
-        btn.addEventListener('click', ()=>setLang(btn.dataset.setLang));
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => setLang(btn.dataset.setLang));
       });
+
       setLang(savedLang);
     });
   </script>
