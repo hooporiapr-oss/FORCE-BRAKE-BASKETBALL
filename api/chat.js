@@ -1,3 +1,4 @@
+// api/chat.js
 // Expects POST JSON:  { messages: [{role, content}, ...], language: "en" | "es" }
 // Returns JSON:       { reply: string }
 //
