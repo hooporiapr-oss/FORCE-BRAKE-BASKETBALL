@@ -701,14 +701,82 @@
     .chat-body {
       padding: 1rem;
       display: grid;
+      grid-template-rows: 1fr auto;
       gap: 0.9rem;
+      min-height: 0;
     }
 
-    .chat-dynamic {
-      font-size: 0.92rem;
-      color: #dfe4ec;
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      overflow-y: auto;
+      max-height: 420px;
+      min-height: 180px;
+      padding-right: 0.25rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.18) transparent;
+    }
+
+    .chat-messages::-webkit-scrollbar { width: 6px; }
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.18);
+      border-radius: 10px;
+    }
+
+    .chat-message {
+      max-width: 86%;
+      padding: 0.7rem 0.9rem;
+      border-radius: 16px;
+      font-size: 0.93rem;
       line-height: 1.55;
-      min-height: 2.8em;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      animation: chatPop 180ms ease;
+    }
+
+    .chat-message--user {
+      align-self: flex-end;
+      color: #081006;
+      background: linear-gradient(135deg, var(--accent), #d9ff71);
+      border-bottom-right-radius: 6px;
+      font-weight: 600;
+    }
+
+    .chat-message--assistant {
+      align-self: flex-start;
+      color: #e7ebf2;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-bottom-left-radius: 6px;
+    }
+
+    @keyframes chatPop {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-typing {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+      padding: 0.85rem 0.95rem;
+    }
+
+    .chat-typing span {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.55);
+      animation: chatBounce 1.1s infinite ease-in-out;
+    }
+
+    .chat-typing span:nth-child(2) { animation-delay: 0.15s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes chatBounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+      40% { transform: translateY(-4px); opacity: 1; }
     }
 
     .chat-input-wrap {
@@ -732,6 +800,8 @@
       border-radius: 999px;
       outline: none;
     }
+
+    .chat-input:disabled { opacity: 0.6; }
 
     .chat-send {
       width: 52px;
@@ -758,10 +828,10 @@
       transform: translateY(-2px);
     }
 
-    .chat-footnote {
-      font-size: 0.82rem;
-      color: var(--muted);
-      line-height: 1.5;
+    .chat-send:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
 
     @media (max-width: 1080px) {
@@ -865,9 +935,14 @@
         grid-template-rows: auto 1fr;
       }
 
+      .chat-messages {
+        max-height: none;
+        height: 100%;
+      }
+
       .chat-body {
-        overflow-y: auto;
-        align-content: start;
+        overflow: hidden;
+        grid-template-rows: 1fr auto;
       }
 
       .chat-input-row {
@@ -1194,14 +1269,13 @@
     </div>
     <div class="chat-body">
 
-      <div class="chat-dynamic" id="chatDynamic"></div>
+      <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
 
       <div class="chat-input-wrap">
         <div class="chat-input-row">
           <input class="chat-input" id="chatInput" type="text" placeholder="Ask your first question..." data-placeholder-en="Ask your first question..." data-placeholder-es="Haz tu primera pregunta..." />
           <button class="chat-send" id="chatSend" type="button" aria-label="Send message">➜</button>
         </div>
-        <div class="chat-footnote" data-en="Use this advisor to start premium conversations, qualify high-intent visitors, and move athletes, coaches, and programs toward your offer with more clarity and authority." data-es="Usa este asesor para iniciar conversaciones premium, calificar visitantes de alta intención y mover atletas, coaches y programas hacia tu oferta con más claridad y autoridad.">Use this advisor to start premium conversations, qualify high-intent visitors, and move athletes, coaches, and programs toward your offer with more clarity and authority.</div>
       </div>
     </div>
   </aside>
@@ -1228,13 +1302,8 @@
   </footer>
 
   <script>
-    // -------------------------------------------------------------------------
-    // Inline site script: navigation, language toggle, chat-panel open/close,
-    // rotating pitch messages, reveal-on-scroll.
-    //
-    // NOTE: The chat SEND button and Enter-key handlers have been removed from
-    // this script. Conversational chat is now owned by /chat.js.
-    // -------------------------------------------------------------------------
+    // --- Nav / language / panel open-close ---
+    // The actual chat conversation logic lives in /chat.js
     const mobileToggle = document.getElementById('mobileToggle');
     const navLinks = document.getElementById('navLinks');
 
@@ -1281,46 +1350,11 @@
 
     setLanguage(localStorage.getItem('siteLanguage') || 'en');
 
+    // --- Chat panel open / close ---
     const chatFab = document.getElementById('chatFab');
     const chatPanel = document.getElementById('chatPanel');
     const chatOverlay = document.getElementById('chatOverlay');
     const chatClose = document.getElementById('chatClose');
-    const chatDynamic = document.getElementById('chatDynamic');
-
-    const rotatingMessages = {
-      en: [
-        'Ask the question that changes everything: what part of basketball performance are you still not training directly?',
-        'Most players chase speed. The smartest ones build force, braking control, and flywheel transfer that actually shows up in the game.',
-        'Start where the edge is real: first step, stopping power, redirection, recovery, and position-specific transfer.'
-      ],
-      es: [
-        'Haz la pregunta que lo cambia todo: ¿qué parte del rendimiento en baloncesto todavía no estás entrenando de forma directa?',
-        'La mayoría de los jugadores persigue velocidad. Los más inteligentes construyen fuerza, control de frenado y transferencia del flywheel que realmente aparece en el juego.',
-        'Empieza donde la ventaja es real: primer paso, poder de frenado, redirección, recuperación y transferencia por posición.'
-      ]
-    };
-
-    let messageIndex = 0;
-    let messageTimer = null;
-
-    function currentLang() {
-      return localStorage.getItem('siteLanguage') || 'en';
-    }
-
-    function updateDynamicMessage() {
-      if (!chatDynamic) return;
-      // If chat.js has taken over and hidden this element, stop updating it.
-      if (chatDynamic.style.display === 'none') return;
-      const lang = currentLang();
-      chatDynamic.textContent = rotatingMessages[lang][messageIndex % rotatingMessages[lang].length];
-      messageIndex += 1;
-    }
-
-    function startDynamicMessages() {
-      updateDynamicMessage();
-      if (messageTimer) clearInterval(messageTimer);
-      messageTimer = setInterval(updateDynamicMessage, 5000);
-    }
 
     function openChat(event) {
       if (event) {
@@ -1333,7 +1367,8 @@
       if (chatFab) chatFab.classList.add('is-hidden');
       chatPanel.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      startDynamicMessages();
+      const input = document.getElementById('chatInput');
+      if (input) setTimeout(() => input.focus(), 150);
     }
 
     function closeChat(event) {
@@ -1357,8 +1392,7 @@
     if (chatClose) chatClose.addEventListener('click', closeChat);
     if (chatOverlay) chatOverlay.addEventListener('click', closeChat);
 
-    startDynamicMessages();
-
+    // --- Scroll reveal ---
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) entry.target.classList.add('is-visible');
@@ -1367,6 +1401,7 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
+
   <script src="/chat.js" defer></script>
 </body>
 </html>
