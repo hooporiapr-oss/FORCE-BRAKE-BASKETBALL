@@ -6,22 +6,15 @@
   <title>Flywheel Basketball Training | Force and Braking Performance</title>
   <meta name="description" content="A premium basketball performance website focused on flywheel training, force production, braking ability, and movement control for serious athletes and coaches." />
   <meta name="theme-color" content="#0a0a0d" />
-  <meta name="keywords" content="basketball flywheel training, basketball braking, force production basketball, deceleration basketball, basketball performance training" />
   <style>
     :root {
       --bg: #07080b;
-      --bg-soft: #0d1016;
-      --panel: rgba(255,255,255,0.045);
-      --panel-strong: rgba(255,255,255,0.08);
       --text: #f5f3ee;
       --muted: #b8bcc7;
-      --line: rgba(255,255,255,0.12);
       --accent: #b8f516;
       --accent-2: #7fe2ff;
-      --glow: rgba(184,245,22,0.28);
       --shadow: 0 20px 60px rgba(0,0,0,0.38);
       --radius: 22px;
-      --radius-sm: 16px;
       --max: 1240px;
       --transition: 260ms ease;
     }
@@ -56,6 +49,7 @@
 
     a { color: inherit; text-decoration: none; }
     img { max-width: 100%; display: block; }
+    button, input, textarea, select { font: inherit; }
 
     .container {
       width: min(calc(100% - 2rem), var(--max));
@@ -103,7 +97,7 @@
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 40;
+      z-index: 100;
       backdrop-filter: blur(18px);
       background: rgba(7,8,11,0.72);
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -116,6 +110,7 @@
       justify-content: space-between;
       gap: 1rem;
       flex-wrap: wrap;
+      position: relative;
     }
 
     .brand {
@@ -161,7 +156,7 @@
       width: 6px;
       height: 6px;
       background: var(--accent);
-      box-shadow: 0 0 18px var(--glow);
+      box-shadow: 0 0 18px rgba(184,245,22,0.28);
     }
 
     .nav-links {
@@ -188,7 +183,9 @@
     }
 
     .btn,
-    .btn-secondary {
+    .btn-secondary,
+    .chat-send,
+    .chat-start {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -200,17 +197,20 @@
       white-space: nowrap;
       border: 0;
       cursor: pointer;
-      font: inherit;
     }
 
-    .btn {
+    .btn,
+    .chat-send,
+    .chat-start {
       color: #061006;
       background: linear-gradient(135deg, var(--accent), #d9ff71);
       box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 18px 36px rgba(184,245,22,0.18);
     }
 
     .btn:hover,
-    .btn-secondary:hover {
+    .btn-secondary:hover,
+    .chat-send:hover,
+    .chat-start:hover {
       transform: translateY(-2px);
     }
 
@@ -233,7 +233,6 @@
       background: transparent;
       border: 0;
       color: #d6d9df;
-      font: inherit;
       font-size: 0.92rem;
       cursor: pointer;
       opacity: 0.78;
@@ -297,12 +296,24 @@
       max-width: 760px;
     }
 
+    .stat,
+    .card,
+    .insight,
+    .application,
+    .faq-item,
+    .form-card,
+    .manifesto,
+    .chat-bubble,
+    .chat-starter {
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.035);
+      border-radius: var(--radius);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
     .stat {
       padding: 1rem 1rem 1.05rem;
-      border: 1px solid rgba(255,255,255,0.09);
-      background: rgba(255,255,255,0.03);
       border-radius: 18px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .stat strong {
@@ -320,7 +331,7 @@
       line-height: 1.55;
     }
 
-    .hero-visual{
+    .hero-visual {
       position: relative;
       width: 100%;
       display: block;
@@ -328,7 +339,7 @@
       margin: 0;
     }
 
-    .hero-image{
+    .hero-image {
       width: 100%;
       height: auto;
       display: block;
@@ -346,29 +357,21 @@
     .feature-grid,
     .applications-grid,
     .faq-grid,
-    .insight-grid,
-    .proof-grid {
+    .insight-grid {
       display: grid;
       gap: 1.25rem;
     }
 
-    .feature-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .insight-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .applications-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .faq-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: var(--radius);
-      padding: 1.4rem;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-      transition: transform var(--transition), border-color var(--transition), background var(--transition);
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(184,245,22,0.28);
-      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.035));
+    .card,
+    .insight,
+    .application,
+    .faq-item {
+      padding: 1.35rem;
     }
 
     .card .index {
@@ -386,20 +389,18 @@
     }
 
     .card h3,
+    .insight h3,
     .application h3,
-    .faq-item h3,
-    .proof-card h3,
-    .insight h3 {
+    .faq-item h3 {
       margin: 0 0 0.75rem;
       font-size: 1.15rem;
       letter-spacing: -0.03em;
     }
 
     .card p,
+    .insight p,
     .application p,
-    .faq-item p,
-    .proof-card p,
-    .insight p {
+    .faq-item p {
       margin: 0;
       color: var(--muted);
       line-height: 1.75;
@@ -407,12 +408,11 @@
     }
 
     .manifesto {
-      border-radius: 36px;
       padding: 2rem;
+      border-radius: 36px;
       background:
         radial-gradient(circle at top right, rgba(184,245,22,0.12), transparent 30%),
         linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
-      border: 1px solid rgba(255,255,255,0.1);
       box-shadow: var(--shadow);
     }
 
@@ -445,21 +445,6 @@
       border: 1px solid rgba(255,255,255,0.08);
       color: #dde1e9;
       font-size: 0.88rem;
-    }
-
-    .insight-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .applications-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .faq-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .proof-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-    .insight,
-    .application,
-    .faq-item,
-    .proof-card {
-      padding: 1.35rem;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.035);
-      border: 1px solid rgba(255,255,255,0.09);
     }
 
     .section-divider {
@@ -502,10 +487,8 @@
     }
 
     .form-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.03));
-      border-radius: 28px;
       padding: 1.8rem;
-      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 28px;
       box-shadow: var(--shadow);
     }
 
@@ -539,14 +522,14 @@
       color: var(--text);
       padding: 0.95rem 1rem;
       border-radius: 16px;
-      font: inherit;
       outline: none;
       transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
     }
 
     input:focus,
     select:focus,
-    textarea:focus {
+    textarea:focus,
+    .chat-input:focus {
       border-color: rgba(184,245,22,0.48);
       background: rgba(255,255,255,0.06);
       box-shadow: 0 0 0 4px rgba(184,245,22,0.08);
@@ -600,6 +583,7 @@
       height: 46px;
       border-radius: 14px;
       font-size: 1.1rem;
+      cursor: pointer;
     }
 
     .chat-fab {
@@ -619,13 +603,30 @@
       box-shadow: 0 18px 36px rgba(184,245,22,0.25);
       cursor: pointer;
       transition: transform var(--transition), box-shadow var(--transition);
-      font-size: 1.9rem;
+      font-size: 1.95rem;
       font-weight: 800;
+      line-height: 1;
     }
 
     .chat-fab:hover {
       transform: translateY(-2px) scale(1.02);
       box-shadow: 0 22px 42px rgba(184,245,22,0.28);
+    }
+
+    .chat-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3,4,7,0.66);
+      backdrop-filter: blur(8px);
+      z-index: 118;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease;
+    }
+
+    .chat-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .chat-panel {
@@ -659,7 +660,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
-      padding: 1rem 1rem 0.9rem;
+      padding: 1rem 1rem 0.95rem;
       border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
@@ -691,7 +692,6 @@
       background: rgba(255,255,255,0.04);
       color: var(--text);
       cursor: pointer;
-      font: inherit;
       font-size: 1rem;
     }
 
@@ -702,10 +702,7 @@
     }
 
     .chat-bubble {
-      border-radius: 20px;
       padding: 1rem;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
       color: var(--muted);
       line-height: 1.65;
       font-size: 0.96rem;
@@ -718,42 +715,17 @@
       font-size: 0.98rem;
     }
 
-    .chat-starters {
-      display: grid;
-      gap: 0.7rem;
-    }
-
-    .chat-starter {
-      width: 100%;
-      text-align: left;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.035);
-      color: var(--text);
-      border-radius: 18px;
-      padding: 0.9rem 0.95rem;
-      cursor: pointer;
-      font: inherit;
-      line-height: 1.45;
-      transition: transform var(--transition), border-color var(--transition), background var(--transition);
-    }
-
-    .chat-starter:hover {
-      transform: translateY(-2px);
-      border-color: rgba(184,245,22,0.3);
-      background: rgba(255,255,255,0.06);
+    .chat-dynamic {
+      font-size: 0.92rem;
+      color: #dfe4ec;
+      line-height: 1.55;
+      min-height: 2.8em;
     }
 
     .chat-input-wrap {
       display: grid;
       gap: 0.7rem;
       padding-top: 0.2rem;
-    }
-
-    .chat-dynamic {
-      font-size: 0.92rem;
-      color: #dfe4ec;
-      line-height: 1.55;
-      min-height: 2.8em;
     }
 
     .chat-input-row {
@@ -769,41 +741,13 @@
       color: var(--text);
       padding: 0.9rem 1rem;
       border-radius: 999px;
-      font: inherit;
       outline: none;
-    }
-
-    .chat-send {
-      border: 0;
-      border-radius: 999px;
-      padding: 0.9rem 1.05rem;
-      background: linear-gradient(135deg, var(--accent), #d9ff71);
-      color: #081006;
-      font-weight: 800;
-      cursor: pointer;
-      font: inherit;
     }
 
     .chat-footnote {
       font-size: 0.82rem;
       color: var(--muted);
       line-height: 1.5;
-    }
-
-    .chat-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(3,4,7,0.66);
-      backdrop-filter: blur(8px);
-      z-index: 118;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 220ms ease;
-    }
-
-    .chat-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
     }
 
     @media (max-width: 1080px) {
@@ -821,15 +765,12 @@
       .hero-copy h1 { max-width: 11ch; }
       .applications-grid,
       .insight-grid,
-      .proof-grid,
       .faq-grid,
       .feature-grid { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 820px) {
       .nav {
-        position: relative;
-        flex-wrap: wrap;
         align-items: center;
         padding: 1rem 0;
         min-height: 78px;
@@ -840,11 +781,10 @@
         align-items: center;
         justify-content: center;
         position: absolute;
-        top: 22px;
+        top: 16px;
         right: 0;
-        transform: none;
         margin: 0;
-        z-index: 20;
+        z-index: 101;
       }
 
       .brand {
@@ -878,7 +818,6 @@
       .feature-grid,
       .applications-grid,
       .insight-grid,
-      .proof-grid,
       .faq-grid,
       .form-grid { grid-template-columns: 1fr; }
 
@@ -897,37 +836,7 @@
       }
 
       .cta-band { padding: 1.6rem; }
-    }
 
-    @media (max-width: 560px) {
-      .container { width: min(calc(100% - 1.2rem), var(--max)); }
-      .section { padding: 5rem 0; }
-      .hero-copy h1 { font-size: clamp(2.75rem, 12vw, 4.35rem); }
-      .section-title { font-size: clamp(2rem, 8vw, 2.9rem); }
-      .manifesto,
-      .form-card,
-      .cta-band { border-radius: 24px; }
-      .btn,
-      .btn-secondary { width: 100%; }
-      .hero-actions { display: grid; }
-
-      .hero-visual {
-        border-radius: 20px;
-      }
-
-      .hero-image {
-        border-radius: 20px;
-      }
-
-      .chat-fab {
-        right: 16px;
-        bottom: 16px;
-        width: 58px;
-        height: 58px;
-      }
-    }
-
-    @media (max-width: 820px) {
       .chat-panel {
         right: 0;
         bottom: 0;
@@ -942,12 +851,7 @@
         grid-template-rows: auto 1fr;
       }
 
-      .chat-head {
-        padding: 1rem 1rem 0.95rem;
-      }
-
       .chat-body {
-        padding: 1rem;
         overflow-y: auto;
         align-content: start;
       }
@@ -957,6 +861,31 @@
         bottom: 0;
         background: linear-gradient(180deg, rgba(8,10,14,0), rgba(8,10,14,0.98) 28%);
         padding-top: 0.6rem;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .container { width: min(calc(100% - 1.2rem), var(--max)); }
+      .section { padding: 5rem 0; }
+      .hero-copy h1 { font-size: clamp(2.75rem, 12vw, 4.35rem); }
+      .section-title { font-size: clamp(2rem, 8vw, 2.9rem); }
+      .manifesto,
+      .form-card,
+      .cta-band { border-radius: 24px; }
+      .btn,
+      .btn-secondary,
+      .chat-send,
+      .chat-start { width: 100%; }
+      .hero-actions { display: grid; }
+
+      .hero-visual,
+      .hero-image { border-radius: 20px; }
+
+      .chat-fab {
+        right: 16px;
+        bottom: 16px;
+        width: 58px;
+        height: 58px;
       }
     }
   </style>
@@ -969,7 +898,7 @@
         <span data-en="Force / Braking Basketball" data-es="Fuerza / Frenado en Baloncesto">Force / Braking Basketball</span>
       </a>
 
-      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">☰</button>
+      <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Toggle navigation">☰</button>
 
       <nav class="nav-links" id="navLinks">
         <a href="#home" data-en="Home" data-es="Inicio">Home</a>
@@ -1000,9 +929,7 @@
           <span class="eyebrow" data-en="Basketball movement doctrine" data-es="Doctrina del movimiento en el baloncesto">Basketball movement doctrine</span>
           <h1 data-en="Force wins the gap. Braking wins the game." data-es="La fuerza gana el espacio. El frenado gana el juego.">Force wins the gap. Braking wins the game.</h1>
           <p data-en="Basketball performance is not defined by speed alone. It is defined by how force is created, absorbed, organized, and redirected in the moments that decide separation, balance, recovery, and command. This is a sharper way to train how the game is actually played." data-es="El rendimiento en baloncesto no se define solo por la velocidad. Se define por cómo se crea, se absorbe, se organiza y se redirige la fuerza en los momentos que deciden separación, balance, recuperación y control. Esta es una forma más precisa de entrenar cómo realmente se juega el deporte.">
-            Basketball performance is not defined by speed alone. It is defined by how force is created,
-            absorbed, organized, and redirected in the moments that decide separation, balance, recovery,
-            and command. This is a sharper way to train how the game is actually played.
+            Basketball performance is not defined by speed alone. It is defined by how force is created, absorbed, organized, and redirected in the moments that decide separation, balance, recovery, and command. This is a sharper way to train how the game is actually played.
           </p>
           <div class="hero-actions">
             <a href="#method" class="btn" data-en="Explore the Method" data-es="Explora el Método">Explore the Method</a>
@@ -1025,11 +952,7 @@
         </div>
 
         <div class="hero-visual">
-          <img
-            src="assets/hero-universal-force-braking.png"
-            alt="Universal basketball performance image showing male, female, and youth athletes in dynamic motion"
-            class="hero-image"
-          />
+          <img src="assets/hero-universal-force-braking.png" alt="Universal basketball performance image showing male, female, and youth athletes in dynamic motion" class="hero-image" />
         </div>
       </div>
     </section>
@@ -1039,34 +962,13 @@
         <div class="reveal">
           <span class="eyebrow" data-en="The core idea" data-es="La idea central">The core idea</span>
           <h2 class="section-title" data-en="Force creates separation. Braking owns the next move." data-es="La fuerza crea separación. El frenado domina la próxima acción.">Force creates separation. Braking owns the next move.</h2>
-          <p class="section-lead" data-en="The game is full of violent transitions. Burst. Stop. Shift. Recover. Rise. Land. Attack again. A player who only knows how to go fast is incomplete. The player who can organize force under pressure has a deeper edge — one that shows up when the floor gets crowded, the space gets tight, and decisions happen in a fraction of a second." data-es="El juego está lleno de transiciones violentas. Explota. Frena. Cambia. Recupera. Eleva. Aterriza. Ataca otra vez. Un jugador que solo sabe ir rápido está incompleto. El jugador que puede organizar la fuerza bajo presión tiene una ventaja más profunda: una que aparece cuando la cancha se llena, el espacio se reduce y las decisiones ocurren en una fracción de segundo.">
-            The game is full of violent transitions. Burst. Stop. Shift. Recover. Rise. Land. Attack again.
-            A player who only knows how to go fast is incomplete. The player who can organize force under
-            pressure has a deeper edge — one that shows up when the floor gets crowded, the space gets tight,
-            and decisions happen in a fraction of a second.
-          </p>
+          <p class="section-lead" data-en="The game is full of violent transitions. Burst. Stop. Shift. Recover. Rise. Land. Attack again. A player who only knows how to go fast is incomplete. The player who can organize force under pressure has a deeper edge — one that shows up when the floor gets crowded, the space gets tight, and decisions happen in a fraction of a second." data-es="El juego está lleno de transiciones violentas. Explota. Frena. Cambia. Recupera. Eleva. Aterriza. Ataca otra vez. Un jugador que solo sabe ir rápido está incompleto. El jugador que puede organizar la fuerza bajo presión tiene una ventaja más profunda: una que aparece cuando la cancha se llena, el espacio se reduce y las decisiones ocurren en una fracción de segundo.">The game is full of violent transitions. Burst. Stop. Shift. Recover. Rise. Land. Attack again. A player who only knows how to go fast is incomplete. The player who can organize force under pressure has a deeper edge — one that shows up when the floor gets crowded, the space gets tight, and decisions happen in a fraction of a second.</p>
         </div>
         <div class="feature-grid reveal">
-          <article class="card">
-            <span class="index">01</span>
-            <h3 data-en="First Step Creation" data-es="Creación del Primer Paso">First Step Creation</h3>
-            <p data-en="Usable force helps the body create separation without wasted rhythm, drifting posture, or delayed attack." data-es="La fuerza útil ayuda al cuerpo a crear separación sin ritmo desperdiciado, postura suelta o ataque tardío.">Usable force helps the body create separation without wasted rhythm, drifting posture, or delayed attack.</p>
-          </article>
-          <article class="card">
-            <span class="index">02</span>
-            <h3 data-en="Closeout Control" data-es="Control del Closeout">Closeout Control</h3>
-            <p data-en="Braking quality shapes how fast a player can arrive under control instead of flying through the play." data-es="La calidad del frenado define cuán rápido un jugador puede llegar con control en vez de pasarse de la jugada.">Braking quality shapes how fast a player can arrive under control instead of flying through the play.</p>
-          </article>
-          <article class="card">
-            <span class="index">03</span>
-            <h3 data-en="Landing and Rebound Position" data-es="Aterrizaje y Posición de Rebote">Landing and Rebound Position</h3>
-            <p data-en="Absorbing force cleanly helps athletes land better, stabilize faster, and own the next action." data-es="Absorber fuerza con limpieza ayuda a aterrizar mejor, estabilizarse más rápido y dominar la próxima acción.">Absorbing force cleanly helps athletes land better, stabilize faster, and own the next action.</p>
-          </article>
-          <article class="card">
-            <span class="index">04</span>
-            <h3 data-en="Defensive Recovery" data-es="Recuperación Defensiva">Defensive Recovery</h3>
-            <p data-en="Stopping well is not passive. It is how the body reorganizes quickly enough to recover and strike again." data-es="Frenar bien no es pasivo. Es cómo el cuerpo se reorganiza con suficiente rapidez para recuperar y responder otra vez.">Stopping well is not passive. It is how the body reorganizes quickly enough to recover and strike again.</p>
-          </article>
+          <article class="card"><span class="index">01</span><h3 data-en="First Step Creation" data-es="Creación del Primer Paso">First Step Creation</h3><p data-en="Usable force helps the body create separation without wasted rhythm, drifting posture, or delayed attack." data-es="La fuerza útil ayuda al cuerpo a crear separación sin ritmo desperdiciado, postura suelta o ataque tardío.">Usable force helps the body create separation without wasted rhythm, drifting posture, or delayed attack.</p></article>
+          <article class="card"><span class="index">02</span><h3 data-en="Closeout Control" data-es="Control del Closeout">Closeout Control</h3><p data-en="Braking quality shapes how fast a player can arrive under control instead of flying through the play." data-es="La calidad del frenado define cuán rápido un jugador puede llegar con control en vez de pasarse de la jugada.">Braking quality shapes how fast a player can arrive under control instead of flying through the play.</p></article>
+          <article class="card"><span class="index">03</span><h3 data-en="Landing and Rebound Position" data-es="Aterrizaje y Posición de Rebote">Landing and Rebound Position</h3><p data-en="Absorbing force cleanly helps athletes land better, stabilize faster, and own the next action." data-es="Absorber fuerza con limpieza ayuda a aterrizar mejor, estabilizarse más rápido y dominar la próxima acción.">Absorbing force cleanly helps athletes land better, stabilize faster, and own the next action.</p></article>
+          <article class="card"><span class="index">04</span><h3 data-en="Defensive Recovery" data-es="Recuperación Defensiva">Defensive Recovery</h3><p data-en="Stopping well is not passive. It is how the body reorganizes quickly enough to recover and strike again." data-es="Frenar bien no es pasivo. Es cómo el cuerpo se reorganiza con suficiente rapidez para recuperar y responder otra vez.">Stopping well is not passive. It is how the body reorganizes quickly enough to recover and strike again.</p></article>
         </div>
       </div>
     </section>
@@ -1078,37 +980,18 @@
         <div class="reveal">
           <span class="eyebrow" data-en="Why braking matters" data-es="Por qué importa el frenado">Why braking matters</span>
           <h2 class="section-title" data-en="Stopping is not a consequence. It is a skill." data-es="Frenar no es una consecuencia. Es una destreza.">Stopping is not a consequence. It is a skill.</h2>
-          <p class="section-lead" data-en="In basketball, braking means more than simply slowing down. It is the ability to absorb force, control momentum, organize body position, and create the conditions for the next movement. The best movers are not just explosive. They are disciplined in the moments where control decides value." data-es="En baloncesto, frenar significa más que simplemente bajar velocidad. Es la capacidad de absorber fuerza, controlar el impulso, organizar la posición corporal y crear las condiciones para el próximo movimiento. Los mejores jugadores en movimiento no solo son explosivos. Son disciplinados en los momentos donde el control decide el valor.">
-            In basketball, braking means more than simply slowing down. It is the ability to absorb force,
-            control momentum, organize body position, and create the conditions for the next movement.
-            The best movers are not just explosive. They are disciplined in the moments where control decides value.
-          </p>
+          <p class="section-lead" data-en="In basketball, braking means more than simply slowing down. It is the ability to absorb force, control momentum, organize body position, and create the conditions for the next movement. The best movers are not just explosive. They are disciplined in the moments where control decides value." data-es="En baloncesto, frenar significa más que simplemente bajar velocidad. Es la capacidad de absorber fuerza, controlar el impulso, organizar la posición corporal y crear las condiciones para el próximo movimiento. Los mejores jugadores en movimiento no solo son explosivos. Son disciplinados en los momentos donde el control decide el valor.">In basketball, braking means more than simply slowing down. It is the ability to absorb force, control momentum, organize body position, and create the conditions for the next movement. The best movers are not just explosive. They are disciplined in the moments where control decides value.</p>
         </div>
 
         <div class="insight-grid" style="margin-top: 2rem;">
-          <article class="insight reveal">
-            <h3 data-en="Braking protects force" data-es="El frenado protege la fuerza">Braking protects force</h3>
-            <p data-en="Force without control leaks into extra steps, poor angles, rushed posture, and wasted advantage. Better braking keeps output useful." data-es="La fuerza sin control se pierde en pasos de más, ángulos pobres, postura apresurada y ventaja desperdiciada. Un mejor frenado mantiene la producción útil.">Force without control leaks into extra steps, poor angles, rushed posture, and wasted advantage. Better braking keeps output useful.</p>
-          </article>
-          <article class="insight reveal">
-            <h3 data-en="Braking sharpens redirection" data-es="El frenado afina la redirección">Braking sharpens redirection</h3>
-            <p data-en="The cleanest changes of direction come from athletes who can stop into position before they ask the body to go again." data-es="Los cambios de dirección más limpios vienen de atletas que pueden frenarse en posición antes de pedirle al cuerpo que vuelva a salir.">The cleanest changes of direction come from athletes who can stop into position before they ask the body to go again.</p>
-          </article>
-          <article class="insight reveal">
-            <h3 data-en="Braking changes game speed" data-es="El frenado cambia la velocidad del juego">Braking changes game speed</h3>
-            <p data-en="Players who stop well look more composed because their bodies can match the timing of the game instead of chasing it." data-es="Los jugadores que frenan bien se ven más compuestos porque su cuerpo puede igualar el ritmo del juego en vez de perseguirlo.">Players who stop well look more composed because their bodies can match the timing of the game instead of chasing it.</p>
-          </article>
+          <article class="insight reveal"><h3 data-en="Braking protects force" data-es="El frenado protege la fuerza">Braking protects force</h3><p data-en="Force without control leaks into extra steps, poor angles, rushed posture, and wasted advantage. Better braking keeps output useful." data-es="La fuerza sin control se pierde en pasos de más, ángulos pobres, postura apresurada y ventaja desperdiciada. Un mejor frenado mantiene la producción útil.">Force without control leaks into extra steps, poor angles, rushed posture, and wasted advantage. Better braking keeps output useful.</p></article>
+          <article class="insight reveal"><h3 data-en="Braking sharpens redirection" data-es="El frenado afina la redirección">Braking sharpens redirection</h3><p data-en="The cleanest changes of direction come from athletes who can stop into position before they ask the body to go again." data-es="Los cambios de dirección más limpios vienen de atletas que pueden frenarse en posición antes de pedirle al cuerpo que vuelva a salir.">The cleanest changes of direction come from athletes who can stop into position before they ask the body to go again.</p></article>
+          <article class="insight reveal"><h3 data-en="Braking changes game speed" data-es="El frenado cambia la velocidad del juego">Braking changes game speed</h3><p data-en="Players who stop well look more composed because their bodies can match the timing of the game instead of chasing it." data-es="Los jugadores que frenan bien se ven más compuestos porque su cuerpo puede igualar el ritmo del juego en vez de perseguirlo.">Players who stop well look more composed because their bodies can match the timing of the game instead of chasing it.</p></article>
         </div>
 
         <div class="manifesto reveal" style="margin-top: 2rem;">
-          <blockquote data-en="Basketball is not only about how fast you go. It is about how well you own the stop." data-es="El baloncesto no se trata solo de cuán rápido vas. Se trata de cuán bien dominas el frenado.">
-            Basketball is not only about how fast you go. It is about how well you own the stop.
-          </blockquote>
-          <p data-en="Closeouts, counters, pull-ups, finishes through contact, defensive slides, landing mechanics, second jumps, and recovery steps all live inside the quality of deceleration. That is why braking deserves more than a passing mention. It deserves a central place in how basketball performance is trained." data-es="Los closeouts, counters, pull-ups, definiciones con contacto, deslizamientos defensivos, mecánica de aterrizaje, segundos saltos y pasos de recuperación viven dentro de la calidad de la desaceleración. Por eso el frenado merece más que una mención rápida. Merece un lugar central en cómo se entrena el rendimiento en baloncesto.">
-            Closeouts, counters, pull-ups, finishes through contact, defensive slides, landing mechanics, second jumps,
-            and recovery steps all live inside the quality of deceleration. That is why braking deserves more than a passing mention.
-            It deserves a central place in how basketball performance is trained.
-          </p>
+          <blockquote data-en="Basketball is not only about how fast you go. It is about how well you own the stop." data-es="El baloncesto no se trata solo de cuán rápido vas. Se trata de cuán bien dominas el frenado.">Basketball is not only about how fast you go. It is about how well you own the stop.</blockquote>
+          <p data-en="Closeouts, counters, pull-ups, finishes through contact, defensive slides, landing mechanics, second jumps, and recovery steps all live inside the quality of deceleration. That is why braking deserves more than a passing mention. It deserves a central place in how basketball performance is trained." data-es="Los closeouts, counters, pull-ups, definiciones con contacto, deslizamientos defensivos, mecánica de aterrizaje, segundos saltos y pasos de recuperación viven dentro de la calidad de la desaceleración. Por eso el frenado merece más que una mención rápida. Merece un lugar central en cómo se entrena el rendimiento en baloncesto.">Closeouts, counters, pull-ups, finishes through contact, defensive slides, landing mechanics, second jumps, and recovery steps all live inside the quality of deceleration. That is why braking deserves more than a passing mention. It deserves a central place in how basketball performance is trained.</p>
           <div class="marquee">
             <span class="pill" data-en="Body control" data-es="Control corporal">Body control</span>
             <span class="pill" data-en="Redirection" data-es="Redirección">Redirection</span>
@@ -1128,34 +1011,14 @@
         <div class="reveal">
           <span class="eyebrow" data-en="Force for basketball" data-es="Fuerza para el baloncesto">Force for basketball</span>
           <h2 class="section-title" data-en="Force is not just strength. It is usable basketball action." data-es="La fuerza no es solo fuerza física. Es acción útil para el baloncesto.">Force is not just strength. It is usable basketball action.</h2>
-          <p class="section-lead" data-en="In basketball, force shows up in the first step, in stance integrity, in finishing through contact, in vertical projection, in rebounding position, and in the ability to repeat high-value movement without losing shape. The question is not whether an athlete can produce force in isolation. The question is whether that force appears on the floor in a form the game can use." data-es="En baloncesto, la fuerza aparece en el primer paso, en la integridad de la postura, al definir con contacto, en la proyección vertical, en la posición para el rebote y en la capacidad de repetir movimiento de alto valor sin perder forma. La pregunta no es si un atleta puede producir fuerza en aislamiento. La pregunta es si esa fuerza aparece en cancha de una forma que el juego pueda usar.">
-            In basketball, force shows up in the first step, in stance integrity, in finishing through contact,
-            in vertical projection, in rebounding position, and in the ability to repeat high-value movement without losing shape.
-            The question is not whether an athlete can produce force in isolation. The question is whether that force appears on the floor in a form the game can use.
-          </p>
+          <p class="section-lead" data-en="In basketball, force shows up in the first step, in stance integrity, in finishing through contact, in vertical projection, in rebounding position, and in the ability to repeat high-value movement without losing shape. The question is not whether an athlete can produce force in isolation. The question is whether that force appears on the floor in a form the game can use." data-es="En baloncesto, la fuerza aparece en el primer paso, en la integridad de la postura, al definir con contacto, en la proyección vertical, en la posición para el rebote y en la capacidad de repetir movimiento de alto valor sin perder forma. La pregunta no es si un atleta puede producir fuerza en aislamiento. La pregunta es si esa fuerza aparece en cancha de una forma que el juego pueda usar.">In basketball, force shows up in the first step, in stance integrity, in finishing through contact, in vertical projection, in rebounding position, and in the ability to repeat high-value movement without losing shape. The question is not whether an athlete can produce force in isolation. The question is whether that force appears on the floor in a form the game can use.</p>
         </div>
 
         <div class="feature-grid reveal">
-          <article class="card">
-            <span class="index">A</span>
-            <h3 data-en="First-Step Presence" data-es="Presencia en el Primer Paso">First-Step Presence</h3>
-            <p data-en="Useful force helps the body create immediate pressure into space instead of taking empty steps into the defense." data-es="La fuerza útil ayuda al cuerpo a crear presión inmediata hacia el espacio en vez de dar pasos vacíos hacia la defensa.">Useful force helps the body create immediate pressure into space instead of taking empty steps into the defense.</p>
-          </article>
-          <article class="card">
-            <span class="index">B</span>
-            <h3 data-en="Stance Integrity" data-es="Integridad de la Postura">Stance Integrity</h3>
-            <p data-en="Force supports posture under movement so the athlete can attack, react, and recover from positions that hold up under stress." data-es="La fuerza sostiene la postura en movimiento para que el atleta pueda atacar, reaccionar y recuperar desde posiciones que se mantienen bajo estrés.">Force supports posture under movement so the athlete can attack, react, and recover from positions that hold up under stress.</p>
-          </article>
-          <article class="card">
-            <span class="index">C</span>
-            <h3 data-en="Vertical Expression" data-es="Expresión Vertical">Vertical Expression</h3>
-            <p data-en="Projection is not just about jumping high. It is about how cleanly force is organized and returned through the system." data-es="La proyección no se trata solo de saltar alto. Se trata de cuán limpiamente se organiza y se devuelve la fuerza a través del sistema.">Projection is not just about jumping high. It is about how cleanly force is organized and returned through the system.</p>
-          </article>
-          <article class="card">
-            <span class="index">D</span>
-            <h3 data-en="Repeated Output" data-es="Producción Repetida">Repeated Output</h3>
-            <p data-en="Basketball is not one effort. It is repeated effort. Better force capacity helps sustain quality deeper into the possession and the game." data-es="El baloncesto no es un solo esfuerzo. Es esfuerzo repetido. Una mejor capacidad de fuerza ayuda a sostener calidad más profundo en la posesión y en el juego.">Basketball is not one effort. It is repeated effort. Better force capacity helps sustain quality deeper into the possession and the game.</p>
-          </article>
+          <article class="card"><span class="index">A</span><h3 data-en="First-Step Presence" data-es="Presencia en el Primer Paso">First-Step Presence</h3><p data-en="Useful force helps the body create immediate pressure into space instead of taking empty steps into the defense." data-es="La fuerza útil ayuda al cuerpo a crear presión inmediata hacia el espacio en vez de dar pasos vacíos hacia la defensa.">Useful force helps the body create immediate pressure into space instead of taking empty steps into the defense.</p></article>
+          <article class="card"><span class="index">B</span><h3 data-en="Stance Integrity" data-es="Integridad de la Postura">Stance Integrity</h3><p data-en="Force supports posture under movement so the athlete can attack, react, and recover from positions that hold up under stress." data-es="La fuerza sostiene la postura en movimiento para que el atleta pueda atacar, reaccionar y recuperar desde posiciones que se mantienen bajo estrés.">Force supports posture under movement so the athlete can attack, react, and recover from positions that hold up under stress.</p></article>
+          <article class="card"><span class="index">C</span><h3 data-en="Vertical Expression" data-es="Expresión Vertical">Vertical Expression</h3><p data-en="Projection is not just about jumping high. It is about how cleanly force is organized and returned through the system." data-es="La proyección no se trata solo de saltar alto. Se trata de cuán limpiamente se organiza y se devuelve la fuerza a través del sistema.">Projection is not just about jumping high. It is about how cleanly force is organized and returned through the system.</p></article>
+          <article class="card"><span class="index">D</span><h3 data-en="Repeated Output" data-es="Producción Repetida">Repeated Output</h3><p data-en="Basketball is not one effort. It is repeated effort. Better force capacity helps sustain quality deeper into the possession and the game." data-es="El baloncesto no es un solo esfuerzo. Es esfuerzo repetido. Una mejor capacidad de fuerza ayuda a sostener calidad más profundo en la posesión y en el juego.">Basketball is not one effort. It is repeated effort. Better force capacity helps sustain quality deeper into the possession and the game.</p></article>
         </div>
       </div>
     </section>
@@ -1167,35 +1030,18 @@
         <div class="reveal">
           <span class="eyebrow" data-en="The flywheel method" data-es="El método flywheel">The flywheel method</span>
           <h2 class="section-title" data-en="A training method built around output, control, and return." data-es="Un método de entrenamiento construido alrededor de producción, control y retorno.">A training method built around output, control, and return.</h2>
-          <p class="section-lead" data-en="Flywheel training creates resistance that responds to the athlete’s effort. The harder the output, the greater the demand to control the return. That makes the method especially relevant to basketball, where force production and force absorption are constantly linked." data-es="El entrenamiento flywheel crea resistencia que responde al esfuerzo del atleta. Mientras más fuerte la producción, mayor la exigencia de controlar el retorno. Eso hace el método especialmente relevante para el baloncesto, donde la producción de fuerza y la absorción de fuerza están constantemente conectadas.">
-            Flywheel training creates resistance that responds to the athlete’s effort. The harder the output, the greater the demand to control the return.
-            That makes the method especially relevant to basketball, where force production and force absorption are constantly linked.
-          </p>
+          <p class="section-lead" data-en="Flywheel training creates resistance that responds to the athlete’s effort. The harder the output, the greater the demand to control the return. That makes the method especially relevant to basketball, where force production and force absorption are constantly linked." data-es="El entrenamiento flywheel crea resistencia que responde al esfuerzo del atleta. Mientras más fuerte la producción, mayor la exigencia de controlar el retorno. Eso hace el método especialmente relevante para el baloncesto, donde la producción de fuerza y la absorción de fuerza están constantemente conectadas.">Flywheel training creates resistance that responds to the athlete’s effort. The harder the output, the greater the demand to control the return. That makes the method especially relevant to basketball, where force production and force absorption are constantly linked.</p>
         </div>
 
         <div class="insight-grid" style="margin-top: 2rem;">
-          <article class="insight reveal">
-            <h3 data-en="Resistance that answers intent" data-es="Resistencia que responde a la intención">Resistance that answers intent</h3>
-            <p data-en="Instead of moving through a fixed load in a fixed way, the athlete feels a relationship between what is put into the movement and what must be managed coming back." data-es="En vez de moverse contra una carga fija de una manera fija, el atleta siente una relación entre lo que pone en el movimiento y lo que tiene que manejar al regresar.">Instead of moving through a fixed load in a fixed way, the athlete feels a relationship between what is put into the movement and what must be managed coming back.</p>
-          </article>
-          <article class="insight reveal">
-            <h3 data-en="Concentric and eccentric in plain language" data-es="Concéntrico y excéntrico en lenguaje claro">Concentric and eccentric in plain language</h3>
-            <p data-en="First, you drive the movement. Then, you must receive it, control it, and organize the body for what comes next. That rhythm matters in basketball." data-es="Primero impulsas el movimiento. Luego tienes que recibirlo, controlarlo y organizar el cuerpo para lo que sigue. Ese ritmo importa en el baloncesto.">First, you drive the movement. Then, you must receive it, control it, and organize the body for what comes next. That rhythm matters in basketball.</p>
-          </article>
-          <article class="insight reveal">
-            <h3 data-en="Decelerate. Re-organize. Re-attack." data-es="Desacelera. Reorganiza. Vuelve a atacar.">Decelerate. Re-organize. Re-attack.</h3>
-            <p data-en="The method rewards intent, awareness, timing, and control. It does not just ask the athlete to produce force. It asks the athlete to own it." data-es="El método recompensa la intención, la conciencia, el timing y el control. No solo le pide al atleta producir fuerza. Le pide dominarla.">The method rewards intent, awareness, timing, and control. It does not just ask the athlete to produce force. It asks the athlete to own it.</p>
-          </article>
+          <article class="insight reveal"><h3 data-en="Resistance that answers intent" data-es="Resistencia que responde a la intención">Resistance that answers intent</h3><p data-en="Instead of moving through a fixed load in a fixed way, the athlete feels a relationship between what is put into the movement and what must be managed coming back." data-es="En vez de moverse contra una carga fija de una manera fija, el atleta siente una relación entre lo que pone en el movimiento y lo que tiene que manejar al regresar.">Instead of moving through a fixed load in a fixed way, the athlete feels a relationship between what is put into the movement and what must be managed coming back.</p></article>
+          <article class="insight reveal"><h3 data-en="Concentric and eccentric in plain language" data-es="Concéntrico y excéntrico en lenguaje claro">Concentric and eccentric in plain language</h3><p data-en="First, you drive the movement. Then, you must receive it, control it, and organize the body for what comes next. That rhythm matters in basketball." data-es="Primero impulsas el movimiento. Luego tienes que recibirlo, controlarlo y organizar el cuerpo para lo que sigue. Ese ritmo importa en el baloncesto.">First, you drive the movement. Then, you must receive it, control it, and organize the body for what comes next. That rhythm matters in basketball.</p></article>
+          <article class="insight reveal"><h3 data-en="Decelerate. Re-organize. Re-attack." data-es="Desacelera. Reorganiza. Vuelve a atacar.">Decelerate. Re-organize. Re-attack.</h3><p data-en="The method rewards intent, awareness, timing, and control. It does not just ask the athlete to produce force. It asks the athlete to own it." data-es="El método recompensa la intención, la conciencia, el timing y el control. No solo le pide al atleta producir fuerza. Le pide dominarla.">The method rewards intent, awareness, timing, and control. It does not just ask the athlete to produce force. It asks the athlete to own it.</p></article>
         </div>
 
         <div class="manifesto reveal" style="margin-top: 2rem;">
-          <blockquote data-en="Better movement is not only faster movement. It is more organized movement under force." data-es="Mejor movimiento no es solo movimiento más rápido. Es movimiento más organizado bajo fuerza.">
-            Better movement is not only faster movement. It is more organized movement under force.
-          </blockquote>
-          <p data-en="That is the value of this method for basketball. It connects output to control in a way that feels closer to the sport’s real demands: produce, absorb, stop, redirect, and go again with purpose." data-es="Ese es el valor de este método para el baloncesto. Conecta la producción con el control de una manera que se siente más cercana a las exigencias reales del deporte: producir, absorber, frenar, redirigir y volver a salir con propósito.">
-            That is the value of this method for basketball. It connects output to control in a way that feels closer to the sport’s real demands:
-            produce, absorb, stop, redirect, and go again with purpose.
-          </p>
+          <blockquote data-en="Better movement is not only faster movement. It is more organized movement under force." data-es="Mejor movimiento no es solo movimiento más rápido. Es movimiento más organizado bajo fuerza.">Better movement is not only faster movement. It is more organized movement under force.</blockquote>
+          <p data-en="That is the value of this method for basketball. It connects output to control in a way that feels closer to the sport’s real demands: produce, absorb, stop, redirect, and go again with purpose." data-es="Ese es el valor de este método para el baloncesto. Conecta la producción con el control de una manera que se siente más cercana a las exigencias reales del deporte: producir, absorber, frenar, redirigir y volver a salir con propósito.">That is the value of this method for basketball. It connects output to control in a way that feels closer to the sport’s real demands: produce, absorb, stop, redirect, and go again with purpose.</p>
         </div>
       </div>
     </section>
@@ -1207,49 +1053,19 @@
         <div class="reveal">
           <span class="eyebrow" data-en="Basketball applications" data-es="Aplicaciones en el baloncesto">Basketball applications</span>
           <h2 class="section-title" data-en="Built for the stops, shifts, contacts, and recoveries that define the game." data-es="Diseñado para los frenos, cambios, contactos y recuperaciones que definen el juego.">Built for the stops, shifts, contacts, and recoveries that define the game.</h2>
-          <p class="section-lead" data-en="Basketball-specific performance is never one-dimensional. Different roles express force and braking through different movement demands. The method scales across positions, training ages, and development stages while keeping the game at the center." data-es="El rendimiento específico del baloncesto nunca es de una sola dimensión. Diferentes roles expresan fuerza y frenado a través de distintas exigencias de movimiento. El método escala a través de posiciones, edades de entrenamiento y etapas de desarrollo, manteniendo el juego en el centro.">
-            Basketball-specific performance is never one-dimensional. Different roles express force and braking through different movement demands.
-            The method scales across positions, training ages, and development stages while keeping the game at the center.
-          </p>
+          <p class="section-lead" data-en="Basketball-specific performance is never one-dimensional. Different roles express force and braking through different movement demands. The method scales across positions, training ages, and development stages while keeping the game at the center." data-es="El rendimiento específico del baloncesto nunca es de una sola dimensión. Diferentes roles expresan fuerza y frenado a través de distintas exigencias de movimiento. El método escala a través de posiciones, edades de entrenamiento y etapas de desarrollo, manteniendo el juego en el centro.">Basketball-specific performance is never one-dimensional. Different roles express force and braking through different movement demands. The method scales across positions, training ages, and development stages while keeping the game at the center.</p>
         </div>
 
         <div class="applications-grid" style="margin-top: 2rem;">
-          <article class="application reveal">
-            <h3 data-en="Guards" data-es="Guards">Guards</h3>
-            <p data-en="Create tighter changes of direction, sharper stopping into counters, better control in pull-up positions, and more efficient recovery after burst actions." data-es="Crea cambios de dirección más cerrados, un frenado más preciso hacia counters, mejor control en posiciones de pull-up y una recuperación más eficiente después de acciones explosivas.">Create tighter changes of direction, sharper stopping into counters, better control in pull-up positions, and more efficient recovery after burst actions.</p>
-          </article>
-          <article class="application reveal">
-            <h3 data-en="Wings" data-es="Wings">Wings</h3>
-            <p data-en="Develop better transition between speed and balance, stronger takeoff and landing qualities, and cleaner organization through multi-action movement." data-es="Desarrolla una mejor transición entre velocidad y balance, mejores cualidades de despegue y aterrizaje, y una organización más limpia en movimientos de múltiples acciones.">Develop better transition between speed and balance, stronger takeoff and landing qualities, and cleaner organization through multi-action movement.</p>
-          </article>
-          <article class="application reveal">
-            <h3 data-en="Bigs" data-es="Bigs">Bigs</h3>
-            <p data-en="Support rebounding position, body control around contact, recovery from effort, and cleaner force expression in short-space movement." data-es="Apoya la posición de rebote, el control corporal alrededor del contacto, la recuperación del esfuerzo y una expresión de fuerza más limpia en movimientos de poco espacio.">Support rebounding position, body control around contact, recovery from effort, and cleaner force expression in short-space movement.</p>
-          </article>
-          <article class="application reveal">
-            <h3 data-en="Youth Development" data-es="Desarrollo Juvenil">Youth Development</h3>
-            <p data-en="Introduce athletes to force awareness, movement discipline, deceleration quality, and the value of organized effort before chaos becomes habit." data-es="Introduce a los atletas a la conciencia de la fuerza, la disciplina del movimiento, la calidad de la desaceleración y el valor del esfuerzo organizado antes de que el caos se convierta en costumbre.">Introduce athletes to force awareness, movement discipline, deceleration quality, and the value of organized effort before chaos becomes habit.</p>
-          </article>
-          <article class="application reveal">
-            <h3 data-en="In-Season Support" data-es="Apoyo en Temporada">In-Season Support</h3>
-            <p data-en="Use the method to keep performance qualities alive with smart intent and clean execution, without turning everything into unnecessary volume." data-es="Usa el método para mantener vivas las cualidades de rendimiento con intención inteligente y ejecución limpia, sin convertir todo en volumen innecesario.">Use the method to keep performance qualities alive with smart intent and clean execution, without turning everything into unnecessary volume.</p>
-          </article>
-          <article class="application reveal">
-            <h3 data-en="Defensive Movement" data-es="Movimiento Defensivo">Defensive Movement</h3>
-            <p data-en="Train the ability to close space, brake under speed, recover posture, and move again without losing the next read." data-es="Entrena la capacidad de cerrar espacio, frenar con velocidad, recuperar la postura y volver a moverse sin perder la próxima lectura.">Train the ability to close space, brake under speed, recover posture, and move again without losing the next read.</p>
-          </article>
-          <article class="application reveal">
-            <h3 data-en="Finishing Through Contact" data-es="Definir con Contacto">Finishing Through Contact</h3>
-            <p data-en="Improve how the body holds position, produces force into traffic, and reorganizes after impact near the rim." data-es="Mejora cómo el cuerpo sostiene la posición, produce fuerza entre tráfico y se reorganiza después del impacto cerca del aro.">Improve how the body holds position, produces force into traffic, and reorganizes after impact near the rim.</p>
-          </article>
-          <article class="application reveal">
-            <h3 data-en="Rebounding and Landing Control" data-es="Rebote y Control al Aterrizar">Rebounding and Landing Control</h3>
-            <p data-en="Support force absorption after elevation, better landing decisions, and faster access to the second effort." data-es="Apoya la absorción de fuerza después de elevarse, mejores decisiones al aterrizar y un acceso más rápido al segundo esfuerzo.">Support force absorption after elevation, better landing decisions, and faster access to the second effort.</p>
-          </article>
-          <article class="application reveal">
-            <h3 data-en="Multi-Directional Performance" data-es="Rendimiento Multidireccional">Multi-Directional Performance</h3>
-            <p data-en="Train movement that respects basketball’s reality: not straight-line power alone, but angles, interruptions, recoveries, and redirection." data-es="Entrena un movimiento que respeta la realidad del baloncesto: no solo potencia en línea recta, sino ángulos, interrupciones, recuperaciones y redirección.">Train movement that respects basketball’s reality: not straight-line power alone, but angles, interruptions, recoveries, and redirection.</p>
-          </article>
+          <article class="application reveal"><h3 data-en="Guards" data-es="Guards">Guards</h3><p data-en="Create tighter changes of direction, sharper stopping into counters, better control in pull-up positions, and more efficient recovery after burst actions." data-es="Crea cambios de dirección más cerrados, un frenado más preciso hacia counters, mejor control en posiciones de pull-up y una recuperación más eficiente después de acciones explosivas.">Create tighter changes of direction, sharper stopping into counters, better control in pull-up positions, and more efficient recovery after burst actions.</p></article>
+          <article class="application reveal"><h3 data-en="Wings" data-es="Wings">Wings</h3><p data-en="Develop better transition between speed and balance, stronger takeoff and landing qualities, and cleaner organization through multi-action movement." data-es="Desarrolla una mejor transición entre velocidad y balance, mejores cualidades de despegue y aterrizaje, y una organización más limpia en movimientos de múltiples acciones.">Develop better transition between speed and balance, stronger takeoff and landing qualities, and cleaner organization through multi-action movement.</p></article>
+          <article class="application reveal"><h3 data-en="Bigs" data-es="Bigs">Bigs</h3><p data-en="Support rebounding position, body control around contact, recovery from effort, and cleaner force expression in short-space movement." data-es="Apoya la posición de rebote, el control corporal alrededor del contacto, la recuperación del esfuerzo y una expresión de fuerza más limpia en movimientos de poco espacio.">Support rebounding position, body control around contact, recovery from effort, and cleaner force expression in short-space movement.</p></article>
+          <article class="application reveal"><h3 data-en="Youth Development" data-es="Desarrollo Juvenil">Youth Development</h3><p data-en="Introduce athletes to force awareness, movement discipline, deceleration quality, and the value of organized effort before chaos becomes habit." data-es="Introduce a los atletas a la conciencia de la fuerza, la disciplina del movimiento, la calidad de la desaceleración y el valor del esfuerzo organizado antes de que el caos se convierta en costumbre.">Introduce athletes to force awareness, movement discipline, deceleration quality, and the value of organized effort before chaos becomes habit.</p></article>
+          <article class="application reveal"><h3 data-en="In-Season Support" data-es="Apoyo en Temporada">In-Season Support</h3><p data-en="Use the method to keep performance qualities alive with smart intent and clean execution, without turning everything into unnecessary volume." data-es="Usa el método para mantener vivas las cualidades de rendimiento con intención inteligente y ejecución limpia, sin convertir todo en volumen innecesario.">Use the method to keep performance qualities alive with smart intent and clean execution, without turning everything into unnecessary volume.</p></article>
+          <article class="application reveal"><h3 data-en="Defensive Movement" data-es="Movimiento Defensivo">Defensive Movement</h3><p data-en="Train the ability to close space, brake under speed, recover posture, and move again without losing the next read." data-es="Entrena la capacidad de cerrar espacio, frenar con velocidad, recuperar la postura y volver a moverse sin perder la próxima lectura.">Train the ability to close space, brake under speed, recover posture, and move again without losing the next read.</p></article>
+          <article class="application reveal"><h3 data-en="Finishing Through Contact" data-es="Definir con Contacto">Finishing Through Contact</h3><p data-en="Improve how the body holds position, produces force into traffic, and reorganizes after impact near the rim." data-es="Mejora cómo el cuerpo sostiene la posición, produce fuerza entre tráfico y se reorganiza después del impacto cerca del aro.">Improve how the body holds position, produces force into traffic, and reorganizes after impact near the rim.</p></article>
+          <article class="application reveal"><h3 data-en="Rebounding and Landing Control" data-es="Rebote y Control al Aterrizar">Rebounding and Landing Control</h3><p data-en="Support force absorption after elevation, better landing decisions, and faster access to the second effort." data-es="Apoya la absorción de fuerza después de elevarse, mejores decisiones al aterrizar y un acceso más rápido al segundo esfuerzo.">Support force absorption after elevation, better landing decisions, and faster access to the second effort.</p></article>
+          <article class="application reveal"><h3 data-en="Multi-Directional Performance" data-es="Rendimiento Multidireccional">Multi-Directional Performance</h3><p data-en="Train movement that respects basketball’s reality: not straight-line power alone, but angles, interruptions, recoveries, and redirection." data-es="Entrena un movimiento que respeta la realidad del baloncesto: no solo potencia en línea recta, sino ángulos, interrupciones, recuperaciones y redirección.">Train movement that respects basketball’s reality: not straight-line power alone, but angles, interruptions, recoveries, and redirection.</p></article>
         </div>
       </div>
     </section>
@@ -1260,10 +1076,7 @@
           <div>
             <span class="eyebrow" data-en="Performance doctrine" data-es="Doctrina de rendimiento">Performance doctrine</span>
             <h2 data-en="Create force. Absorb force. Redirect the game." data-es="Crea fuerza. Absorbe fuerza. Redirige el juego.">Create force. Absorb force. Redirect the game.</h2>
-            <p data-en="This is not generic training language. It is a more honest model of basketball performance — one that treats braking as a high-level advantage, not an afterthought." data-es="Esto no es lenguaje genérico de entrenamiento. Es un modelo más honesto del rendimiento en baloncesto: uno que trata el frenado como una ventaja de alto nivel, no como algo secundario.">
-              This is not generic training language. It is a more honest model of basketball performance — one that treats braking as a high-level advantage,
-              not an afterthought.
-            </p>
+            <p data-en="This is not generic training language. It is a more honest model of basketball performance — one that treats braking as a high-level advantage, not an afterthought." data-es="Esto no es lenguaje genérico de entrenamiento. Es un modelo más honesto del rendimiento en baloncesto: uno que trata el frenado como una ventaja de alto nivel, no como algo secundario.">This is not generic training language. It is a more honest model of basketball performance — one that treats braking as a high-level advantage, not an afterthought.</p>
           </div>
           <div style="display:flex; gap:1rem; flex-wrap:wrap;">
             <a href="#contact" class="btn" data-en="Start the Conversation" data-es="Comienza la Conversación">Start the Conversation</a>
@@ -1283,46 +1096,16 @@
         </div>
 
         <div class="faq-grid" style="margin-top: 2rem;">
-          <article class="faq-item reveal">
-            <h3 data-en="What is flywheel training?" data-es="¿Qué es el entrenamiento flywheel?">What is flywheel training?</h3>
-            <p data-en="It is a resistance method where the athlete’s effort helps shape the training demand, creating a stronger relationship between output and control." data-es="Es un método de resistencia donde el esfuerzo del atleta ayuda a definir la exigencia del entrenamiento, creando una relación más fuerte entre producción y control.">It is a resistance method where the athlete’s effort helps shape the training demand, creating a stronger relationship between output and control.</p>
-          </article>
-          <article class="faq-item reveal">
-            <h3 data-en="Why does braking matter in basketball?" data-es="¿Por qué importa el frenado en el baloncesto?">Why does braking matter in basketball?</h3>
-            <p data-en="Because cuts, closeouts, counters, landings, recoveries, and shot preparation all depend on how well the athlete can decelerate into position." data-es="Porque los cortes, closeouts, counters, aterrizajes, recuperaciones y la preparación del tiro dependen de cuán bien el atleta puede desacelerar hacia una buena posición.">Because cuts, closeouts, counters, landings, recoveries, and shot preparation all depend on how well the athlete can decelerate into position.</p>
-          </article>
-          <article class="faq-item reveal">
-            <h3 data-en="How is this different from traditional lifting?" data-es="¿Cómo se diferencia del levantamiento tradicional?">How is this different from traditional lifting?</h3>
-            <p data-en="It places a stronger spotlight on the connection between producing force and then controlling the return, which is highly relevant to the sport." data-es="Le da más importancia a la conexión entre producir fuerza y luego controlar el retorno, algo altamente relevante para el deporte.">It places a stronger spotlight on the connection between producing force and then controlling the return, which is highly relevant to the sport.</p>
-          </article>
-          <article class="faq-item reveal">
-            <h3 data-en="Is this only about strength?" data-es="¿Esto es solo sobre fuerza?">Is this only about strength?</h3>
-            <p data-en="No. It is about usable force, body organization, movement control, and the quality of what happens after the first action." data-es="No. Se trata de fuerza útil, organización corporal, control del movimiento y la calidad de lo que sucede después de la primera acción.">No. It is about usable force, body organization, movement control, and the quality of what happens after the first action.</p>
-          </article>
-          <article class="faq-item reveal">
-            <h3 data-en="Can this support change of direction?" data-es="¿Puede ayudar al cambio de dirección?">Can this support change of direction?</h3>
-            <p data-en="Yes. Better redirection starts with better braking. The athlete has to stop into a position that allows the next action to happen cleanly." data-es="Sí. Una mejor redirección comienza con un mejor frenado. El atleta tiene que frenarse hacia una posición que permita que la próxima acción ocurra con limpieza.">Yes. Better redirection starts with better braking. The athlete has to stop into a position that allows the next action to happen cleanly.</p>
-          </article>
-          <article class="faq-item reveal">
-            <h3 data-en="Does this only apply to advanced athletes?" data-es="¿Esto solo aplica a atletas avanzados?">Does this only apply to advanced athletes?</h3>
-            <p data-en="No. The principles matter across levels. The method can scale while still teaching force awareness and movement discipline." data-es="No. Los principios importan en todos los niveles. El método puede escalar mientras sigue enseñando conciencia de fuerza y disciplina de movimiento.">No. The principles matter across levels. The method can scale while still teaching force awareness and movement discipline.</p>
-          </article>
-          <article class="faq-item reveal">
-            <h3 data-en="Can it fit into performance work year-round?" data-es="¿Puede encajar todo el año en el trabajo de rendimiento?">Can it fit into performance work year-round?</h3>
-            <p data-en="Yes. It can support off-season development, in-season maintenance, and broader long-term movement education when programmed with clarity." data-es="Sí. Puede apoyar el desarrollo fuera de temporada, el mantenimiento en temporada y una educación de movimiento más amplia a largo plazo cuando se programa con claridad.">Yes. It can support off-season development, in-season maintenance, and broader long-term movement education when programmed with clarity.</p>
-          </article>
-          <article class="faq-item reveal">
-            <h3 data-en="How does force transfer to basketball movement?" data-es="¿Cómo se transfiere la fuerza al movimiento en baloncesto?">How does force transfer to basketball movement?</h3>
-            <p data-en="Force matters when it shows up in first steps, stance quality, contact finishes, vertical actions, landings, and repeated movement under pressure." data-es="La fuerza importa cuando aparece en primeros pasos, calidad de postura, definiciones con contacto, acciones verticales, aterrizajes y movimiento repetido bajo presión.">Force matters when it shows up in first steps, stance quality, contact finishes, vertical actions, landings, and repeated movement under pressure.</p>
-          </article>
-          <article class="faq-item reveal">
-            <h3 data-en="Why is stopping such a big deal in basketball?" data-es="¿Por qué frenar es tan importante en el baloncesto?">Why is stopping such a big deal in basketball?</h3>
-            <p data-en="Because the stop decides what the body can do next. Good braking protects balance, timing, posture, and the quality of re-acceleration." data-es="Porque el frenado decide lo que el cuerpo puede hacer después. Un buen frenado protege el balance, el timing, la postura y la calidad de la reaceleración.">Because the stop decides what the body can do next. Good braking protects balance, timing, posture, and the quality of re-acceleration.</p>
-          </article>
-          <article class="faq-item reveal">
-            <h3 data-en="Can this support performance reloading?" data-es="¿Puede ayudar a recargar el rendimiento?">Can this support performance reloading?</h3>
-            <p data-en="Yes. It can help re-establish output, control, and movement confidence inside a performance progression without overcomplicating the process." data-es="Sí. Puede ayudar a restablecer producción, control y confianza de movimiento dentro de una progresión de rendimiento sin complicar de más el proceso.">Yes. It can help re-establish output, control, and movement confidence inside a performance progression without overcomplicating the process.</p>
-          </article>
+          <article class="faq-item reveal"><h3 data-en="What is flywheel training?" data-es="¿Qué es el entrenamiento flywheel?">What is flywheel training?</h3><p data-en="It is a resistance method where the athlete’s effort helps shape the training demand, creating a stronger relationship between output and control." data-es="Es un método de resistencia donde el esfuerzo del atleta ayuda a definir la exigencia del entrenamiento, creando una relación más fuerte entre producción y control.">It is a resistance method where the athlete’s effort helps shape the training demand, creating a stronger relationship between output and control.</p></article>
+          <article class="faq-item reveal"><h3 data-en="Why does braking matter in basketball?" data-es="¿Por qué importa el frenado en el baloncesto?">Why does braking matter in basketball?</h3><p data-en="Because cuts, closeouts, counters, landings, recoveries, and shot preparation all depend on how well the athlete can decelerate into position." data-es="Porque los cortes, closeouts, counters, aterrizajes, recuperaciones y la preparación del tiro dependen de cuán bien el atleta puede desacelerar hacia una buena posición.">Because cuts, closeouts, counters, landings, recoveries, and shot preparation all depend on how well the athlete can decelerate into position.</p></article>
+          <article class="faq-item reveal"><h3 data-en="How is this different from traditional lifting?" data-es="¿Cómo se diferencia del levantamiento tradicional?">How is this different from traditional lifting?</h3><p data-en="It places a stronger spotlight on the connection between producing force and then controlling the return, which is highly relevant to the sport." data-es="Le da más importancia a la conexión entre producir fuerza y luego controlar el retorno, algo altamente relevante para el deporte.">It places a stronger spotlight on the connection between producing force and then controlling the return, which is highly relevant to the sport.</p></article>
+          <article class="faq-item reveal"><h3 data-en="Is this only about strength?" data-es="¿Esto es solo sobre fuerza?">Is this only about strength?</h3><p data-en="No. It is about usable force, body organization, movement control, and the quality of what happens after the first action." data-es="No. Se trata de fuerza útil, organización corporal, control del movimiento y la calidad de lo que sucede después de la primera acción.">No. It is about usable force, body organization, movement control, and the quality of what happens after the first action.</p></article>
+          <article class="faq-item reveal"><h3 data-en="Can this support change of direction?" data-es="¿Puede ayudar al cambio de dirección?">Can this support change of direction?</h3><p data-en="Yes. Better redirection starts with better braking. The athlete has to stop into a position that allows the next action to happen cleanly." data-es="Sí. Una mejor redirección comienza con un mejor frenado. El atleta tiene que frenarse hacia una posición que permita que la próxima acción ocurra con limpieza.">Yes. Better redirection starts with better braking. The athlete has to stop into a position that allows the next action to happen cleanly.</p></article>
+          <article class="faq-item reveal"><h3 data-en="Does this only apply to advanced athletes?" data-es="¿Esto solo aplica a atletas avanzados?">Does this only apply to advanced athletes?</h3><p data-en="No. The principles matter across levels. The method can scale while still teaching force awareness and movement discipline." data-es="No. Los principios importan en todos los niveles. El método puede escalar mientras sigue enseñando conciencia de fuerza y disciplina de movimiento.">No. The principles matter across levels. The method can scale while still teaching force awareness and movement discipline.</p></article>
+          <article class="faq-item reveal"><h3 data-en="Can it fit into performance work year-round?" data-es="¿Puede encajar todo el año en el trabajo de rendimiento?">Can it fit into performance work year-round?</h3><p data-en="Yes. It can support off-season development, in-season maintenance, and broader long-term movement education when programmed with clarity." data-es="Sí. Puede apoyar el desarrollo fuera de temporada, el mantenimiento en temporada y una educación de movimiento más amplia a largo plazo cuando se programa con claridad.">Yes. It can support off-season development, in-season maintenance, and broader long-term movement education when programmed with clarity.</p></article>
+          <article class="faq-item reveal"><h3 data-en="How does force transfer to basketball movement?" data-es="¿Cómo se transfiere la fuerza al movimiento en baloncesto?">How does force transfer to basketball movement?</h3><p data-en="Force matters when it shows up in first steps, stance quality, contact finishes, vertical actions, landings, and repeated movement under pressure." data-es="La fuerza importa cuando aparece en primeros pasos, calidad de postura, definiciones con contacto, acciones verticales, aterrizajes y movimiento repetido bajo presión.">Force matters when it shows up in first steps, stance quality, contact finishes, vertical actions, landings, and repeated movement under pressure.</p></article>
+          <article class="faq-item reveal"><h3 data-en="Why is stopping such a big deal in basketball?" data-es="¿Por qué frenar es tan importante en el baloncesto?">Why is stopping such a big deal in basketball?</h3><p data-en="Because the stop decides what the body can do next. Good braking protects balance, timing, posture, and the quality of re-acceleration." data-es="Porque el frenado decide lo que el cuerpo puede hacer después. Un buen frenado protege el balance, el timing, la postura y la calidad de la reaceleración.">Because the stop decides what the body can do next. Good braking protects balance, timing, posture, and the quality of re-acceleration.</p></article>
+          <article class="faq-item reveal"><h3 data-en="Can this support performance reloading?" data-es="¿Puede ayudar a recargar el rendimiento?">Can this support performance reloading?</h3><p data-en="Yes. It can help re-establish output, control, and movement confidence inside a performance progression without overcomplicating the process." data-es="Sí. Puede ayudar a restablecer producción, control y confianza de movimiento dentro de una progresión de rendimiento sin complicar de más el proceso.">Yes. It can help re-establish output, control, and movement confidence inside a performance progression without overcomplicating the process.</p></article>
         </div>
       </div>
     </section>
@@ -1334,9 +1117,7 @@
         <div class="reveal">
           <span class="eyebrow" data-en="Contact / CTA" data-es="Contacto / CTA">Contact / CTA</span>
           <h2 class="section-title" data-en="For athletes, coaches, trainers, and programs ready for a smarter model." data-es="Para atletas, coaches, trainers y programas listos para un modelo más inteligente.">For athletes, coaches, trainers, and programs ready for a smarter model.</h2>
-          <p class="section-lead" data-en="The conversation starts with one question: how should basketball performance really be trained when force and braking are treated as central, not secondary?" data-es="La conversación comienza con una pregunta: ¿cómo debe entrenarse realmente el rendimiento en baloncesto cuando la fuerza y el frenado se tratan como centrales y no secundarios?">
-            The conversation starts with one question: how should basketball performance really be trained when force and braking are treated as central, not secondary?
-          </p>
+          <p class="section-lead" data-en="The conversation starts with one question: how should basketball performance really be trained when force and braking are treated as central, not secondary?" data-es="La conversación comienza con una pregunta: ¿cómo debe entrenarse realmente el rendimiento en baloncesto cuando la fuerza y el frenado se tratan como centrales y no secundarios?">The conversation starts with one question: how should basketball performance really be trained when force and braking are treated as central, not secondary?</p>
           <div class="marquee">
             <span class="pill" data-en="Athletes" data-es="Atletas">Athletes</span>
             <span class="pill" data-en="Coaches" data-es="Coaches">Coaches</span>
@@ -1391,6 +1172,35 @@
 
   <div class="chat-overlay" id="chatOverlay"></div>
 
+  <button class="chat-fab" id="chatFab" type="button" aria-label="Open Force Braking Basketball Advisor">🏀</button>
+
+  <aside class="chat-panel" id="chatPanel" aria-hidden="true">
+    <div class="chat-head">
+      <div class="chat-title-wrap">
+        <span class="chat-kicker" data-en="World-class authority" data-es="Autoridad de clase mundial">World-class authority</span>
+        <span class="chat-title" data-en="Force Braking Basketball Advisor" data-es="Force Braking Basketball Advisor">Force Braking Basketball Advisor</span>
+      </div>
+      <button class="chat-close" id="chatClose" type="button" aria-label="Close advisor">✕</button>
+    </div>
+    <div class="chat-body">
+      <div class="chat-bubble">
+        <strong data-en="Stop training around the game. Start training the hidden edge that controls it." data-es="Deja de entrenar alrededor del juego. Empieza a entrenar la ventaja oculta que lo controla.">Stop training around the game. Start training the hidden edge that controls it.</strong>
+        <span data-en="Force Braking Basketball Advisor is built to help athletes, coaches, trainers, and programs understand the real relationship between force production, braking ability, flywheel transfer, and basketball performance — and turn that into a competitive advantage." data-es="Force Braking Basketball Advisor está diseñado para ayudar a atletas, coaches, trainers y programas a entender la relación real entre la producción de fuerza, la capacidad de frenado, la transferencia del flywheel y el rendimiento en baloncesto, y convertir eso en una ventaja competitiva.">Force Braking Basketball Advisor is built to help athletes, coaches, trainers, and programs understand the real relationship between force production, braking ability, flywheel transfer, and basketball performance — and turn that into a competitive advantage.</span>
+      </div>
+
+      <div class="chat-dynamic" id="chatDynamic"></div>
+
+      <div class="chat-input-wrap">
+        <button class="chat-start" id="chatStart" type="button" data-en="Start the Conversation" data-es="Comienza la Conversación">Start the Conversation</button>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chatInput" type="text" placeholder="Ask your first question..." data-placeholder-en="Ask your first question..." data-placeholder-es="Haz tu primera pregunta..." />
+          <button class="chat-send" id="chatSend" type="button" data-en="Send" data-es="Enviar">Send</button>
+        </div>
+        <div class="chat-footnote" data-en="Use this advisor to start premium conversations, qualify high-intent visitors, and move athletes, coaches, and programs toward your offer with more clarity and authority." data-es="Usa este asesor para iniciar conversaciones premium, calificar visitantes de alta intención y mover atletas, coaches y programas hacia tu oferta con más claridad y autoridad.">Use this advisor to start premium conversations, qualify high-intent visitors, and move athletes, coaches, and programs toward your offer with more clarity and authority.</div>
+      </div>
+    </div>
+  </aside>
+
   <footer>
     <div class="container footer-grid">
       <div>
@@ -1398,9 +1208,7 @@
           <span class="brand-mark" aria-hidden="true"></span>
           <span data-en="Force / Braking Basketball" data-es="Fuerza / Frenado en Baloncesto">Force / Braking Basketball</span>
         </div>
-        <p style="max-width: 62ch; margin: 0; line-height: 1.8;" data-en="A premium basketball performance experience centered on force production, braking ability, movement control, and the deeper mechanics of game transfer." data-es="Una experiencia premium de rendimiento en baloncesto centrada en producción de fuerza, capacidad de frenado, control del movimiento y la mecánica más profunda de la transferencia al juego.">
-          A premium basketball performance experience centered on force production, braking ability, movement control, and the deeper mechanics of game transfer.
-        </p>
+        <p style="max-width: 62ch; margin: 0; line-height: 1.8;" data-en="A premium basketball performance experience centered on force production, braking ability, movement control, and the deeper mechanics of game transfer." data-es="Una experiencia premium de rendimiento en baloncesto centrada en producción de fuerza, capacidad de frenado, control del movimiento y la mecánica más profunda de la transferencia al juego.">A premium basketball performance experience centered on force production, braking ability, movement control, and the deeper mechanics of game transfer.</p>
       </div>
       <div class="footer-links">
         <a href="#home" data-en="Home" data-es="Inicio">Home</a>
@@ -1413,35 +1221,6 @@
       </div>
     </div>
   </footer>
-
-  <button class="chat-fab" id="chatFab" type="button" aria-label="Open Force Braking Basketball Advisor">🏀</button>
-
-  <aside class="chat-panel" id="chatPanel" aria-hidden="true">
-    <div class="chat-head">
-      <div class="chat-title-wrap">
-        <span class="chat-kicker" data-en="World-class authority" data-es="Autoridad de clase mundial">World-class authority</span>
-        <span class="chat-title" data-en="Force Braking Basketball Advisor" data-es="Force Braking Basketball Advisor">Force Braking Basketball Advisor</span>
-      </div>
-      <button class="chat-close" id="chatClose" type="button" aria-label="Close chat">✕</button>
-    </div>
-    <div class="chat-body">
-      <div class="chat-bubble">
-        <strong data-en="Stop training around the game. Start training the hidden edge that controls it." data-es="Deja de entrenar alrededor del juego. Empieza a entrenar la ventaja oculta que lo controla.">Stop training around the game. Start training the hidden edge that controls it.</strong>
-        <span data-en="Force Braking Basketball Advisor is built to help athletes, coaches, trainers, and programs understand the real relationship between force production, braking ability, flywheel transfer, and basketball performance — and turn that into a competitive advantage." data-es="Force Braking Basketball Advisor está diseñado para ayudar a atletas, coaches, trainers y programas a entender la relación real entre la producción de fuerza, la capacidad de frenado, la transferencia del flywheel y el rendimiento en baloncesto, y convertir eso en una ventaja competitiva.">Force Braking Basketball Advisor is built to help athletes, coaches, trainers, and programs understand the real relationship between force production, braking ability, flywheel transfer, and basketball performance — and turn that into a competitive advantage.</span>
-      </div>
-
-      <div class="chat-dynamic" id="chatDynamic"></div>
-
-      <div class="chat-input-wrap">
-        <button class="chat-send" id="chatStart" type="button" data-en="Start the Conversation" data-es="Comienza la Conversación">Start the Conversation</button>
-        <div class="chat-input-row">
-          <input class="chat-input" id="chatInput" type="text" data-placeholder-en="Ask your first question..." data-placeholder-es="Haz tu primera pregunta..." placeholder="Ask your first question..." />
-          <button class="chat-send" id="chatSend" type="button" data-en="Send" data-es="Enviar">Send</button>
-        </div>
-        <div class="chat-footnote" data-en="Use this advisor to start premium conversations, qualify high-intent visitors, and move athletes, coaches, and programs toward your offer with more clarity and authority." data-es="Usa este asesor para iniciar conversaciones premium, calificar visitantes de alta intención y mover atletas, coaches y programas hacia tu oferta con más claridad y autoridad.">Use this advisor to start premium conversations, qualify high-intent visitors, and move athletes, coaches, and programs toward your offer with more clarity and authority.</div>
-      </div>
-    </div>
-  </aside>
 
   <script>
     const toggle = document.getElementById('mobileToggle');
@@ -1509,7 +1288,94 @@
       es: [
         'Haz la pregunta que lo cambia todo: ¿qué parte del rendimiento en baloncesto todavía no estás entrenando de forma directa?',
         'La mayoría de los jugadores persigue velocidad. Los más inteligentes construyen fuerza, control de frenado y transferencia del flywheel que realmente aparece en el juego.',
-        'Empieza donde la ventaja es real: primer paso, poder de frenado, red
+        'Empieza donde la ventaja es real: primer paso, poder de frenado, redirección, recuperación y transferencia por posición.'
+      ]
+    };
+
+    let messageIndex = 0;
+    let messageTimer = null;
+
+    function currentLang() {
+      return localStorage.getItem('siteLanguage') || 'en';
+    }
+
+    function updateDynamicMessage() {
+      if (!chatDynamic) return;
+      const lang = currentLang();
+      chatDynamic.textContent = rotatingMessages[lang][messageIndex % rotatingMessages[lang].length];
+      messageIndex += 1;
+    }
+
+    function startDynamicMessages() {
+      updateDynamicMessage();
+      if (messageTimer) clearInterval(messageTimer);
+      messageTimer = setInterval(updateDynamicMessage, 5000);
+    }
+
+    function openChat(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      if (!chatPanel) return;
+      chatPanel.classList.add('open');
+      if (chatOverlay) chatOverlay.classList.add('open');
+      chatPanel.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      startDynamicMessages();
+    }
+
+    function closeChat(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      if (!chatPanel) return;
+      chatPanel.classList.remove('open');
+      if (chatOverlay) chatOverlay.classList.remove('open');
+      chatPanel.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    if (chatFab) {
+      chatFab.addEventListener('click', openChat);
+      chatFab.addEventListener('pointerup', openChat);
+    }
+    if (chatClose) chatClose.addEventListener('click', closeChat);
+    if (chatOverlay) chatOverlay.addEventListener('click', closeChat);
+
+    if (chatStart) {
+      chatStart.addEventListener('click', () => {
+        if (chatInput) chatInput.focus();
+      });
+    }
+
+    if (chatSend) {
+      chatSend.addEventListener('click', () => {
+        if (chatInput && chatInput.value.trim()) {
+          window.location.href = '#contact';
+        }
+      });
+    }
+
+    if (chatInput) {
+      chatInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && chatInput.value.trim()) {
+          event.preventDefault();
+          window.location.href = '#contact';
+        }
+      });
+    }
+
+    startDynamicMessages();
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
