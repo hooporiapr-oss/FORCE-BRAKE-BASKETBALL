@@ -1432,13 +1432,8 @@
 
       <div class="chat-dynamic" id="chatDynamic"></div>
 
-      <div class="chat-starters">
-        <button class="chat-starter" type="button" data-en="Show me how flywheel training creates a real braking advantage in basketball." data-es="Muéstrame cómo el entrenamiento flywheel crea una ventaja real de frenado en el baloncesto.">Show me how flywheel training creates a real braking advantage in basketball.</button>
-        <button class="chat-starter" type="button" data-en="Break down the force vs. braking difference the right way for players and coaches." data-es="Explícame bien la diferencia entre fuerza y frenado para jugadores y coaches.">Break down the force vs. braking difference the right way for players and coaches.</button>
-        <button class="chat-starter" type="button" data-en="Build me a smarter starting point for guards, wings, and bigs." data-es="Créame un punto de partida más inteligente para guards, wings y bigs.">Build me a smarter starting point for guards, wings, and bigs.</button>
-      </div>
-
       <div class="chat-input-wrap">
+        <button class="chat-send" id="chatStart" type="button" data-en="Start the Conversation" data-es="Comienza la Conversación">Start the Conversation</button>
         <div class="chat-input-row">
           <input class="chat-input" id="chatInput" type="text" data-placeholder-en="Ask your first question..." data-placeholder-es="Haz tu primera pregunta..." placeholder="Ask your first question..." />
           <button class="chat-send" id="chatSend" type="button" data-en="Send" data-es="Enviar">Send</button>
@@ -1497,8 +1492,8 @@
     const chatDynamic = document.getElementById('chatDynamic');
     const chatInput = document.getElementById('chatInput');
     const chatSend = document.getElementById('chatSend');
-    const chatStarters = document.querySelectorAll('.chat-starter');
-
+    const chatStart = document.getElementById('chatStart');
+    
     const rotatingMessages = {
       en: [
         'Ask the question that changes everything: what part of basketball performance are you still not training directly?',
@@ -1542,14 +1537,14 @@
     chatFab?.addEventListener('click', openChat);
     chatClose?.addEventListener('click', closeChat);
     chatOverlay?.addEventListener('click', closeChat);
-
-    chatStarters.forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (chatInput) {
-          chatInput.value = currentLang() === 'es' ? btn.dataset.es : btn.dataset.en;
-          chatInput.focus();
         }
       });
+    });
+
+    chatStart?.addEventListener('click', () => {
+      if (chatInput) {
+        chatInput.focus();
+      }
     });
 
     chatSend?.addEventListener('click', () => {
