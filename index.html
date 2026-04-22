@@ -583,6 +583,186 @@
       cursor: pointer;
     }
 
+    .chat-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 120;
+      width: 64px;
+      height: 64px;
+      border: 0;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--accent), #d9ff71);
+      color: #081006;
+      box-shadow: 0 18px 36px rgba(184,245,22,0.25);
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition);
+      font-size: 1.95rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .chat-fab:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 22px 42px rgba(184,245,22,0.28);
+    }
+
+    .chat-fab.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.92);
+    }
+
+    .chat-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3,4,7,0.66);
+      backdrop-filter: blur(8px);
+      z-index: 118;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease;
+    }
+
+    .chat-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .chat-panel {
+      position: fixed;
+      right: 22px;
+      bottom: 98px;
+      z-index: 119;
+      width: min(390px, calc(100vw - 24px));
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background:
+        radial-gradient(circle at top right, rgba(127,226,255,0.12), transparent 30%),
+        radial-gradient(circle at 15% 85%, rgba(184,245,22,0.12), transparent 30%),
+        linear-gradient(180deg, rgba(12,14,20,0.96), rgba(8,10,14,0.96));
+      box-shadow: 0 26px 60px rgba(0,0,0,0.42);
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px) scale(0.98);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .chat-panel.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .chat-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1rem 0.95rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .chat-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .chat-kicker {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .chat-title {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .chat-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .chat-body {
+      padding: 1rem;
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .chat-dynamic {
+      font-size: 0.92rem;
+      color: #dfe4ec;
+      line-height: 1.55;
+      min-height: 2.8em;
+    }
+
+    .chat-input-wrap {
+      display: grid;
+      gap: 0.7rem;
+      padding-top: 0.2rem;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 0.7rem;
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 0.9rem 1rem;
+      border-radius: 999px;
+      outline: none;
+    }
+
+    .chat-send {
+      width: 52px;
+      min-width: 52px;
+      height: 52px;
+      padding: 0;
+      border-radius: 999px;
+      border: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--accent), #d9ff71);
+      color: #081006;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 18px 36px rgba(184,245,22,0.18);
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+      font-size: 1.1rem;
+      line-height: 1;
+      flex: 0 0 52px;
+    }
+
+    .chat-send:hover {
+      transform: translateY(-2px);
+    }
+
+    .chat-footnote {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
 
     @media (max-width: 1080px) {
       .hero-grid,
@@ -671,6 +851,54 @@
 
       .cta-band { padding: 1.6rem; }
 
+      .chat-panel {
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .chat-body {
+        overflow-y: auto;
+        align-content: start;
+      }
+
+      .chat-input-row {
+        position: sticky;
+        bottom: 0;
+        background: linear-gradient(180deg, rgba(8,10,14,0), rgba(8,10,14,0.98) 28%);
+        padding-top: 0.6rem;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .container { width: min(calc(100% - 1.2rem), var(--max)); }
+      .section { padding: 5rem 0; }
+      .hero-copy h1 { font-size: clamp(2.75rem, 12vw, 4.35rem); }
+      .section-title { font-size: clamp(2rem, 8vw, 2.9rem); }
+      .manifesto,
+      .form-card,
+      .cta-band { border-radius: 24px; }
+      .btn,
+      .btn-secondary { width: 100%; }
+      .hero-actions { display: grid; }
+
+      .hero-visual,
+      .hero-image { border-radius: 20px; }
+
+      .chat-fab {
+        right: 16px;
+        bottom: 16px;
+        width: 58px;
+        height: 58px;
+      }
     }
   </style>
 </head>
@@ -952,8 +1180,11 @@
     </section>
   </main>
 
+  <div class="chat-overlay" id="chatOverlay"></div>
 
+  <button class="chat-fab" id="chatFab" type="button" aria-label="Open Force Braking">🏀</button>
 
+  <aside class="chat-panel" id="chatPanel" aria-hidden="true">
     <div class="chat-head">
       <div class="chat-title-wrap">
         <span class="chat-kicker" data-en="Basketball" data-es="Force">Braking</span>
@@ -1043,13 +1274,97 @@
 
     setLanguage(localStorage.getItem('siteLanguage') || 'en');
 
+    const chatFab = document.getElementById('chatFab');
+    const chatPanel = document.getElementById('chatPanel');
+    const chatOverlay = document.getElementById('chatOverlay');
+    const chatClose = document.getElementById('chatClose');
+    const chatDynamic = document.getElementById('chatDynamic');
+    const chatInput = document.getElementById('chatInput');
+    const chatSend = document.getElementById('chatSend');
 
+    const rotatingMessages = {
+      en: [
+        'Ask the question that changes everything: what part of basketball performance are you still not training directly?',
+        'Most players chase speed. The smartest ones build force, braking control, and flywheel transfer that actually shows up in the game.',
+        'Start where the edge is real: first step, stopping power, redirection, recovery, and position-specific transfer.'
+      ],
+      es: [
+        'Haz la pregunta que lo cambia todo: ¿qué parte del rendimiento en baloncesto todavía no estás entrenando de forma directa?',
+        'La mayoría de los jugadores persigue velocidad. Los más inteligentes construyen fuerza, control de frenado y transferencia del flywheel que realmente aparece en el juego.',
+        'Empieza donde la ventaja es real: primer paso, poder de frenado, redirección, recuperación y transferencia por posición.'
+      ]
+    };
+
+    let messageIndex = 0;
+    let messageTimer = null;
 
     function currentLang() {
       return localStorage.getItem('siteLanguage') || 'en';
     }
 
-    
+    function updateDynamicMessage() {
+      if (!chatDynamic) return;
+      const lang = currentLang();
+      chatDynamic.textContent = rotatingMessages[lang][messageIndex % rotatingMessages[lang].length];
+      messageIndex += 1;
+    }
+
+    function startDynamicMessages() {
+      updateDynamicMessage();
+      if (messageTimer) clearInterval(messageTimer);
+      messageTimer = setInterval(updateDynamicMessage, 5000);
+    }
+
+    function openChat(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      if (!chatPanel) return;
+      chatPanel.classList.add('open');
+      if (chatOverlay) chatOverlay.classList.add('open');
+      if (chatFab) chatFab.classList.add('is-hidden');
+      chatPanel.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      startDynamicMessages();
+    }
+
+    function closeChat(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      if (!chatPanel) return;
+      chatPanel.classList.remove('open');
+      if (chatOverlay) chatOverlay.classList.remove('open');
+      if (chatFab) chatFab.classList.remove('is-hidden');
+      chatPanel.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    if (chatFab) {
+      chatFab.addEventListener('click', openChat);
+      chatFab.addEventListener('pointerup', openChat);
+    }
+
+    if (chatClose) chatClose.addEventListener('click', closeChat);
+    if (chatOverlay) chatOverlay.addEventListener('click', closeChat);
+
+    if (chatSend) {
+      chatSend.addEventListener('click', () => {
+        if (chatInput && chatInput.value.trim()) {
+          window.location.href = '#contact';
+        }
+      });
+    }
+
+    if (chatInput) {
+      chatInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && chatInput.value.trim()) {
+          event.preventDefault();
+          window.location.href = '#contact';
+        }
+      });
     }
 
     startDynamicMessages();
