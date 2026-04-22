@@ -1043,97 +1043,13 @@
 
     setLanguage(localStorage.getItem('siteLanguage') || 'en');
 
-    const chatFab = document.getElementById('chatFab');
-    const chatPanel = document.getElementById('chatPanel');
-    const chatOverlay = document.getElementById('chatOverlay');
-    const chatClose = document.getElementById('chatClose');
-    const chatDynamic = document.getElementById('chatDynamic');
-    const chatInput = document.getElementById('chatInput');
-    const chatSend = document.getElementById('chatSend');
 
-    const rotatingMessages = {
-      en: [
-        'Ask the question that changes everything: what part of basketball performance are you still not training directly?',
-        'Most players chase speed. The smartest ones build force, braking control, and flywheel transfer that actually shows up in the game.',
-        'Start where the edge is real: first step, stopping power, redirection, recovery, and position-specific transfer.'
-      ],
-      es: [
-        'Haz la pregunta que lo cambia todo: ¿qué parte del rendimiento en baloncesto todavía no estás entrenando de forma directa?',
-        'La mayoría de los jugadores persigue velocidad. Los más inteligentes construyen fuerza, control de frenado y transferencia del flywheel que realmente aparece en el juego.',
-        'Empieza donde la ventaja es real: primer paso, poder de frenado, redirección, recuperación y transferencia por posición.'
-      ]
-    };
-
-    let messageIndex = 0;
-    let messageTimer = null;
 
     function currentLang() {
       return localStorage.getItem('siteLanguage') || 'en';
     }
 
-    function updateDynamicMessage() {
-      if (!chatDynamic) return;
-      const lang = currentLang();
-      chatDynamic.textContent = rotatingMessages[lang][messageIndex % rotatingMessages[lang].length];
-      messageIndex += 1;
-    }
-
-    function startDynamicMessages() {
-      updateDynamicMessage();
-      if (messageTimer) clearInterval(messageTimer);
-      messageTimer = setInterval(updateDynamicMessage, 5000);
-    }
-
-    function openChat(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      if (!chatPanel) return;
-      chatPanel.classList.add('open');
-      if (chatOverlay) chatOverlay.classList.add('open');
-      if (chatFab) chatFab.classList.add('is-hidden');
-      chatPanel.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      startDynamicMessages();
-    }
-
-    function closeChat(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      if (!chatPanel) return;
-      chatPanel.classList.remove('open');
-      if (chatOverlay) chatOverlay.classList.remove('open');
-      if (chatFab) chatFab.classList.remove('is-hidden');
-      chatPanel.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-
-    if (chatFab) {
-      chatFab.addEventListener('click', openChat);
-      chatFab.addEventListener('pointerup', openChat);
-    }
-
-    if (chatClose) chatClose.addEventListener('click', closeChat);
-    if (chatOverlay) chatOverlay.addEventListener('click', closeChat);
-
-    if (chatSend) {
-      chatSend.addEventListener('click', () => {
-        if (chatInput && chatInput.value.trim()) {
-          window.location.href = '#contact';
-        }
-      });
-    }
-
-    if (chatInput) {
-      chatInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' && chatInput.value.trim()) {
-          event.preventDefault();
-          window.location.href = '#contact';
-        }
-      });
+    
     }
 
     startDynamicMessages();
