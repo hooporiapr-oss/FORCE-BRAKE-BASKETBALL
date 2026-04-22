@@ -1228,6 +1228,13 @@
   </footer>
 
   <script>
+    // -------------------------------------------------------------------------
+    // Inline site script: navigation, language toggle, chat-panel open/close,
+    // rotating pitch messages, reveal-on-scroll.
+    //
+    // NOTE: The chat SEND button and Enter-key handlers have been removed from
+    // this script. Conversational chat is now owned by /chat.js.
+    // -------------------------------------------------------------------------
     const mobileToggle = document.getElementById('mobileToggle');
     const navLinks = document.getElementById('navLinks');
 
@@ -1279,8 +1286,6 @@
     const chatOverlay = document.getElementById('chatOverlay');
     const chatClose = document.getElementById('chatClose');
     const chatDynamic = document.getElementById('chatDynamic');
-    const chatInput = document.getElementById('chatInput');
-    const chatSend = document.getElementById('chatSend');
 
     const rotatingMessages = {
       en: [
@@ -1304,6 +1309,8 @@
 
     function updateDynamicMessage() {
       if (!chatDynamic) return;
+      // If chat.js has taken over and hidden this element, stop updating it.
+      if (chatDynamic.style.display === 'none') return;
       const lang = currentLang();
       chatDynamic.textContent = rotatingMessages[lang][messageIndex % rotatingMessages[lang].length];
       messageIndex += 1;
@@ -1350,23 +1357,6 @@
     if (chatClose) chatClose.addEventListener('click', closeChat);
     if (chatOverlay) chatOverlay.addEventListener('click', closeChat);
 
-    if (chatSend) {
-      chatSend.addEventListener('click', () => {
-        if (chatInput && chatInput.value.trim()) {
-          window.location.href = '#contact';
-        }
-      });
-    }
-
-    if (chatInput) {
-      chatInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' && chatInput.value.trim()) {
-          event.preventDefault();
-          window.location.href = '#contact';
-        }
-      });
-    }
-
     startDynamicMessages();
 
     const observer = new IntersectionObserver((entries) => {
@@ -1377,6 +1367,6 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
-<script src="/chat.js" defer></script>
+  <script src="/chat.js" defer></script>
 </body>
 </html>
