@@ -4,15 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flywheel Basketball Training | Force and Braking Performance</title>
-  <meta name="description" content="A premium basketball performance website focused on flywheel training, force production, braking ability, and movement control for serious athletes and coaches." />
+  <meta name="description" content="A premium basketball performance website focused on force production, braking ability, flywheel transfer, and real basketball movement." />
   <meta name="theme-color" content="#0a0a0d" />
   <style>
     :root {
       --bg: #07080b;
+      --bg-soft: #0d1016;
+      --panel: rgba(255,255,255,0.045);
+      --panel-strong: rgba(255,255,255,0.08);
       --text: #f5f3ee;
       --muted: #b8bcc7;
+      --line: rgba(255,255,255,0.12);
       --accent: #b8f516;
       --accent-2: #7fe2ff;
+      --glow: rgba(184,245,22,0.28);
       --shadow: 0 20px 60px rgba(0,0,0,0.38);
       --radius: 22px;
       --max: 1240px;
@@ -156,7 +161,7 @@
       width: 6px;
       height: 6px;
       background: var(--accent);
-      box-shadow: 0 0 18px rgba(184,245,22,0.28);
+      box-shadow: 0 0 18px var(--glow);
     }
 
     .nav-links {
@@ -207,7 +212,6 @@
 
     .btn:hover,
     .btn-secondary:hover,
-    .chat-send:hover,
     .chat-start:hover {
       transform: translateY(-2px);
     }
@@ -301,8 +305,7 @@
     .faq-item,
     .form-card,
     .manifesto,
-    .chat-bubble,
-    .chat-starter {
+    .chat-bubble {
       border: 1px solid rgba(255,255,255,0.09);
       background: rgba(255,255,255,0.035);
       border-radius: var(--radius);
@@ -732,6 +735,16 @@
       align-items: center;
     }
 
+    .chat-input {
+      flex: 1;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 0.9rem 1rem;
+      border-radius: 999px;
+      outline: none;
+    }
+
     .chat-send {
       width: 52px;
       min-width: 52px;
@@ -755,16 +768,6 @@
 
     .chat-send:hover {
       transform: translateY(-2px);
-    }
-
-    .chat-input {
-      flex: 1;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      padding: 0.9rem 1rem;
-      border-radius: 999px;
-      outline: none;
     }
 
     .chat-footnote {
@@ -896,7 +899,8 @@
       .form-card,
       .cta-band { border-radius: 24px; }
       .btn,
-      .btn-secondary { width: 100%; }
+      .btn-secondary,
+      .chat-start { width: 100%; }
       .hero-actions { display: grid; }
 
       .hero-visual,
@@ -949,9 +953,7 @@
         <div class="hero-copy reveal">
           <span class="eyebrow" data-en="Basketball movement doctrine" data-es="Doctrina del movimiento en el baloncesto">Basketball movement doctrine</span>
           <h1 data-en="Force wins the gap. Braking wins the game." data-es="La fuerza gana el espacio. El frenado gana el juego.">Force wins the gap. Braking wins the game.</h1>
-          <p data-en="Basketball performance is not defined by speed alone. It is defined by how force is created, absorbed, organized, and redirected in the moments that decide separation, balance, recovery, and command. This is a sharper way to train how the game is actually played." data-es="El rendimiento en baloncesto no se define solo por la velocidad. Se define por cómo se crea, se absorbe, se organiza y se redirige la fuerza en los momentos que deciden separación, balance, recuperación y control. Esta es una forma más precisa de entrenar cómo realmente se juega el deporte.">
-            Basketball performance is not defined by speed alone. It is defined by how force is created, absorbed, organized, and redirected in the moments that decide separation, balance, recovery, and command. This is a sharper way to train how the game is actually played.
-          </p>
+          <p data-en="Basketball performance is not defined by speed alone. It is defined by how force is created, absorbed, organized, and redirected in the moments that decide separation, balance, recovery, and command. This is a sharper way to train how the game is actually played." data-es="El rendimiento en baloncesto no se define solo por la velocidad. Se define por cómo se crea, se absorbe, se organiza y se redirige la fuerza en los momentos que deciden separación, balance, recuperación y control. Esta es una forma más precisa de entrenar cómo realmente se juega el deporte.">Basketball performance is not defined by speed alone. It is defined by how force is created, absorbed, organized, and redirected in the moments that decide separation, balance, recovery, and command. This is a sharper way to train how the game is actually played.</p>
           <div class="hero-actions">
             <a href="#method" class="btn" data-en="Explore the Method" data-es="Explora el Método">Explore the Method</a>
             <a href="#braking" class="btn-secondary" data-en="Why Braking Matters" data-es="Por Qué Importa Frenar">Why Braking Matters</a>
@@ -1243,11 +1245,11 @@
   </footer>
 
   <script>
-    const toggle = document.getElementById('mobileToggle');
+    const mobileToggle = document.getElementById('mobileToggle');
     const navLinks = document.getElementById('navLinks');
 
-    if (toggle && navLinks) {
-      toggle.addEventListener('click', () => {
+    if (mobileToggle && navLinks) {
+      mobileToggle.addEventListener('click', () => {
         navLinks.classList.toggle('open');
       });
 
@@ -1287,8 +1289,7 @@
       langEs.addEventListener('click', () => setLanguage('es'));
     }
 
-    const savedLanguage = localStorage.getItem('siteLanguage') || 'en';
-    setLanguage(savedLanguage);
+    setLanguage(localStorage.getItem('siteLanguage') || 'en');
 
     const chatFab = document.getElementById('chatFab');
     const chatPanel = document.getElementById('chatPanel');
@@ -1360,9 +1361,9 @@
       chatFab.addEventListener('click', openChat);
       chatFab.addEventListener('pointerup', openChat);
     }
+
     if (chatClose) chatClose.addEventListener('click', closeChat);
-    if (chatOverlay) chatOverlay.addEventListener('click', closeChat););
-    }
+    if (chatOverlay) chatOverlay.addEventListener('click', closeChat);
 
     if (chatSend) {
       chatSend.addEventListener('click', () => {
