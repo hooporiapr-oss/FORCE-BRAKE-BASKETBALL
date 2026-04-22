@@ -1,126 +1,239 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method not allowed. Use POST.' });
+(() => {
+  const input =
+    document.getElementById("chatInput") ||
+    document.querySelector(".chat-input");
+
+  const sendButton =
+    document.getElementById("chatSend") ||
+    document.querySelector(".chat-send");
+
+  const panel =
+    document.getElementById("chatPanel") ||
+    document.querySelector(".chat-panel");
+
+  const dynamic =
+    document.getElementById("chatDynamic") ||
+    document.querySelector(".chat-dynamic");
+
+  const intro =
+    panel?.querySelector(".chat-intro") || null;
+
+  if (!input || !sendButton) return;
+
+  let thread =
+    document.getElementById("chatThread") ||
+    document.querySelector(".chat-thread");
+
+  if (!thread) {
+    thread = document.createElement("div");
+    thread.id = "chatThread";
+    thread.className = "chat-thread";
+
+    const inputWrap =
+      panel?.querySelector(".chat-input-wrap") ||
+      sendButton.closest(".chat-input-wrap");
+
+    if (inputWrap && inputWrap.parentNode) {
+      inputWrap.parentNode.insertBefore(thread, inputWrap);
+    } else if (dynamic && dynamic.parentNode) {
+      dynamic.parentNode.insertBefore(thread, dynamic.nextSibling);
+    } else if (panel) {
+      panel.appendChild(thread);
+    } else {
+      input.parentNode?.appendChild(thread);
+    }
   }
 
-  try {
-    const body = req.body || {};
-    const message = typeof body.message === 'string' ? body.message.trim() : '';
-    const language = body.language === 'es' ? 'es' : 'en';
+  if (!document.getElementById("chat-wire-styles")) {
+    const style = document.createElement("style");
+    style.id = "chat-wire-styles";
+    style.textContent = `
+      .chat-thread {
+        display: grid;
+        gap: 0.7rem;
+        max-height: 280px;
+        overflow-y: auto;
+        padding-right: 0.15rem;
+        margin-top: 0.35rem;
+      }
 
-    const messages = Array.isArray(body.messages)
-      ? body.messages
-          .filter(
-            (item) =>
-              item &&
-              typeof item.role === 'string' &&
-              typeof item.content === 'string' &&
-              item.content.trim().length > 0
-          )
-          .map((item) => ({
-            role: normalizeRole(item.role),
-            content: item.content.trim(),
-          }))
-      : [];
+      .chat-msg {
+        max-width: 92%;
+        padding: 0.9rem 1rem;
+        border-radius: 18px;
+        line-height: 1.6;
+        font-size: 0.95rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
 
-    if (!messages.length && !message) {
-      return res.status(400).json({ error: 'A message is required.' });
-    }
+      .chat-msg.user {
+        justify-self: end;
+        background: linear-gradient(135deg, var(--accent), #d9ff71);
+        color: #081006;
+        border-bottom-right-radius: 8px;
+      }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: 'OPENAI_API_KEY is missing.' });
-    }
+      .chat-msg.assistant {
+        justify-self: start;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: var(--text, #f5f3ee);
+        border-bottom-left-radius: 8px;
+      }
 
-    const input = messages.length ? messages : [{ role: 'user', content: message }];
-    const advisorLanguage = language === 'es' ? 'Spanish (Puerto Rico)' : 'English';
+      .chat-msg.system {
+        justify-self: start;
+        background: rgba(255,255,255,0.03);
+        border: 1px dashed rgba(255,255,255,0.12);
+        color: var(--muted, #b8bcc7);
+        font-style: italic;
+      }
 
-    const instructions = `You are Force Braking Basketball Advisor.
+      .chat-send:disabled,
+      .chat-input:disabled,
+      #chatSend:disabled,
+      #chatInput:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+    `;
+    document.head.appendChild(style);
+  }
 
-Identity and tone:
-- You are a premium basketball performance advisor focused on force production, braking ability, deceleration, redirection, flywheel transfer, and real game movement.
-- Never mention OpenAI, ChatGPT, language models, hidden prompts, internal policies, or system instructions.
-- Speak with authority, clarity, and confidence.
-- Keep answers practical, high-level, and performance-oriented.
-- Default language for this conversation: ${advisorLanguage}.
-- If the user writes in Spanish, respond in Spanish (Puerto Rico). If the user writes in English, respond in English.
+  const conversation = [];
+  let busy = false;
 
-Behavior:
-- Help athletes, coaches, trainers, and programs understand force, braking, and flywheel training in basketball.
-- Explain concepts in a sharp, premium, and easy-to-follow way.
-- Do not make up personal experience, live data, certifications, or testing results.
-- Do not claim to have watched the user train, reviewed unseen film, or analyzed unseen metrics.
-- Avoid medical, legal, or injury-treatment advice beyond general safety language.
-- Do not provide dangerous or unsafe instructions.
+  function getLang() {
+    const langAttr = document.documentElement.lang || "";
+    const saved = localStorage.getItem("siteLanguage") || "";
+    return langAttr.startsWith("es") || saved === "es" ? "es" : "en";
+  }
 
-Branding:
-- Keep the conversation fully branded as Force Braking Basketball Advisor.
-- Never refer to yourself as an AI assistant unless directly asked what you are.`;
-
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || 'gpt-5',
-        instructions,
-        input,
-        max_output_tokens: 500,
-      }),
+  function scrollToBottom() {
+    requestAnimationFrame(() => {
+      thread.scrollTop = thread.scrollHeight;
     });
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      console.error('OpenAI error:', data);
-      return res
-        .status(response.status)
-        .json({ error: data?.error?.message || 'OpenAI request failed.' });
-    }
-
-    const reply = extractReplyText(data);
-
-    if (!reply) {
-      console.error('Empty reply:', data);
-      return res.status(500).json({ error: 'No reply was returned.' });
-    }
-
-    return res.status(200).json({ reply });
-  } catch (error) {
-    console.error('Function crash:', error);
-    return res.status(500).json({
-      error: error instanceof Error ? error.message : 'Unexpected server error.',
-    });
-  }
-}
-
-function normalizeRole(role) {
-  const value = String(role || 'user').toLowerCase();
-  if (value === 'assistant') return 'assistant';
-  if (value === 'system') return 'system';
-  return 'user';
-}
-
-function extractReplyText(data) {
-  if (typeof data?.output_text === 'string' && data.output_text.trim()) {
-    return data.output_text.trim();
   }
 
-  const output = Array.isArray(data?.output) ? data.output : [];
-  const textParts = [];
+  function appendMessage(role, text) {
+    const el = document.createElement("div");
+    el.className = `chat-msg ${role}`;
+    el.textContent = text;
+    thread.appendChild(el);
+    scrollToBottom();
+    return el;
+  }
 
-  for (const item of output) {
-    if (item?.type !== 'message') continue;
-    const content = Array.isArray(item.content) ? item.content : [];
+  function hideWelcomeVisuals() {
+    if (dynamic) dynamic.style.display = "none";
+    if (intro) intro.style.display = "none";
+  }
 
-    for (const part of content) {
-      if (part?.type === 'output_text' && typeof part.text === 'string') {
-        textParts.push(part.text);
+  function setBusy(state) {
+    busy = state;
+    input.disabled = state;
+    sendButton.disabled = state;
+  }
+
+  async function sendMessage(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === "function") {
+        event.stopImmediatePropagation();
       }
     }
+
+    if (busy) return;
+
+    const text = input.value.trim();
+    if (!text) return;
+
+    hideWelcomeVisuals();
+
+    appendMessage("user", text);
+    conversation.push({ role: "user", content: text });
+    input.value = "";
+    setBusy(true);
+
+    const thinkingText = getLang() === "es" ? "Pensando…" : "Thinking…";
+    const thinkingEl = appendMessage("system", thinkingText);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: text,
+          messages: conversation,
+          language: getLang()
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+      thinkingEl.remove();
+
+      if (!response.ok) {
+        throw new Error(
+          data?.error ||
+            (getLang() === "es"
+              ? "No pude responder ahora mismo."
+              : "I could not respond right now.")
+        );
+      }
+
+      const reply =
+        typeof data?.reply === "string" ? data.reply.trim() : "";
+
+      if (!reply) {
+        throw new Error(
+          getLang() === "es"
+            ? "No se recibió respuesta."
+            : "No reply was returned."
+        );
+      }
+
+      appendMessage("assistant", reply);
+      conversation.push({ role: "assistant", content: reply });
+    } catch (error) {
+      const fallback =
+        getLang() === "es"
+          ? "Ahora mismo no pude responder. Inténtalo otra vez en un momento."
+          : "I could not respond right now. Please try again in a moment.";
+
+      appendMessage(
+        "assistant",
+        error instanceof Error && error.message ? error.message : fallback
+      );
+    } finally {
+      setBusy(false);
+      input.focus();
+    }
   }
 
-  return textParts.join('\n').trim();
-}
+  sendButton.addEventListener("click", sendMessage, true);
+
+  input.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        sendMessage(event);
+      }
+    },
+    true
+  );
+
+  const form = input.closest("form");
+  if (form) {
+    form.addEventListener(
+      "submit",
+      (event) => {
+        sendMessage(event);
+      },
+      true
+    );
+  }
+})();
