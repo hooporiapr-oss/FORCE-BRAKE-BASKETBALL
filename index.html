@@ -1,1842 +1,1281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Basketball Force System</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --black: #0a0a0a;
-    --white: #f5f2ed;
-    --orange: #e85d24;
-    --gray: #1e1e1e;
-    --gray-mid: #3a3a3a;
-    --gray-light: #7a7a7a;
-    --max: 760px;
-    --pad: clamp(20px, 5vw, 48px);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* ── CURSOR ── */
-  .cursor {
-    width: 10px; height: 10px;
-    background: var(--orange); border-radius: 50%;
-    position: fixed; pointer-events: none; z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s, width 0.3s, height 0.3s;
-  }
-  .cursor-ring {
-    width: 36px; height: 36px;
-    border: 1px solid rgba(232,93,36,0.4); border-radius: 50%;
-    position: fixed; pointer-events: none; z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: transform 0.18s ease-out, opacity 0.3s;
-  }
-
-  /* ── NOISE ── */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 1000; opacity: 0.6;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    display: flex; flex-direction: column;
-    z-index: 100;
-  }
-  nav::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(10,10,10,0.96) 70%, transparent);
-    z-index: -1; pointer-events: none;
-  }
-  .nav-top {
-    display: flex; align-items: center; justify-content: center;
-    padding: 20px var(--pad) 10px;
-  }
-  .nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; letter-spacing: 0.12em;
-    color: var(--white); text-decoration: none;
-  }
-  .nav-logo span { color: var(--orange); }
-  .nav-lang-bar {
-    display: flex; justify-content: center; align-items: center;
-    padding: 0 var(--pad) 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .lang-toggle { display: flex; align-items: center; gap: 12px; }
-  .lang-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-    background: none; border: none; color: var(--gray-light);
-    cursor: none; padding: 4px 0;
-    border-bottom: 1px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
-  }
-  .lang-btn.active { color: var(--orange); border-color: var(--orange); }
-  .lang-sep { font-size: 12px; color: var(--gray-mid); font-family: 'DM Mono', monospace; }
-
-  /* ── SHARED SECTION WRAPPER ── */
-  .section-inner {
-    max-width: var(--max);
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  /* ── SECTION LABEL ── */
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--orange); margin-bottom: 16px;
-    display: block; text-align: center;
-  }
-
-  /* ── KEYFRAMES ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes scrollPulse {
-    0%,100% { opacity: 0.3; } 50% { opacity: 1; }
-  }
-
-  /* ── REVEAL ── */
-  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100svh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    padding: 120px 0 100px;
-    position: relative; overflow: hidden;
-  }
-  .hero-bg {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(232,93,36,0.08) 0%, transparent 70%),
-      var(--black);
-  }
-  .hero-grid {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size: 80px 80px;
-    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.3) 70%, transparent 100%);
-  }
-  .hero-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--orange); margin-bottom: 12px;
-    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
-    position: relative;
-    padding: 0 var(--pad);
-  }
-  .hero-image-wrap {
-    width: 100%;
-    margin: 8px 0 0;
-    line-height: 0;
-    opacity: 0;
-    animation: fadeUp 1s 0.4s forwards;
-    flex-shrink: 0;
-  }
-  .hero-device-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-    filter: brightness(0.97) contrast(1.03);
-  }
-  .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(64px, 14vw, 140px);
-    line-height: 0.9; letter-spacing: 0.02em;
-    color: var(--white); position: relative;
-    opacity: 0; animation: fadeUp 0.9s 0.6s forwards;
-    margin: 0 0 28px;
-    padding: 16px var(--pad) 0;
-  }
-  .hero-title .outline { -webkit-text-stroke: 1px rgba(245,242,237,0.3); color: transparent; }
-  .hero-title .accent  { color: var(--orange); }
-  .hero-sub {
-    font-size: clamp(14px, 2vw, 16px);
-    line-height: 1.7; color: var(--gray-light);
-    max-width: 520px;
-    opacity: 0; animation: fadeUp 0.9s 0.8s forwards;
-    position: relative;
-    padding: 0 var(--pad);
-  }
-  .hero-sub strong { color: var(--white); font-weight: 400; }
-  .hero-stat-group { display: none; }
-  .scroll-indicator {
-    position: absolute; bottom: 28px; left: 50%;
-    transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    opacity: 0; animation: fadeUp 1s 1.2s forwards;
-  }
-  .scroll-indicator span {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--gray-light);
-  }
-  .scroll-line {
-    width: 1px; height: 40px;
-    background: linear-gradient(to bottom, var(--orange), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
-
-  /* ── FEATURED PRODUCT IMAGE ── */
-  .section-featured {
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-    line-height: 0;
-  }
-  .featured-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-    filter: brightness(0.97) contrast(1.03);
-  }
-  .featured-label {
-    position: absolute;
-    bottom: 24px; left: 50%;
-    transform: translateX(-50%);
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: rgba(245,242,237,0.7);
-    background: rgba(10,10,10,0.5);
-    padding: 6px 16px;
-    white-space: nowrap;
-    backdrop-filter: blur(4px);
-  }
-
-  /* ── DEFINITION ── */
-  .section-def {
-    padding: clamp(64px, 10vw, 120px) var(--pad);
-    border-top: 1px solid var(--gray);
-    text-align: center;
-  }
-  .big-quote {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(40px, 8vw, 72px);
-    line-height: 1.05; letter-spacing: 0.04em;
-    color: var(--white);
-    margin: 20px auto 40px;
-  }
-  .big-quote em { font-style: normal; color: var(--orange); }
-  .def-body {
-    font-size: clamp(14px, 2vw, 15px);
-    line-height: 1.85; color: var(--gray-light);
-    text-align: center; margin: 0 auto;
-    max-width: var(--max);
-  }
-  .def-body p { margin-bottom: 18px; }
-  .def-body p:last-child { margin-bottom: 0; }
-  .def-body strong { color: var(--white); font-weight: 400; }
-
-  /* ── CONTINUUM ── */
-  .section-continuum {
-    padding: clamp(64px, 10vw, 100px) var(--pad);
-    border-top: 1px solid var(--gray);
-    text-align: center;
-  }
-  .continuum-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(32px, 6vw, 52px);
-    letter-spacing: 0.04em; margin-bottom: 48px;
-  }
-  .continuum-steps {
-    display: flex; flex-direction: column; gap: 1px;
-    background: var(--gray);
-    max-width: var(--max); margin: 0 auto;
-  }
-  .cont-step {
-    background: var(--black);
-    text-align: left;
-    cursor: pointer;
-    position: relative;
-    transition: background 0.25s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .cont-step:hover { background: rgba(232,93,36,0.05); }
-  .cont-step.active { background: rgba(232,93,36,0.06); }
-  .cont-arrow { display: none; }
-
-  /* Accordion trigger row */
-  .cont-trigger {
-    display: flex; align-items: center; gap: 20px;
-    padding: clamp(20px, 3.5vw, 28px) clamp(20px, 4vw, 36px);
-    user-select: none;
-  }
-  .cont-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px; letter-spacing: 0.12em;
-    color: var(--orange); min-width: 36px;
-    flex-shrink: 0;
-  }
-  .cont-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(26px, 5vw, 36px);
-    letter-spacing: 0.06em; color: var(--white);
-    flex: 1;
-  }
-  .cont-step.active .cont-name { color: var(--orange); }
-  .cont-chevron {
-    width: 22px; height: 22px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.3s ease;
-  }
-  .cont-chevron svg { width: 16px; height: 16px; stroke: var(--gray-light); fill: none; stroke-width: 2; stroke-linecap: round; }
-  .cont-step.active .cont-chevron { transform: rotate(180deg); }
-  .cont-step.active .cont-chevron svg { stroke: var(--orange); }
-
-  /* Accordion body */
-  .cont-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease, padding 0.3s ease;
-    padding: 0 clamp(20px, 4vw, 36px) 0 calc(clamp(20px, 4vw, 36px) + 56px);
-  }
-  .cont-step.active .cont-body {
-    max-height: 300px;
-    padding-bottom: clamp(20px, 3.5vw, 28px);
-  }
-  .cont-desc {
-    font-size: clamp(15px, 2.2vw, 17px);
-    line-height: 1.75; color: #fff;
-    font-weight: 300;
-  }
-
-  /* ── PILLARS ── */
-  .section-pillars {
-    padding: clamp(64px, 10vw, 120px) var(--pad);
-    border-top: 1px solid var(--gray);
-    background: var(--gray);
-    text-align: center;
-  }
-  .pillars-header-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(48px, 10vw, 80px);
-    line-height: 0.95; letter-spacing: 0.03em;
-    margin: 16px auto 24px;
-  }
-  .pillars-header-text {
-    font-size: clamp(13px, 2vw, 15px);
-    line-height: 1.8; color: var(--gray-light);
-    max-width: var(--max); margin: 0 auto 48px;
-  }
-  .pillars-grid {
-    display: flex; flex-direction: column; gap: 1px;
-    background: var(--gray-mid);
-    max-width: var(--max); margin: 0 auto;
-  }
-
-  /* Accordion pillar card */
-  .pillar-card {
-    background: var(--gray);
-    cursor: pointer;
-    position: relative; overflow: hidden;
-    text-align: left;
-    transition: background 0.25s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .pillar-card:hover { background: rgba(232,93,36,0.05); }
-  .pillar-card.active { background: rgba(232,93,36,0.07); }
-
-  /* Orange bottom line sweep on active */
-  .pillar-card::after {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 2px; background: var(--orange);
-    transform: scaleX(0); transform-origin: left;
-    transition: transform 0.4s ease;
-  }
-  .pillar-card.active::after { transform: scaleX(1); }
-
-  /* Trigger row */
-  .pillar-trigger {
-    display: flex; align-items: center; gap: 16px;
-    padding: clamp(20px, 3.5vw, 28px) clamp(20px, 4vw, 36px);
-    user-select: none;
-  }
-  .pillar-index {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.15em;
-    color: var(--orange); min-width: 68px; flex-shrink: 0;
-  }
-  .pillar-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(22px, 4vw, 30px);
-    letter-spacing: 0.05em; flex: 1;
-    color: var(--white);
-  }
-  .pillar-card.active .pillar-name { color: var(--orange); }
-  .pillar-chevron {
-    width: 22px; height: 22px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.3s ease;
-  }
-  .pillar-chevron svg { width: 16px; height: 16px; stroke: var(--gray-light); fill: none; stroke-width: 2; stroke-linecap: round; }
-  .pillar-card.active .pillar-chevron { transform: rotate(180deg); }
-  .pillar-card.active .pillar-chevron svg { stroke: var(--orange); }
-
-  /* Collapsible body */
-  .pillar-body {
-    max-height: 0; overflow: hidden;
-    transition: max-height 0.4s ease, padding 0.3s ease;
-    padding: 0 clamp(20px, 4vw, 36px) 0 calc(clamp(20px, 4vw, 36px) + 84px);
-  }
-  .pillar-card.active .pillar-body {
-    max-height: 400px;
-    padding-bottom: clamp(20px, 3.5vw, 28px);
-  }
-  .pillar-sub {
-    font-size: clamp(15px, 2.2vw, 17px);
-    line-height: 1.75; color: #fff;
-    font-weight: 300; margin-bottom: 16px;
-  }
-  .pillar-insight {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px; line-height: 1.6; color: var(--orange);
-    padding-top: 14px; border-top: 1px solid var(--gray-mid);
-  }
-
-  /* ── PLAYER TYPES ── */
-  .section-types {
-    padding: clamp(64px, 10vw, 120px) var(--pad);
-    border-top: 1px solid var(--gray);
-    text-align: center;
-  }
-  .types-header {
-    margin-bottom: 40px;
-  }
-  .types-big {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(36px, 8vw, 60px);
-    line-height: 0.95; margin: 16px auto 16px;
-  }
-  .types-desc {
-    font-size: clamp(13px, 2vw, 15px);
-    line-height: 1.8; color: var(--gray-light);
-    max-width: var(--max); margin: 0 auto;
-  }
-  .types-left { display: none; }
-  .types-right {
-    max-width: var(--max); margin: 0 auto;
-    display: flex; flex-direction: column; gap: 1px;
-    background: var(--gray);
-  }
-  .type-row {
-    background: var(--black);
-    text-align: left; cursor: pointer;
-    position: relative;
-    transition: background 0.25s;
-    -webkit-tap-highlight-color: transparent;
-    border: none;
-  }
-  .type-row:hover { background: rgba(232,93,36,0.05); }
-  .type-row.active { background: rgba(232,93,36,0.07); }
-  .type-row::after {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 2px; background: var(--orange);
-    transform: scaleX(0); transform-origin: left;
-    transition: transform 0.4s ease;
-  }
-  .type-row.active::after { transform: scaleX(1); }
-
-  /* Trigger row */
-  .type-trigger {
-    display: flex; align-items: center; gap: 16px;
-    padding: clamp(20px, 3.5vw, 28px) clamp(20px, 4vw, 36px);
-    user-select: none;
-  }
-  .type-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px; color: var(--orange); min-width: 28px;
-    flex-shrink: 0;
-  }
-  .type-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(24px, 4vw, 32px);
-    letter-spacing: 0.06em; color: var(--white); flex: 1;
-  }
-  .type-row.active .type-name { color: var(--orange); }
-  .type-chevron {
-    width: 22px; height: 22px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.3s ease;
-  }
-  .type-chevron svg { width: 16px; height: 16px; stroke: var(--gray-light); fill: none; stroke-width: 2; stroke-linecap: round; }
-  .type-row.active .type-chevron { transform: rotate(180deg); }
-  .type-row.active .type-chevron svg { stroke: var(--orange); }
-
-  /* Collapsible body */
-  .type-body {
-    max-height: 0; overflow: hidden;
-    transition: max-height 0.4s ease, padding 0.3s ease;
-    padding: 0 clamp(20px, 4vw, 36px) 0 calc(clamp(20px, 4vw, 36px) + 44px);
-  }
-  .type-row.active .type-body {
-    max-height: 300px;
-    padding-bottom: clamp(20px, 3.5vw, 28px);
-  }
-  .type-desc-text {
-    font-size: clamp(15px, 2.2vw, 17px);
-    color: #fff; line-height: 1.75; font-weight: 300;
-    margin-bottom: 16px;
-  }
-  .type-bar { display: flex; gap: 4px; }
-  .type-bar-seg { height: 3px; flex: 1; background: var(--gray-mid); border-radius: 2px; }
-  .type-bar-seg.filled { background: var(--orange); }
-
-  /* ── TECHNOLOGY ── */
-  .section-tech {
-    padding: clamp(64px, 10vw, 120px) var(--pad);
-    border-top: 1px solid var(--gray);
-    background: #0e0e0e;
-    text-align: center;
-  }
-  .tech-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(40px, 8vw, 72px);
-    letter-spacing: 0.03em; margin: 16px auto 8px;
-  }
-  .tech-sub {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px; letter-spacing: 0.12em;
-    color: var(--gray-light); text-transform: uppercase;
-    margin-bottom: 48px; display: block;
-  }
-  .yoyo-layout {
-    display: flex; flex-direction: column;
-    max-width: var(--max); margin: 0 auto;
-    border: 1px solid var(--gray-mid);
-  }
-  .yoyo-image-wrap {
-    position: relative; background: #060606;
-    overflow: hidden; width: 100%;
-    aspect-ratio: 16/9;
-  }
-  .yoyo-img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center center;
-    display: block;
-    filter: brightness(0.95) contrast(1.04);
-    transition: transform 0.6s ease, filter 0.4s ease;
-  }
-  .yoyo-image-wrap:hover .yoyo-img { transform: scale(1.03); filter: brightness(1); }
-  .yoyo-img-label {
-    position: absolute; top: 16px; left: 16px;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--orange); background: rgba(10,10,10,0.75);
-    padding: 5px 10px; z-index: 2;
-  }
-  .yoyo-img-caption {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 20px; border-top: 1px solid var(--gray-mid);
-    background: var(--black);
-  }
-  .yoyo-content {
-    padding: clamp(32px, 5vw, 52px) clamp(20px, 4vw, 40px);
-    text-align: left; display: flex; flex-direction: column; gap: 32px;
-    border-top: 1px solid var(--gray-mid);
-  }
-  .yoyo-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(44px, 8vw, 72px);
-    line-height: 0.9; letter-spacing: 0.04em;
-    margin-top: 8px;
-  }
-  .yoyo-desc { font-size: clamp(13px, 2vw, 14px); line-height: 1.85; color: var(--gray-light); }
-  .yoyo-metrics { }
-  .yoyo-metric-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 1px; background: var(--gray-mid); margin-top: 16px;
-  }
-  .yoyo-metric {
-    background: #0e0e0e; padding: 14px 16px;
-    display: flex; align-items: center; gap: 12px;
-    transition: background 0.2s; cursor: none;
-  }
-  .yoyo-metric:hover { background: rgba(232,93,36,0.05); }
-  .yoyo-metric-icon { font-size: 13px; color: var(--orange); min-width: 16px; font-family: 'DM Mono', monospace; }
-  .yoyo-metric-label { font-size: 12px; color: var(--white); }
-  .yoyo-pills { display: flex; flex-wrap: wrap; gap: 8px; }
-  .tech-pill {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.08em;
-    color: var(--orange); border: 1px solid rgba(232,93,36,0.3);
-    padding: 4px 12px;
-  }
-  /* hide leftover tech-top */
-  .tech-top { display: none; }
-
-  /* ── FINAL ── */
-  .section-final {
-    padding: clamp(80px, 12vw, 160px) var(--pad);
-    border-top: 1px solid var(--gray);
-    text-align: center; position: relative; overflow: hidden;
-  }
-  .section-final::before {
-    content: 'FORCE';
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28vw; color: transparent;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.03);
-    white-space: nowrap; pointer-events: none;
-  }
-  .final-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--orange); margin-bottom: 32px; display: block;
-  }
-  .final-text {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(24px, 5vw, 48px);
-    line-height: 1.1; letter-spacing: 0.04em;
-    max-width: 820px; margin: 0 auto; position: relative;
-  }
-  .final-text .highlight { color: var(--orange); }
-
-  /* ── FOOTER ── */
-  footer {
-    padding: clamp(28px, 4vw, 40px) var(--pad);
-    border-top: 1px solid var(--gray);
-    display: flex; flex-direction: column;
-    align-items: center; gap: 10px; text-align: center;
-  }
-  .footer-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px; letter-spacing: 0.12em; color: var(--white);
-  }
-  .footer-logo span { color: var(--orange); }
-  .footer-text {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--gray-light);
-  }
-
-  /* ── RESPONSIVE FINE-TUNING ── */
-  @media (max-width: 480px) {
-    .yoyo-metric-grid { grid-template-columns: 1fr; }
-  }
-</style>
-</head>
-<body>
-
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<nav>
-  <div class="nav-top">
-    <a class="nav-logo" href="#"><span>B</span>FORCE</a>
-  </div>
-  <div class="nav-lang-bar">
-    <div class="lang-toggle">
-      <button class="lang-btn active" id="lang-en" onclick="setLang('en')">English</button>
-      <span class="lang-sep">·</span>
-      <button class="lang-btn" id="lang-es" onclick="setLang('es')">Español</button>
-    </div>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-eyebrow">Basketball Force Development & Management System</div>
-  <div class="hero-image-wrap reveal">
-    <img src="yoyo-02.png" alt="Wheeler YoYo device on basketball court" class="hero-device-img" />
-  </div>
-  <h1 class="hero-title">
-    MASTER<br>
-    <span class="outline">YOUR</span><br>
-    <span class="accent">FORCE</span>
-  </h1>
-  <div class="hero-bottom">
-    <p class="hero-sub">
-      A system built on one truth: basketball is not a strength sport, a speed sport, or a conditioning sport. It is a <strong>force-management sport under chaos.</strong>
-    </p>
-    <div class="hero-stat-group">
-      <div class="hero-stat">
-        <div class="hero-stat-num">5</div>
-        <div class="hero-stat-label">Force Pillars</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">1</div>
-        <div class="hero-stat-label">Technology</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">1</div>
-        <div class="hero-stat-label">System</div>
-      </div>
-    </div>
-  </div>
-  <div class="scroll-indicator">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
-</section>
-
-<!-- DEFINITION -->
-<section class="section-def">
-  <div class="reveal">
-    <div class="section-label" data-key="defLabel">Core definition</div>
-    <div class="big-quote" data-key="defQuote">PRODUCE.<br>ABSORB.<br>CONTROL.<br>REDIRECT.<br><em>REPEAT.</em></div>
-  </div>
-  <div class="reveal">
-    <div class="def-body">
-      <p data-key="defP1">Basketball Force is the ability to <strong>produce, absorb, control, redirect, and repeat force</strong> under game conditions.</p>
-      <p data-key="defP2">This system replaces vague descriptors like athleticism, explosiveness, and quickness — terms that lack specificity and cannot explain performance behavior.</p>
-      <p data-key="defP3">Every action in basketball occurs under time pressure, spatial constraints, perceptual demands, physical contact, and fatigue. Training must reflect this reality.</p>
-      <p data-key="defP4">Most systems overtrain <strong>production</strong> and undertrain absorption, control, and repeatability. This system corrects that imbalance.</p>
-    </div>
-  </div>
-</section>
-
-<!-- CONTINUUM -->
-<section class="section-continuum" id="continuum">
-  <div class="continuum-header reveal">
-    <div class="section-label" data-key="continuumLabel">The force continuum</div>
-    <h2 class="continuum-title" data-key="continuumTitle">A continuous loop</h2>
-  </div>
-  <div class="continuum-steps">
-    <div class="cont-step reveal">
-      <div class="cont-trigger">
-        <span class="cont-num">01 —</span>
-        <span class="cont-name" data-en="PRODUCE" data-es="PRODUCIR">PRODUCE</span>
-        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="cont-body"><p class="cont-desc">Generation of force — vertical, horizontal, lateral. The foundation most systems over-prioritize.</p></div>
-    </div>
-    <div class="cont-step reveal">
-      <div class="cont-trigger">
-        <span class="cont-num">02 —</span>
-        <span class="cont-name" data-en="ABSORB" data-es="ABSORBER">ABSORB</span>
-        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="cont-body"><p class="cont-desc">The ability to receive and dissipate force safely and efficiently. The best movers are often the best brakers.</p></div>
-    </div>
-    <div class="cont-step reveal">
-      <div class="cont-trigger">
-        <span class="cont-num">03 —</span>
-        <span class="cont-name" data-en="CONTROL" data-es="CONTROLAR">CONTROL</span>
-        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="cont-body"><p class="cont-desc">Maintenance of structure, balance, and coordination under load. Force is only useful if it can be controlled.</p></div>
-    </div>
-    <div class="cont-step reveal">
-      <div class="cont-trigger">
-        <span class="cont-num">04 —</span>
-        <span class="cont-name" data-en="REDIRECT" data-es="REDIRIGIR">REDIRECT</span>
-        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="cont-body"><p class="cont-desc">Transition of force into new movement direction. Slow redirection limits game speed more than raw speed.</p></div>
-    </div>
-    <div class="cont-step reveal">
-      <div class="cont-trigger">
-        <span class="cont-num">05 —</span>
-        <span class="cont-name" data-en="REPEAT" data-es="REPETIR">REPEAT</span>
-        <span class="cont-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="cont-body"><p class="cont-desc">Sustaining performance across time, possessions, and fatigue. Performance breakdown under fatigue reveals true capacity.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- PILLARS -->
-<section class="section-pillars" id="pillars">
-  <div class="pillars-header">
-    <div class="reveal">
-      <div class="section-label" data-key="pillarsLabel">Performance pillars</div>
-      <h2 class="pillars-header-title" data-key="pillarsTitle">THE 5<br>PILLARS<br>OF FORCE</h2>
-    </div>
-    <p class="pillars-header-text reveal" data-key="pillarsText">Each pillar represents a distinct domain of force behavior. Elite players are not just physically gifted — they are complete across all five domains. Identifying gaps is the foundation of targeted development.</p>
-  </div>
-  <div class="pillars-grid">
-    <div class="pillar-card reveal">
-      <div class="pillar-trigger">
-        <span class="pillar-index">01 / PILLAR</span>
-        <span class="pillar-name">Force Production</span>
-        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="pillar-body">
-        <p class="pillar-sub">Rate of Force Development, directional force, contextual application. Output with timing and direction.</p>
-        <div class="pillar-insight">Output without timing and direction has limited transfer.</div>
-      </div>
-    </div>
-    <div class="pillar-card reveal">
-      <div class="pillar-trigger">
-        <span class="pillar-index">02 / PILLAR</span>
-        <span class="pillar-name">Force Absorption</span>
-        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="pillar-body">
-        <p class="pillar-sub">Eccentric strength, braking mechanics, landing efficiency, deceleration strategy.</p>
-        <div class="pillar-insight">The best movers are often the best brakers.</div>
-      </div>
-    </div>
-    <div class="pillar-card reveal">
-      <div class="pillar-trigger">
-        <span class="pillar-index">03 / PILLAR</span>
-        <span class="pillar-name">Force Control</span>
-        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="pillar-body">
-        <p class="pillar-sub">Balance under load, center of mass control, stability in motion. Organization under force.</p>
-        <div class="pillar-insight">Force is only useful if it can be controlled.</div>
-      </div>
-    </div>
-    <div class="pillar-card reveal">
-      <div class="pillar-trigger">
-        <span class="pillar-index">04 / PILLAR</span>
-        <span class="pillar-name">Force Redirection</span>
-        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="pillar-body">
-        <p class="pillar-sub">Change of direction, transition efficiency, lateral movement. Efficiency of changing force vectors.</p>
-        <div class="pillar-insight">Slow redirection limits game speed more than raw speed.</div>
-      </div>
-    </div>
-    <div class="pillar-card reveal">
-      <div class="pillar-trigger">
-        <span class="pillar-index">05 / PILLAR</span>
-        <span class="pillar-name">Force Repeatability</span>
-        <span class="pillar-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="pillar-body">
-        <p class="pillar-sub">Fatigue resistance, repeated sprint ability, neuromuscular consistency across time.</p>
-        <div class="pillar-insight">Breakdown under fatigue reveals true capacity.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PLAYER TYPES -->
-<section class="section-types" id="players">
-  <div class="types-header reveal">
-    <div class="section-label" data-key="typesLabel">Player force identity</div>
-    <h2 class="types-big" data-key="typesTitle">WHO ARE YOU ON THE COURT?</h2>
-    <p class="types-desc" data-key="typesDesc">Every athlete can be classified by their force behavior profile. Understanding your identity is the starting point for targeted development.</p>
-  </div>
-  <div class="types-right">
-    <div class="type-row reveal">
-      <div class="type-trigger">
-        <span class="type-num">01</span>
-        <span class="type-name">PRODUCER</span>
-        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="type-body">
-        <p class="type-desc-text">High force output, low control. Explosive and powerful, but lacks the organization to translate output into consistent game performance.</p>
-        <div class="type-bar"><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg"></div></div>
-      </div>
-    </div>
-    <div class="type-row reveal">
-      <div class="type-trigger">
-        <span class="type-num">02</span>
-        <span class="type-name">ABSORBER</span>
-        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="type-body">
-        <p class="type-desc-text">Strong braking, limited explosiveness. Exceptional at receiving and dissipating force — but needs more production to be truly threatening.</p>
-        <div class="type-bar"><div class="type-bar-seg"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg"></div></div>
-      </div>
-    </div>
-    <div class="type-row reveal">
-      <div class="type-trigger">
-        <span class="type-num">03</span>
-        <span class="type-name">REACTOR</span>
-        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="type-body">
-        <p class="type-desc-text">Fast decisions, low physical force. Exceptional perception-action coupling but needs physical force development to maximize potential.</p>
-        <div class="type-bar"><div class="type-bar-seg"></div><div class="type-bar-seg"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div></div>
-      </div>
-    </div>
-    <div class="type-row reveal">
-      <div class="type-trigger">
-        <span class="type-num">04</span>
-        <span class="type-name">ELASTIC MOVER</span>
-        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="type-body">
-        <p class="type-desc-text">Efficient, fluid, reactive. Excels at reusing stored energy through the stretch-shortening cycle. The most economical mover on the court.</p>
-        <div class="type-bar"><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div></div>
-      </div>
-    </div>
-    <div class="type-row reveal">
-      <div class="type-trigger">
-        <span class="type-num">05</span>
-        <span class="type-name" style="color:var(--orange)">COMPLETE PLAYER</span>
-        <span class="type-chevron"><svg viewBox="0 0 16 16"><polyline points="2,5 8,11 14,5"/></svg></span>
-      </div>
-      <div class="type-body">
-        <p class="type-desc-text">Balanced across all five domains. Produces, absorbs, controls, redirects, and repeats force under real game pressure. The development target.</p>
-        <div class="type-bar"><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div><div class="type-bar-seg filled"></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TECHNOLOGY -->
-<section class="section-tech" id="technology">
-  <div class="tech-top reveal">
-    <div>
-      <div class="section-label" data-key="techLabel">Wheeler system</div>
-      <h2 class="tech-title" data-key="techTitle">TECHNOLOGY<br>FRAMEWORK</h2>
-    </div>
-    <div class="tech-sub" data-key="techSub">Measure · Diagnose · Guide</div>
-  </div>
-
-  <div class="yoyo-layout">
-    <!-- IMAGE SIDE -->
-    <div class="yoyo-image-wrap reveal">
-      <img src="yoyo-01.png" alt="Wheeler YoYo isoinertial training device on basketball court" class="yoyo-img" />
-      <div class="yoyo-img-caption">
-        <span class="tech-tag" style="margin-bottom:0">Eccentric · Isoinertial</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--gray-light)" data-key="yoyoImgCaption">No spinal load</span>
-      </div>
-    </div>
-
-    <!-- CONTENT SIDE -->
-    <div class="yoyo-content">
-      <div class="reveal">
-        <div class="section-label" data-key="featuredLabel">iSOINERTIAL</div>
-        <h3 class="yoyo-title" data-key="yoyoTitle">FLY-WHEELER<br><span style="color:var(--orange)">YOYO</span></h3>
-        <p class="yoyo-desc">A lower-body strength training system built on flywheel resistance — no spinal load required. The resistance is determined by flywheel speed; intensity is scaled by adding or removing weights. The integrated software measures concentric and eccentric phase strength in real time, enabling objective tracking of athlete evolution.</p>
-        <p class="yoyo-desc">The eccentric overload generated by the device triggers musculoskeletal adaptations that improve protection mechanisms at myotendinous and joint levels, directly reducing the risk of injury.</p>
-      </div>
-
-      <div class="yoyo-metrics reveal">
-        <div class="section-label" style="margin-bottom:20px" data-key="metricsLabel">Evaluates & trains</div>
-        <div class="yoyo-metric-grid">
-          <div class="yoyo-metric">
-            <div class="yoyo-metric-icon">→</div>
-            <div class="yoyo-metric-label">Acceleration Force</div>
-          </div>
-          <div class="yoyo-metric">
-            <div class="yoyo-metric-icon">→</div>
-            <div class="yoyo-metric-label">Acceleration Power</div>
-          </div>
-          <div class="yoyo-metric">
-            <div class="yoyo-metric-icon">←</div>
-            <div class="yoyo-metric-label">Deceleration Force</div>
-          </div>
-          <div class="yoyo-metric">
-            <div class="yoyo-metric-icon">←</div>
-            <div class="yoyo-metric-label">Deceleration Power</div>
-          </div>
-          <div class="yoyo-metric">
-            <div class="yoyo-metric-icon">⇔</div>
-            <div class="yoyo-metric-label">Force Imbalance</div>
-          </div>
-          <div class="yoyo-metric">
-            <div class="yoyo-metric-icon">◎</div>
-            <div class="yoyo-metric-label">Knee Injury Prevention</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="yoyo-pills reveal">
-        <span class="tech-pill">Force Absorption</span>
-        <span class="tech-pill">Eccentric Overload</span>
-        <span class="tech-pill">Real-Time Monitoring</span>
-        <span class="tech-pill">Injury Prevention</span>
-        <span class="tech-pill">No Spinal Load</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FINAL PRINCIPLE -->
-<section class="section-final">
-  <div class="final-label reveal" data-key="finalLabel">Final Principle</div>
-  <h2 class="final-text reveal" data-key="finalText">
-    The difference between players is not how much force they can <span class="highlight">produce</span> — it is how well they can <span class="highlight">control, adapt, and repeat</span> force under pressure.
-  </h2>
-
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo"><span>B</span>FORCE SYSTEM</div>
-  <div class="footer-text" data-key="footerMid">Basketball Force Development &amp; Management</div>
-  <div class="footer-text" data-key="footerCopy">© 2025 — All Rights Reserved</div>
-</footer>
-
-<script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let rx = 0, ry = 0;
-
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-    rx += (e.clientX - rx) * 0.12;
-    ry += (e.clientY - ry) * 0.12;
-  });
-
-  function animateRing() {
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    requestAnimationFrame(animateRing);
-  }
-  animateRing();
-
-  document.querySelectorAll('button, a').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'translate(-50%, -50%) scale(2.5)';
-      ring.style.opacity = '0';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-      ring.style.opacity = '1';
-    });
-  });
-
-
-  // ── TRANSLATION SYSTEM ───────────────────────────────────────────────────────
-  const T = {
-    en: {
-      // NAV & HERO
-      eyebrow: 'Basketball Force Development &amp; Management System',
-      scroll: 'Scroll',
-      heroSub: 'A system built on one truth: basketball is not a strength sport, a speed sport, or a conditioning sport. It is a <strong>force-management sport under chaos.</strong>',
-      statLabels: ['Force Pillars', 'Technology', 'System'],
-
-      // DEFINITION
-      defLabel: 'Core definition',
-      defQuote: 'PRODUCE.<br>ABSORB.<br>CONTROL.<br>REDIRECT.<br><em>REPEAT.</em>',
-      defP1: 'Basketball Force is the ability to <strong>produce, absorb, control, redirect, and repeat force</strong> under game conditions.',
-      defP2: 'This system replaces vague descriptors like athleticism, explosiveness, and quickness — terms that lack specificity and cannot explain performance behavior.',
-      defP3: 'Every action in basketball occurs under time pressure, spatial constraints, perceptual demands, physical contact, and fatigue. Training must reflect this reality.',
-      defP4: 'Most systems overtrain <strong>production</strong> and undertrain absorption, control, and repeatability. This system corrects that imbalance.',
-
-      // CONTINUUM
-      continuumLabel: 'The force continuum',
-      continuumTitle: 'A continuous loop',
-      contNames: ['PRODUCE','ABSORB','CONTROL','REDIRECT','REPEAT'],
-      contDescs: [
-        'Generation of force — vertical, horizontal, lateral. The foundation most systems over-prioritize.',
-        'The ability to receive and dissipate force safely and efficiently. The best movers are often the best brakers.',
-        'Maintenance of structure, balance, and coordination under load. Force is only useful if it can be controlled.',
-        'Transition of force into new movement direction. Slow redirection limits game speed more than raw speed.',
-        'Sustaining performance across time, possessions, and fatigue. Performance breakdown under fatigue reveals true capacity.'
-      ],
-
-      // PILLARS
-      pillarsLabel: 'Performance pillars',
-      pillarsTitle: 'THE 5<br>PILLARS<br>OF FORCE',
-      pillarsText: 'Each pillar represents a distinct domain of force behavior. Elite players are not just physically gifted — they are complete across all five domains. Identifying gaps is the foundation of targeted development.',
-      pillarIndex: ['01 / PILLAR','02 / PILLAR','03 / PILLAR','04 / PILLAR','05 / PILLAR'],
-      pillarNames: ['Force Production','Force Absorption','Force Control','Force Redirection','Force Repeatability'],
-      pillarSubs: [
-        'Rate of Force Development, directional force, contextual application. Output with timing and direction.',
-        'Eccentric strength, braking mechanics, landing efficiency, deceleration strategy.',
-        'Balance under load, center of mass control, stability in motion. Organization under force.',
-        'Change of direction, transition efficiency, lateral movement. Efficiency of changing force vectors.',
-        'Fatigue resistance, repeated sprint ability, neuromuscular consistency across time.'
-      ],
-      pillarInsights: [
-        'Output without timing and direction has limited transfer.',
-        'The best movers are often the best brakers.',
-        'Force is only useful if it can be controlled.',
-        'Slow redirection limits game speed more than raw speed.',
-        'Breakdown under fatigue reveals true capacity.'
-      ],
-
-      // PLAYER TYPES
-      typesLabel: 'Player force identity',
-      typesTitle: 'WHO ARE YOU ON THE COURT?',
-      typesDesc: 'Every athlete can be classified by their force behavior profile. Understanding your identity is the starting point for targeted development.',
-      typeNames: ['PRODUCER','ABSORBER','REACTOR','ELASTIC MOVER','COMPLETE PLAYER'],
-      typeDescs: [
-        'High force output, low control. Explosive and powerful, but lacks the organization to translate output into consistent game performance.',
-        'Strong braking, limited explosiveness. Exceptional at receiving and dissipating force — but needs more production to be truly threatening.',
-        'Fast decisions, low physical force. Exceptional perception-action coupling but needs physical force development to maximize potential.',
-        'Efficient, fluid, reactive. Excels at reusing stored energy through the stretch-shortening cycle. The most economical mover on the court.',
-        'Balanced across all five domains. Produces, absorbs, controls, redirects, and repeats force under real game pressure. The development target.'
-      ],
-
-      // TECHNOLOGY
-      techLabel: 'Wheeler system',
-      techTitle: 'TECHNOLOGY<br>FRAMEWORK',
-      techSub: 'Measure · Diagnose · Guide',
-      yoyoImgLabel: 'Wheeler Isoinertial YoYo',
-      yoyoImgCaption: 'No spinal load',
-      featuredLabel: 'Featured technology',
-      yoyoTitle: 'WHEELER<br><span style="color:var(--orange)">YOYO</span>',
-      yoyoDesc1: 'A lower-body strength training system built on flywheel resistance — no spinal load required. The resistance is determined by flywheel speed; intensity is scaled by adding or removing weights. The integrated software measures concentric and eccentric phase strength in real time, enabling objective tracking of athlete evolution.',
-      yoyoDesc2: 'The eccentric overload generated by the device triggers musculoskeletal adaptations that improve protection mechanisms at myotendinous and joint levels, directly reducing the risk of injury.',
-      metricsLabel: 'Evaluates & trains',
-      metrics: ['Acceleration Force','Acceleration Power','Deceleration Force','Deceleration Power','Force Imbalance','Knee Injury Prevention'],
-      pills: ['Force Absorption','Eccentric Overload','Real-Time Monitoring','Injury Prevention','No Spinal Load'],
-
-      // FINAL
-      finalLabel: 'Final Principle',
-      finalText: "The difference between players is not how much force they can <span class='highlight'>produce</span> \u2014 it is how well they can <span class='highlight'>control, adapt, and repeat</span> force under pressure.",
-
-      // FOOTER
-      footerMid: 'Basketball Force Development &amp; Management',
-      footerCopy: '\u00a9 2025 \u2014 All Rights Reserved',
-    },
-
-    es: {
-      // NAV & HERO
-      eyebrow: 'Sistema de Desarrollo y Gestión de Fuerza en Baloncesto',
-      scroll: 'Bajar',
-      heroSub: 'Un sistema construido sobre una verdad: el baloncesto no es un deporte de fuerza, ni de velocidad, ni de condición física. Es un <strong>deporte de gestión de fuerza bajo el caos.</strong>',
-      statLabels: ['Pilares de Fuerza', 'Tecnología', 'Sistema'],
-
-      // DEFINITION
-      defLabel: 'Definición central',
-      defQuote: 'PRODUCIR.<br>ABSORBER.<br>CONTROLAR.<br>REDIRIGIR.<br><em>REPETIR.</em>',
-      defP1: 'La Fuerza en Baloncesto es la capacidad de <strong>producir, absorber, controlar, redirigir y repetir la fuerza</strong> bajo condiciones reales de juego.',
-      defP2: 'Este sistema reemplaza descriptores vagos como atletismo, explosividad y rapidez — términos que carecen de especificidad y no explican el comportamiento del rendimiento.',
-      defP3: 'Cada acción en el baloncesto ocurre bajo presión de tiempo, límites espaciales, exigencias perceptivas, contacto físico y fatiga. El entrenamiento debe reflejar esa realidad.',
-      defP4: 'La mayoría de los sistemas sobreentrenan la <strong>producción</strong> y subentrenan la absorción, el control y la repetibilidad. Este sistema corrige ese desequilibrio.',
-
-      // CONTINUUM
-      continuumLabel: 'El continuo de fuerza',
-      continuumTitle: 'Un ciclo continuo',
-      contNames: ['PRODUCIR','ABSORBER','CONTROLAR','REDIRIGIR','REPETIR'],
-      contDescs: [
-        'Generación de fuerza — vertical, horizontal, lateral. La base que la mayoría de los sistemas sobreprioriza.',
-        'Capacidad de recibir y disipar la fuerza de forma segura y eficiente. Los mejores atletas son a menudo los mejores al frenar.',
-        'Mantenimiento de estructura, equilibrio y coordinación bajo carga. La fuerza solo es útil si puede controlarse.',
-        'Transición de la fuerza hacia una nueva dirección de movimiento. Una redirección lenta limita más la velocidad de juego que la velocidad bruta.',
-        'Mantener el rendimiento a lo largo del tiempo, posesiones y fatiga. El deterioro bajo fatiga revela la verdadera capacidad.'
-      ],
-
-      // PILLARS
-      pillarsLabel: 'Pilares de rendimiento',
-      pillarsTitle: 'LOS 5<br>PILARES<br>DE FUERZA',
-      pillarsText: 'Cada pilar representa un dominio distinto del comportamiento de fuerza. Los jugadores de élite no solo son talentosos físicamente — son completos en los cinco dominios. Identificar brechas es la base del desarrollo dirigido.',
-      pillarIndex: ['01 / PILAR','02 / PILAR','03 / PILAR','04 / PILAR','05 / PILAR'],
-      pillarNames: ['Producción de Fuerza','Absorción de Fuerza','Control de Fuerza','Redirección de Fuerza','Repetibilidad de Fuerza'],
-      pillarSubs: [
-        'Tasa de Desarrollo de Fuerza, fuerza direccional, aplicación contextual. Potencia con tiempo y dirección.',
-        'Fuerza excéntrica, mecánica de frenado, eficiencia en el aterrizaje, estrategia de desaceleración.',
-        'Equilibrio bajo carga, control del centro de masa, estabilidad en movimiento. Organización bajo fuerza.',
-        'Cambio de dirección, eficiencia en transiciones, movimiento lateral. Eficiencia al cambiar vectores de fuerza.',
-        'Resistencia a la fatiga, capacidad de sprint repetido, consistencia neuromuscular a lo largo del tiempo.'
-      ],
-      pillarInsights: [
-        'El rendimiento sin tiempo y dirección tiene una transferencia limitada al juego.',
-        'Los mejores atletas en movimiento son a menudo los mejores al frenar.',
-        'La fuerza solo es útil si se puede controlar.',
-        'Una redirección lenta limita más la velocidad de juego que la velocidad bruta.',
-        'El deterioro bajo fatiga revela la verdadera capacidad del atleta.'
-      ],
-
-      // PLAYER TYPES
-      typesLabel: 'Identidad de fuerza del jugador',
-      typesTitle: '¿QUIÉN ERES EN LA CANCHA?',
-      typesDesc: 'Todo atleta puede clasificarse según su perfil de comportamiento de fuerza. Entender tu identidad es el punto de partida para un desarrollo específico.',
-      typeNames: ['PRODUCTOR','ABSORBEDOR','REACTOR','ATLETA ELÁSTICO','JUGADOR COMPLETO'],
-      typeDescs: [
-        'Alta producción de fuerza, bajo control. Explosivo y poderoso, pero le falta organización para traducir esa potencia en rendimiento consistente de juego.',
-        'Frenado fuerte, explosividad limitada. Excelente recibiendo y disipando fuerza — pero necesita más producción para ser realmente efectivo.',
-        'Decisiones rápidas, baja fuerza física. Acoplamiento excepcional percepción-acción, pero necesita desarrollar la fuerza física para maximizar su potencial.',
-        'Eficiente, fluido, reactivo. Destaca reutilizando energía almacenada a través del ciclo estiramiento-acortamiento. El atleta más económico en la cancha.',
-        'Equilibrado en los cinco dominios. Produce, absorbe, controla, redirige y repite la fuerza bajo presión real de juego. El objetivo del desarrollo.'
-      ],
-
-      // TECHNOLOGY
-      techLabel: 'Sistema Wheeler',
-      techTitle: 'MARCO<br>TECNOLÓGICO',
-      techSub: 'Medir · Diagnosticar · Guiar',
-      yoyoImgLabel: 'Wheeler YoYo Isoinercial',
-      yoyoImgCaption: 'Sin carga en la columna',
-      featuredLabel: 'Tecnología destacada',
-      yoyoTitle: 'WHEELER<br><span style="color:var(--orange)">YOYO</span>',
-      yoyoDesc1: 'Un sistema de entrenamiento de fuerza para el tren inferior basado en resistencia flywheel — sin carga en la columna vertebral. La resistencia la determina la velocidad del flywheel; la intensidad se ajusta añadiendo o quitando pesos. El software integrado mide la fuerza en las fases concéntrica y excéntrica en tiempo real, permitiendo un seguimiento objetivo de la evolución del atleta.',
-      yoyoDesc2: 'La sobrecarga excéntrica generada por el dispositivo desencadena adaptaciones musculoesqueléticas que mejoran los mecanismos de protección a nivel miotendinoso y articular, reduciendo directamente el riesgo de lesión musculoesquelética.',
-      metricsLabel: 'Evalúa y entrena',
-      metrics: ['Fuerza de Aceleración','Potencia de Aceleración','Fuerza de Desaceleración','Potencia de Desaceleración','Desequilibrio de Fuerza','Prevención de Lesión de Rodilla'],
-      pills: ['Absorción de Fuerza','Sobrecarga Excéntrica','Monitoreo en Tiempo Real','Prevención de Lesiones','Sin Carga en la Columna'],
-
-      // FINAL
-      finalLabel: 'Principio Final',
-      finalText: "La diferencia entre jugadores no es cuánta fuerza pueden <span class='highlight'>producir</span> \u2014 es qué tan bien pueden <span class='highlight'>controlar, adaptarse y repetir</span> la fuerza bajo presión.",
-
-      // FOOTER
-      footerMid: 'Desarrollo y Gestión de Fuerza en Baloncesto',
-      footerCopy: '\u00a9 2025 \u2014 Todos los Derechos Reservados',
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flywheel Basketball Training | Force and Braking Performance</title>
+  <meta name="description" content="A premium basketball performance website focused on flywheel training, force production, braking ability, and movement control for serious athletes and coaches." />
+  <meta name="theme-color" content="#0a0a0d" />
+  <meta name="keywords" content="basketball flywheel training, basketball braking, force production basketball, deceleration basketball, basketball performance training" />
+  <style>
+    :root {
+      --bg: #07080b;
+      --bg-soft: #0d1016;
+      --panel: rgba(255,255,255,0.045);
+      --panel-strong: rgba(255,255,255,0.08);
+      --text: #f5f3ee;
+      --muted: #b8bcc7;
+      --line: rgba(255,255,255,0.12);
+      --accent: #b8f516;
+      --accent-2: #7fe2ff;
+      --glow: rgba(184,245,22,0.28);
+      --shadow: 0 20px 60px rgba(0,0,0,0.38);
+      --radius: 22px;
+      --radius-sm: 16px;
+      --max: 1240px;
+      --transition: 260ms ease;
     }
-  };
 
-  let currentLang = 'en';
-
-  function setLang(lang) {
-    currentLang = lang;
-    const t = T[lang];
-    const q = sel => document.querySelector(sel);
-    const qa = sel => [...document.querySelectorAll(sel)];
-
-    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-    document.getElementById('lang-es').classList.toggle('active', lang === 'es');
-
-    // Hero
-    const eyebrow = q('.hero-eyebrow'); if (eyebrow) eyebrow.innerHTML = t.eyebrow;
-    const heroSub = q('.hero-sub'); if (heroSub) heroSub.innerHTML = t.heroSub;
-    const scrollSpan = q('.scroll-indicator span'); if (scrollSpan) scrollSpan.textContent = t.scroll;
-    qa('.hero-stat-label').forEach((el, i) => { if (t.statLabels[i]) el.textContent = t.statLabels[i]; });
-
-    // Definition
-    q('[data-key="defLabel"]') && (q('[data-key="defLabel"]').textContent = t.defLabel);
-    q('.big-quote') && (q('.big-quote').innerHTML = t.defQuote);
-    q('[data-key="defP1"]') && (q('[data-key="defP1"]').innerHTML = t.defP1);
-    q('[data-key="defP2"]') && (q('[data-key="defP2"]').textContent = t.defP2);
-    q('[data-key="defP3"]') && (q('[data-key="defP3"]').textContent = t.defP3);
-    q('[data-key="defP4"]') && (q('[data-key="defP4"]').innerHTML = t.defP4);
-
-    // Continuum
-    q('[data-key="continuumLabel"]') && (q('[data-key="continuumLabel"]').textContent = t.continuumLabel);
-    q('[data-key="continuumTitle"]') && (q('[data-key="continuumTitle"]').textContent = t.continuumTitle);
-    qa('.cont-name').forEach((el, i) => { if (t.contNames[i]) el.textContent = t.contNames[i]; });
-    qa('.cont-desc').forEach((el, i) => { if (t.contDescs[i]) el.textContent = t.contDescs[i]; });
-
-    // Pillars
-    q('[data-key="pillarsLabel"]') && (q('[data-key="pillarsLabel"]').textContent = t.pillarsLabel);
-    q('[data-key="pillarsTitle"]') && (q('[data-key="pillarsTitle"]').innerHTML = t.pillarsTitle);
-    q('[data-key="pillarsText"]') && (q('[data-key="pillarsText"]').textContent = t.pillarsText);
-    qa('.pillar-index').forEach((el, i) => { if (t.pillarIndex[i]) el.textContent = t.pillarIndex[i]; });
-    qa('.pillar-name').forEach((el, i) => { if (t.pillarNames[i]) el.textContent = t.pillarNames[i]; });
-    qa('.pillar-sub').forEach((el, i) => { if (t.pillarSubs[i]) el.textContent = t.pillarSubs[i]; });
-    qa('.pillar-insight').forEach((el, i) => { if (t.pillarInsights[i]) el.textContent = t.pillarInsights[i]; });
-
-    // Player types
-    q('[data-key="typesLabel"]') && (q('[data-key="typesLabel"]').textContent = t.typesLabel);
-    q('[data-key="typesTitle"]') && (q('[data-key="typesTitle"]').textContent = t.typesTitle);
-    q('[data-key="typesDesc"]') && (q('[data-key="typesDesc"]').textContent = t.typesDesc);
-    qa('.type-name').forEach((el, i) => { if (t.typeNames[i]) el.textContent = t.typeNames[i]; });
-    qa('.type-desc-text').forEach((el, i) => { if (t.typeDescs[i]) el.textContent = t.typeDescs[i]; });
-
-    // Technology
-    q('[data-key="techLabel"]') && (q('[data-key="techLabel"]').textContent = t.techLabel);
-    q('[data-key="techTitle"]') && (q('[data-key="techTitle"]').innerHTML = t.techTitle);
-    q('[data-key="techSub"]') && (q('[data-key="techSub"]').textContent = t.techSub);
-    q('[data-key="yoyoImgLabel"]') && (q('[data-key="yoyoImgLabel"]').textContent = t.yoyoImgLabel);
-    q('[data-key="yoyoImgCaption"]') && (q('[data-key="yoyoImgCaption"]').textContent = t.yoyoImgCaption);
-    q('[data-key="featuredLabel"]') && (q('[data-key="featuredLabel"]').textContent = t.featuredLabel);
-    q('[data-key="yoyoTitle"]') && (q('[data-key="yoyoTitle"]').innerHTML = t.yoyoTitle);
-    qa('.yoyo-desc').forEach((el, i) => {
-      if (i === 0 && t.yoyoDesc1) el.textContent = t.yoyoDesc1;
-      if (i === 1 && t.yoyoDesc2) el.textContent = t.yoyoDesc2;
-    });
-    q('[data-key="metricsLabel"]') && (q('[data-key="metricsLabel"]').textContent = t.metricsLabel);
-    qa('.yoyo-metric-label').forEach((el, i) => { if (t.metrics[i]) el.textContent = t.metrics[i]; });
-    qa('.tech-pill').forEach((el, i) => { if (t.pills[i]) el.textContent = t.pills[i]; });
-
-    // Final principle
-    q('[data-key="finalLabel"]') && (q('[data-key="finalLabel"]').textContent = t.finalLabel);
-    q('[data-key="finalText"]') && (q('[data-key="finalText"]').innerHTML = t.finalText);
-
-    // Footer
-    q('[data-key="footerMid"]') && (q('[data-key="footerMid"]').innerHTML = t.footerMid);
-    q('[data-key="footerCopy"]') && (q('[data-key="footerCopy"]').textContent = t.footerCopy);
-  }
-
-  // ── CONTINUUM ACCORDION ───────────────────────────────────────────────────
-  document.querySelectorAll('.cont-step').forEach(step => {
-    step.querySelector('.cont-trigger').addEventListener('click', () => {
-      const isOpen = step.classList.contains('active');
-      document.querySelectorAll('.cont-step').forEach(s => s.classList.remove('active'));
-      if (!isOpen) step.classList.add('active');
-    });
-  });
-
-  // ── PILLARS ACCORDION ─────────────────────────────────────────────────────
-  document.querySelectorAll('.pillar-card').forEach(card => {
-    card.querySelector('.pillar-trigger').addEventListener('click', () => {
-      const isOpen = card.classList.contains('active');
-      document.querySelectorAll('.pillar-card').forEach(c => c.classList.remove('active'));
-      if (!isOpen) card.classList.add('active');
-    });
-  });
-
-  // ── PLAYER IDENTITY ACCORDION ────────────────────────────────────────────
-  document.querySelectorAll('.type-row').forEach(row => {
-    row.querySelector('.type-trigger').addEventListener('click', () => {
-      const isOpen = row.classList.contains('active');
-      document.querySelectorAll('.type-row').forEach(r => r.classList.remove('active'));
-      if (!isOpen) row.classList.add('active');
-    });
-  });
-
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => {
-          entry.target.classList.add('visible');
-        }, 80);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  reveals.forEach(el => observer.observe(el));
-</script>
-
-<!-- ── BFORCE ADVISOR CHAT ─────────────────────────────────────────────── -->
-<style>
-  /* ── CHAT LANG TOGGLE ── */
-  .chat-lang-row {
-    display: flex; align-items: center; justify-content: center;
-    gap: 16px; padding: 11px 20px;
-    background: #fff;
-    border-bottom: 1px solid #e8e8e8;
-    flex-shrink: 0;
-  }
-  .chat-lang-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-    background: none; border: none;
-    border-bottom: 2px solid transparent;
-    color: #999; cursor: pointer; padding: 3px 2px;
-    font-weight: 500;
-    transition: color 0.2s, border-color 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .chat-lang-btn:hover { color: #333; }
-  .chat-lang-btn.active { color: var(--orange); border-color: var(--orange); }
-  .chat-lang-sep { font-size: 14px; color: #ccc; line-height: 1; }
-
-  /* ── CHAT FAB ── */
-  .chat-fab {
-    position: fixed; bottom: 28px; right: 28px; z-index: 600;
-    width: 60px; height: 60px; border-radius: 50%;
-    background: var(--orange); border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 24px rgba(232,93,36,0.5);
-    transition: transform 0.2s, box-shadow 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 32px rgba(232,93,36,0.65); }
-  .chat-fab svg { width: 26px; height: 26px; fill: #fff; }
-
-  /* Close button inside header */
-  .chat-close-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: rgba(255,255,255,0.12); border: none;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; flex-shrink: 0;
-    transition: background 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .chat-close-btn:hover { background: rgba(255,255,255,0.22); }
-
-  /* ── CHAT PANEL — DESKTOP ── */
-  .chat-panel {
-    position: fixed; bottom: 100px; right: 28px; z-index: 599;
-    width: 400px;
-    height: min(600px, calc(100svh - 140px));
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-    display: flex; flex-direction: column;
-    transform: translateY(16px) scale(0.97);
-    opacity: 0; pointer-events: none;
-    transition: transform 0.25s ease, opacity 0.25s ease;
-    border-radius: 16px;
-    overflow: hidden;
-  }
-  .chat-panel.open {
-    transform: translateY(0) scale(1);
-    opacity: 1; pointer-events: all;
-  }
-
-  /* ── PANEL HEADER ── */
-  .chat-header {
-    padding: 16px 20px;
-    background: #0a0a0a;
-    border-bottom: none;
-    display: flex; align-items: center; gap: 12px;
-    flex-shrink: 0;
-  }
-  .chat-avatar {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: var(--orange);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .chat-avatar svg { width: 18px; height: 18px; fill: #fff; }
-  .chat-header-text { flex: 1; }
-  .chat-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 17px; letter-spacing: 0.08em;
-    color: #fff; line-height: 1;
-  }
-  .chat-status {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--orange); margin-top: 4px;
-  }
-  .chat-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--orange); display: inline-block;
-    margin-right: 5px;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
-
-  /* ── MESSAGES ── */
-  .chat-messages {
-    flex: 1; overflow-y: auto; padding: 20px 16px;
-    display: flex; flex-direction: column; gap: 12px;
-    scroll-behavior: smooth;
-    background: #f7f7f5;
-  }
-  .chat-messages::-webkit-scrollbar { width: 4px; }
-  .chat-messages::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
-
-  .msg { display: flex; gap: 8px; align-items: flex-end; }
-  .msg.user { flex-direction: row-reverse; }
-
-  .msg-bubble {
-    max-width: 80%; padding: 11px 14px;
-    font-size: 14px; line-height: 1.6;
-    font-family: 'DM Sans', sans-serif; font-weight: 400;
-    border-radius: 16px;
-  }
-  .msg.advisor .msg-bubble {
-    background: #fff; color: #1a1a1a;
-    border-radius: 4px 16px 16px 16px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  }
-  .msg.user .msg-bubble {
-    background: var(--orange); color: #fff;
-    font-weight: 500;
-    border-radius: 16px 4px 16px 16px;
-  }
-  .msg-icon {
-    width: 30px; height: 30px; border-radius: 50%;
-    background: #0a0a0a;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .msg-icon svg { width: 14px; height: 14px; fill: var(--orange); }
-
-  /* ── TYPING INDICATOR ── */
-  .typing-indicator { display: none; }
-  .typing-indicator.visible { display: flex; }
-  .typing-dots { display: flex; gap: 5px; padding: 14px 18px; }
-  .typing-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #bbb;
-    animation: typingBounce 1.2s ease-in-out infinite;
-  }
-  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes typingBounce {
-    0%,60%,100% { transform: translateY(0); opacity:0.4; }
-    30% { transform: translateY(-5px); opacity:1; }
-  }
-
-
-
-  /* ── INPUT ROW ── */
-  .chat-input-row {
-    padding: 10px 12px 14px;
-    border-top: 1px solid #ebebeb;
-    display: flex; gap: 8px; align-items: flex-end;
-    flex-shrink: 0;
-    background: #fff;
-  }
-  .chat-input {
-    flex: 1; background: #f4f4f2; border: 1.5px solid #e8e8e8;
-    color: #1a1a1a; font-family: 'DM Sans', sans-serif;
-    font-size: 14px; font-weight: 400;
-    padding: 10px 14px; resize: none;
-    line-height: 1.5; max-height: 100px;
-    outline: none; border-radius: 24px;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-  }
-  .chat-input::placeholder { color: #aaa; }
-  .chat-input:focus { border-color: var(--orange); background: #fff; }
-  .chat-send {
-    width: 42px; height: 42px; flex-shrink: 0; border-radius: 50%;
-    background: var(--orange); border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, transform 0.1s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .chat-send:hover { background: #c94e1b; }
-  .chat-send:active { transform: scale(0.93); }
-  .chat-send svg { width: 17px; height: 17px; fill: #fff; }
-  .chat-send:disabled { opacity: 0.4; pointer-events: none; }
-
-  /* ── MOBILE: TRUE FULL SCREEN ── */
-  @media (max-width: 600px) {
-    .chat-fab {
-      bottom: 20px; right: 20px;
-      width: 56px; height: 56px;
-      z-index: 600;
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(127,226,255,0.12), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(184,245,22,0.12), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(255,255,255,0.05), transparent 40%),
+        linear-gradient(180deg, #06070a 0%, #090b10 35%, #06070a 100%);
+      overflow-x: hidden;
     }
-    .chat-panel {
+
+    body::before {
+      content: "";
       position: fixed;
       inset: 0;
-      width: 100%; height: 100%;
-      max-width: none; max-height: none;
-      border-radius: 0;
-      border: none;
-      box-shadow: none;
-      transform: translateY(100%);
-      opacity: 1;
-      z-index: 700;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 120px 120px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 85%);
+      opacity: 0.28;
+      z-index: -2;
     }
-    .chat-panel.open {
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(calc(100% - 2rem), var(--max));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.76rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 42px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .section {
+      padding: 6.5rem 0;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 0.97;
+      letter-spacing: -0.05em;
+      margin: 1rem 0 1rem;
+      max-width: 12ch;
+    }
+
+    .section-lead {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 68ch;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      background: rgba(7,8,11,0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.92rem;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      position: relative;
+      background:
+        linear-gradient(140deg, rgba(184,245,22,0.22), rgba(127,226,255,0.12)),
+        rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: inset 0 0 24px rgba(255,255,255,0.06), 0 0 30px rgba(184,245,22,0.12);
+      overflow: hidden;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      border-radius: 999px;
+    }
+
+    .brand-mark::before {
+      width: 22px;
+      height: 22px;
+      border: 1px solid rgba(255,255,255,0.55);
+      opacity: 0.5;
+    }
+
+    .brand-mark::after {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      box-shadow: 0 0 18px var(--glow);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-links a {
+      color: #d6d9df;
+      font-size: 0.93rem;
+      transition: color var(--transition), opacity var(--transition);
+      opacity: 0.84;
+    }
+
+    .nav-links a:hover { color: var(--text); opacity: 1; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .btn,
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      padding: 0.95rem 1.4rem;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition), border-color var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn {
+      color: #061006;
+      background: linear-gradient(135deg, var(--accent), #d9ff71);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 18px 36px rgba(184,245,22,0.18);
+    }
+
+    .btn:hover,
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      border: 1px solid rgba(255,255,255,0.14);
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hero {
+      min-height: calc(100vh - 78px);
+      display: grid;
+      align-items: center;
+      padding: 4rem 0 3rem;
+      position: relative;
+      overflow: clip;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .hero-copy h1 {
+      font-size: clamp(3.3rem, 8vw, 7rem);
+      line-height: 0.9;
+      letter-spacing: -0.075em;
+      margin: 1rem 0 1.2rem;
+      max-width: 9.5ch;
+    }
+
+    .hero-copy p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.85;
+      max-width: 62ch;
+      margin-bottom: 1.8rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      max-width: 760px;
+    }
+
+    .stat {
+      padding: 1rem 1rem 1.05rem;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.03);
+      border-radius: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.55rem;
+    }
+
+    .stat span {
+      color: var(--text);
+      font-size: 0.96rem;
+      line-height: 1.55;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 700px;
+      display: grid;
+      place-items: center;
+    }
+
+    .orb {
+      position: absolute;
+      width: 680px;
+      height: 680px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(184,245,22,0.22), transparent 26%),
+        radial-gradient(circle at 55% 55%, rgba(127,226,255,0.16), transparent 38%),
+        radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 68%);
+      filter: blur(8px);
+      opacity: 0.95;
+    }
+
+    .court-ring,
+    .court-ring::before,
+    .court-ring::after {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      content: "";
+    }
+
+    .court-ring {
+      width: 560px;
+      height: 560px;
+      box-shadow: inset 0 0 120px rgba(255,255,255,0.04);
+    }
+
+    .court-ring::before {
+      inset: 42px;
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .court-ring::after {
+      inset: 120px;
+      border-color: rgba(127,226,255,0.14);
+    }
+
+    .vector,
+    .vector-two,
+    .vector-three {
+      position: absolute;
+      border-radius: 999px;
+      transform: rotate(-22deg);
+      filter: blur(0.2px);
+    }
+
+    .vector {
+      width: 340px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(184,245,22,0.9), transparent);
+      top: 24%;
+      right: 8%;
+      box-shadow: 0 0 16px rgba(184,245,22,0.28);
+    }
+
+    .vector-two {
+      width: 280px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(127,226,255,0.8), transparent);
+      bottom: 23%;
+      left: 5%;
+      transform: rotate(28deg);
+      box-shadow: 0 0 16px rgba(127,226,255,0.18);
+    }
+
+    .vector-three {
+      width: 200px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+      bottom: 40%;
+      right: 16%;
+      transform: rotate(92deg);
+      opacity: 0.45;
+    }
+
+    .silhouette {
+      position: relative;
+      width: min(92%, 480px);
+      aspect-ratio: 0.72;
+      border-radius: 40px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03)),
+        linear-gradient(135deg, rgba(184,245,22,0.08), rgba(127,226,255,0.07));
+      border: 1px solid rgba(255,255,255,0.11);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .silhouette::before {
+      content: "";
+      position: absolute;
+      inset: auto auto 10% 12%;
+      width: 74%;
+      height: 76%;
+      background:
+        radial-gradient(circle at 50% 12%, rgba(255,255,255,0.72) 0 10%, transparent 10.5%),
+        linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.02));
+      clip-path: polygon(50% 0%, 58% 8%, 63% 22%, 76% 32%, 85% 53%, 92% 64%, 82% 66%, 75% 53%, 66% 46%, 60% 70%, 65% 100%, 53% 100%, 48% 74%, 40% 74%, 35% 100%, 22% 100%, 30% 66%, 26% 52%, 16% 64%, 7% 60%, 18% 45%, 27% 30%, 39% 20%, 43% 7%);
+      opacity: 0.82;
+      filter: blur(0.2px);
+    }
+
+    .silhouette::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(transparent 55%, rgba(0,0,0,0.62) 92%),
+        radial-gradient(circle at 60% 32%, rgba(184,245,22,0.22), transparent 34%),
+        radial-gradient(circle at 35% 58%, rgba(127,226,255,0.18), transparent 26%);
+      z-index: -1;
+    }
+
+    .floating-card {
+      position: absolute;
+      padding: 1rem 1rem 1.05rem;
+      width: 220px;
+      border-radius: 18px;
+      background: rgba(8,10,14,0.76);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+    }
+
+    .floating-card h3 {
+      margin: 0 0 0.55rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .floating-card p {
+      margin: 0;
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .card-left { left: -2%; bottom: 10%; }
+    .card-right { right: -2%; top: 12%; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .feature-grid,
+    .applications-grid,
+    .faq-grid,
+    .insight-grid,
+    .proof-grid {
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: transform var(--transition), border-color var(--transition), background var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(184,245,22,0.28);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.035));
+    }
+
+    .card .index {
+      display: inline-flex;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #081006;
+      background: linear-gradient(135deg, var(--accent), #e0ff89);
+      margin-bottom: 1rem;
+      box-shadow: 0 10px 24px rgba(184,245,22,0.18);
+    }
+
+    .card h3,
+    .application h3,
+    .faq-item h3,
+    .proof-card h3,
+    .insight h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.03em;
+    }
+
+    .card p,
+    .application p,
+    .faq-item p,
+    .proof-card p,
+    .insight p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 0.98rem;
+    }
+
+    .manifesto {
+      border-radius: 36px;
+      padding: 2rem;
+      background:
+        radial-gradient(circle at top right, rgba(184,245,22,0.12), transparent 30%),
+        linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--shadow);
+    }
+
+    .manifesto blockquote {
+      margin: 0;
+      font-size: clamp(1.5rem, 3.5vw, 3.1rem);
+      line-height: 1.1;
+      letter-spacing: -0.055em;
+      max-width: 18ch;
+    }
+
+    .manifesto p {
+      margin-top: 1rem;
+      color: var(--muted);
+      line-height: 1.85;
+      max-width: 62ch;
+    }
+
+    .marquee {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      margin-top: 1.4rem;
+    }
+
+    .pill {
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #dde1e9;
+      font-size: 0.88rem;
+    }
+
+    .insight-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .applications-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .faq-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .proof-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .insight,
+    .application,
+    .faq-item,
+    .proof-card {
+      padding: 1.35rem;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      margin: 0;
+      border: 0;
+    }
+
+    .cta-band {
+      padding: 2rem;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(127,226,255,0.16), transparent 28%),
+        radial-gradient(circle at 15% 80%, rgba(184,245,22,0.14), transparent 32%),
+        linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .cta-band h2 {
+      margin: 0 0 0.6rem;
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      max-width: 10ch;
+    }
+
+    .cta-band p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 52ch;
+      line-height: 1.8;
+    }
+
+    .form-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.03));
+      border-radius: 28px;
+      padding: 1.8rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--shadow);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #d9dde5;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      font: inherit;
+      outline: none;
+      transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(184,245,22,0.48);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 4px rgba(184,245,22,0.08);
+    }
+
+    textarea { min-height: 150px; resize: vertical; }
+
+    footer {
+      padding: 2rem 0 3rem;
+      color: var(--muted);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+      align-items: end;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .footer-links a {
+      color: #d9dde6;
+      opacity: 0.82;
+    }
+
+    .footer-links a:hover { opacity: 1; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
       transform: translateY(0);
     }
-    /* Hide FAB when chat is open — bulletproof */
-    body.chat-open .chat-fab {
-      display: none !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
+
+    .mobile-toggle {
+      display: none;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      font-size: 1.1rem;
     }
-    .chat-header {
-      padding: 20px 20px;
-      padding-top: max(20px, env(safe-area-inset-top));
-    }
-    .chat-messages {
-      padding: 16px 12px;
-    }
-    .chat-input-row {
-      padding: 10px 12px;
-      padding-bottom: max(16px, env(safe-area-inset-bottom));
-    }
-    .chat-input { font-size: 16px; } /* prevents iOS zoom */
-    .msg-bubble { font-size: 15px; max-width: 85%; }
-  }
-</style>
 
-<!-- FAB BUTTON -->
-<button class="chat-fab" id="chatFab" aria-label="Open BForce Advisor">
-  <svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
-</button>
-
-<!-- CHAT PANEL -->
-<div class="chat-panel" id="chatPanel" role="dialog" aria-label="BForce Advisor">
-  <div class="chat-header">
-    <div class="chat-avatar">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-    </div>
-    <div class="chat-header-text">
-      <div class="chat-name">BFORCE ADVISOR</div>
-      <div class="chat-status"><span class="chat-dot"></span>Online</div>
-    </div>
-    <button class="chat-close-btn" id="chatCloseBtn" aria-label="Close chat">
-      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
-    </button>
-  </div>
-  <div class="chat-lang-row">
-    <button class="chat-lang-btn active" id="chatLangEn" onclick="setChatLang('en')">English</button>
-    <span class="chat-lang-sep">·</span>
-    <button class="chat-lang-btn" id="chatLangEs" onclick="setChatLang('es')">Español</button>
-  </div>
-
-  <div class="chat-messages" id="chatMessages">
-    <div class="msg advisor">
-      <div class="msg-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-      </div>
-      <div class="msg-bubble">Hey, I'm your BForce Advisor — a specialist in isoinertial training, force development, and basketball braking mechanics. What do you want to know?</div>
-    </div>
-    <div class="msg advisor typing-indicator" id="typingIndicator">
-      <div class="msg-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-      </div>
-      <div class="msg-bubble typing-dots">
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-      </div>
-    </div>
-  </div>
-
-
-
-  <div class="chat-input-row">
-    <textarea class="chat-input" id="chatInput" placeholder="Ask about force, braking, isoinertia…" rows="1"></textarea>
-    <button class="chat-send" id="chatSend" aria-label="Send">
-      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-    </button>
-  </div>
-</div>
-
-<script>
-(function() {
-
-  // ── BILINGUAL CHAT CONTENT ─────────────────────────────────────────────────
-  const CHAT_COPY = {
-    en: {
-      greeting: "Hey, I'm your BForce Advisor — a specialist in isoinertial training, force development, and basketball braking mechanics. What do you want to know?",
-      placeholder: 'Ask about force, braking, isoinertia…',
-      status: 'Online',
-      errorMsg: 'Connection error. Please try again.',
-      fallbackMsg: 'Something went wrong. Please try again.',
-      chips: [
-        'What is isoinertial training?',
-        'How does braking affect performance?',
-        'Explain the force continuum',
-        'What is eccentric overload?'
-      ]
-    },
-    es: {
-      greeting: '¡Wepa! Soy tu Asesor BForce — especialista en entrenamiento isoinercial, desarrollo de fuerza y mecánica de frenado en baloncesto. ¿Qué quieres saber, campeón?',
-      placeholder: 'Pregunta sobre fuerza, frenado, isoinercial…',
-      status: 'En línea',
-      errorMsg: 'Error de conexión. Inténtalo de nuevo.',
-      fallbackMsg: 'Algo salió mal. Inténtalo de nuevo.',
-      chips: [
-        '¿Qué es el entrenamiento isoinercial?',
-        '¿Cómo afecta el frenado al rendimiento?',
-        'Explica el continuo de fuerza',
-        '¿Qué es la sobrecarga excéntrica?'
-      ]
-    }
-  };
-
-  // ── SYSTEM PROMPTS ─────────────────────────────────────────────────────────
-  const SYSTEM_EN = `You are the BForce Advisor — an elite expert in isoinertial training, basketball force development, and braking mechanics. You work within the Basketball Force Development & Management System (BFORCE).
-
-LANGUAGE: Always respond in English regardless of what language the user writes in, unless they explicitly ask you to switch.
-
-Your expertise covers:
-- Isoinertial (flywheel) training: how flywheel resistance works, the Wheeler YoYo device, eccentric overload, concentric vs eccentric phases, musculoskeletal adaptations, injury prevention at myotendinous and joint levels
-- The Force Continuum: Produce → Absorb → Control → Redirect → Repeat
-- The 5 Pillars of Basketball Force: Force Production, Force Absorption, Force Control, Force Redirection, Force Repeatability
-- Braking mechanics in basketball: deceleration strategy, braking force, eccentric strength, landing efficiency, why the best movers are often the best brakers
-- Rate of Force Development (RFD), horizontal vs vertical force, reactive intelligence
-- Player force identity types: Producer, Absorber, Reactor, Elastic Mover, Complete Player
-- Secondary variables: elasticity (stretch-shortening cycle), force asymmetry, force organization, reactive intelligence
-- The Wheeler technology system: Wheeler Jump, Wheeler Lights, Strobe Glasses, Wheeler Cone, Wheeler YoYo, Wheeler Rack
-
-Tone: confident, direct, expert — like a high-performance coach who has worked with elite athletes. Be specific and practical. Keep answers concise unless depth is needed. Use basketball context at all times. Never be vague. Avoid generic fitness advice — always ground answers in force mechanics and the BFORCE system.
-
-If asked about something outside your expertise, briefly acknowledge it and redirect to what you can help with.`;
-
-  const SYSTEM_ES = `Eres el Asesor BForce — un experto de élite en entrenamiento isoinercial, desarrollo de fuerza en baloncesto y mecánica de frenado. Trabajas dentro del Sistema de Desarrollo y Gestión de Fuerza en Baloncesto (BFORCE).
-
-IDIOMA: Responde SIEMPRE en español de Puerto Rico. Usa el vocabulario, expresiones y tono propios del español puertorriqueño. Por ejemplo: usa "cancha" en vez de "pista", "jonrón" no aplica aquí, habla con energía y directo como un coach que conoce la cultura del baloncesto boricua. Trata al usuario de "tú".
-
-Tu experiencia abarca:
-- Entrenamiento isoinercial (flywheel): cómo funciona la resistencia flywheel, el dispositivo Wheeler YoYo, sobrecarga excéntrica, fases concéntrica y excéntrica, adaptaciones musculoesqueléticas, prevención de lesiones a nivel miotendinoso y articular
-- El Continuo de Fuerza: Producir → Absorber → Controlar → Redirigir → Repetir
-- Los 5 Pilares de la Fuerza en Baloncesto: Producción de Fuerza, Absorción de Fuerza, Control de Fuerza, Redirección de Fuerza, Repetibilidad de Fuerza
-- Mecánica de frenado en baloncesto: estrategia de desaceleración, fuerza de frenado, fuerza excéntrica, eficiencia en el aterrizaje, por qué los mejores atletas en movimiento son a menudo los mejores al frenar
-- Tasa de Desarrollo de Fuerza (RFD), fuerza horizontal vs vertical, inteligencia reactiva
-- Tipos de identidad de fuerza del jugador: Productor, Absorbedor, Reactor, Atleta Elástico, Jugador Completo
-- Variables secundarias: elasticidad (ciclo estiramiento-acortamiento), asimetría de fuerza, organización de fuerza, inteligencia reactiva
-- El sistema de tecnología Wheeler: Wheeler Jump, Wheeler Lights, Strobe Glasses, Wheeler Cone, Wheeler YoYo, Wheeler Rack
-
-Tono: seguro, directo, experto — como un coach de alto rendimiento que ha trabajado con atletas de élite. Sé específico y práctico. Mantén las respuestas concisas a menos que se necesite profundidad. Usa el contexto del baloncesto en todo momento. Nunca seas vago. Evita los consejos genéricos de fitness — siempre fundamenta las respuestas en la mecánica de fuerza y el sistema BFORCE.
-
-Si te preguntan algo fuera de tu área, reconócelo brevemente y redirige a lo que puedes ayudar.`;
-
-  // ── DOM REFS ───────────────────────────────────────────────────────────────
-  const fab      = document.getElementById('chatFab');
-  const panel    = document.getElementById('chatPanel');
-  const msgWrap  = document.getElementById('chatMessages');
-  const input    = document.getElementById('chatInput');
-  const sendBtn  = document.getElementById('chatSend');
-  const typing   = document.getElementById('typingIndicator');
-  const statusEl = document.querySelector('.chat-status');
-
-  let history   = [];
-  let isLoading = false;
-  let chatLang  = 'en'; // mirrors page lang toggle
-
-  // ── SYNC WITH PAGE LANGUAGE TOGGLE ────────────────────────────────────────
-  const _origSetLang = window.setLang;
-  window.setLang = function(lang) {
-    if (_origSetLang) _origSetLang(lang);
-    updateChatLang(lang);
-  };
-
-  function updateChatLang(lang) {
-    chatLang = lang;
-    const copy = CHAT_COPY[lang];
-
-    // Buttons
-    const btnEn = document.getElementById('chatLangEn');
-    const btnEs = document.getElementById('chatLangEs');
-    if (btnEn) btnEn.classList.toggle('active', lang === 'en');
-    if (btnEs) btnEs.classList.toggle('active', lang === 'es');
-
-    // Placeholder
-    input.placeholder = copy.placeholder;
-
-    // Status dot text
-    if (statusEl) statusEl.innerHTML = `<span class="chat-dot"></span>${copy.status}`;
-
-    // Swap greeting — target the first non-typing advisor bubble
-    if (history.length === 0) {
-      const allAdvisorBubbles = msgWrap.querySelectorAll('.msg.advisor:not(.typing-indicator) .msg-bubble');
-      if (allAdvisorBubbles.length > 0) {
-        allAdvisorBubbles[0].textContent = copy.greeting;
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .split,
+      .footer-grid {
+        grid-template-columns: 1fr;
       }
+
+      .hero-visual {
+        min-height: 520px;
+        order: -1;
+      }
+
+      .hero-copy h1 { max-width: 11ch; }
+      .card-left { left: 2%; bottom: 2%; }
+      .card-right { right: 2%; top: 2%; }
+      .applications-grid,
+      .insight-grid,
+      .proof-grid,
+      .faq-grid,
+      .feature-grid { grid-template-columns: 1fr 1fr; }
     }
-  }
 
-  // exposed so the inline onclick can call it
-  window.setChatLang = updateChatLang;
+    @media (max-width: 820px) {
+      .nav {
+        flex-wrap: wrap;
+        padding: 1rem 0;
+      }
 
-  function openChat()  {
-    panel.classList.add('open');
-    document.body.classList.add('chat-open');
-    fab.style.setProperty('display', 'none', 'important');
-    fab.style.setProperty('visibility', 'hidden', 'important');
-    if (input) input.focus();
-  }
-  function closeChat() {
-    panel.classList.remove('open');
-    document.body.classList.remove('chat-open');
-    fab.style.removeProperty('display');
-    fab.style.removeProperty('visibility');
-  }
+      .mobile-toggle { display: inline-flex; align-items: center; justify-content: center; }
 
-  // ── TOGGLE PANEL ──────────────────────────────────────────────────────────
-  fab.addEventListener('click', openChat);
+      .nav-links {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.5rem 0 0.25rem;
+      }
 
-  const closeBtn = document.getElementById('chatCloseBtn');
-  if (closeBtn) closeBtn.addEventListener('click', closeChat);
+      .nav-links.open { display: flex; }
+      .nav-actions { margin-left: auto; }
+      .hero-meta,
+      .feature-grid,
+      .applications-grid,
+      .insight-grid,
+      .proof-grid,
+      .faq-grid,
+      .form-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 2rem; }
+      .hero-visual { min-height: 420px; }
+      .court-ring { width: 380px; height: 380px; }
+      .orb { width: 460px; height: 460px; }
+      .floating-card { position: relative; width: 100%; }
+      .card-left, .card-right { inset: auto; margin-top: 1rem; }
+      .cta-band { padding: 1.6rem; }
+    }
 
-  // ── AUTO-RESIZE TEXTAREA ──────────────────────────────────────────────────
-  input.addEventListener('input', () => {
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 100) + 'px';
-  });
+    @media (max-width: 560px) {
+      .container { width: min(calc(100% - 1.2rem), var(--max)); }
+      .section { padding: 5rem 0; }
+      .hero-copy h1 { font-size: clamp(2.75rem, 12vw, 4.35rem); }
+      .section-title { font-size: clamp(2rem, 8vw, 2.9rem); }
+      .manifesto,
+      .form-card,
+      .cta-band { border-radius: 24px; }
+      .btn,
+      .btn-secondary { width: 100%; }
+      .hero-actions { display: grid; }
+      .hero-visual { min-height: 360px; }
+      .silhouette { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <a href="#home" class="brand" aria-label="Go to homepage">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Force / Braking Basketball</span>
+      </a>
 
-  // ── SEND ON ENTER ─────────────────────────────────────────────────────────
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
-  });
-  sendBtn.addEventListener('click', send);
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">☰</button>
 
-  // ── ADD MESSAGE BUBBLE ────────────────────────────────────────────────────
-  function addMessage(role, text) {
-    const isAdvisor = role === 'advisor';
-    const div = document.createElement('div');
-    div.className = 'msg ' + (isAdvisor ? 'advisor' : 'user');
+      <nav class="nav-links" id="navLinks">
+        <a href="#home">Home</a>
+        <a href="#braking">Why Braking Matters</a>
+        <a href="#force">Force for Basketball</a>
+        <a href="#method">The Flywheel Method</a>
+        <a href="#applications">Applications</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </nav>
 
-    if (isAdvisor) {
-      div.innerHTML = `
-        <div class="msg-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      <div class="nav-actions">
+        <a href="#contact" class="btn-secondary">Request Info</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <span class="eyebrow">Basketball movement doctrine</span>
+          <h1>Force wins the gap. Braking wins the game.</h1>
+          <p>
+            Basketball performance is not defined by speed alone. It is defined by how force is created,
+            absorbed, organized, and redirected in the moments that decide separation, balance, recovery,
+            and command. This is a sharper way to train how the game is actually played.
+          </p>
+          <div class="hero-actions">
+            <a href="#method" class="btn">Explore the Method</a>
+            <a href="#braking" class="btn-secondary">Why Braking Matters</a>
+          </div>
+          <div class="hero-meta">
+            <div class="stat">
+              <strong>Force</strong>
+              <span>Create usable basketball output for first steps, finishes, rebounds, and repeated actions.</span>
+            </div>
+            <div class="stat">
+              <strong>Braking</strong>
+              <span>Own deceleration, absorb load, stop with control, and re-attack without wasted movement.</span>
+            </div>
+            <div class="stat">
+              <strong>Transfer</strong>
+              <span>Train movement quality that speaks directly to cuts, closeouts, landings, and recovery.</span>
+            </div>
+          </div>
         </div>
-        <div class="msg-bubble"></div>`;
-    } else {
-      div.innerHTML = `<div class="msg-bubble"></div>`;
-    }
 
-    if (typing && typing.parentNode === msgWrap) {
-      msgWrap.insertBefore(div, typing);
-    } else {
-      msgWrap.appendChild(div);
-    }
-    const bubble = div.querySelector('.msg-bubble');
-    if (isAdvisor && text === '__stream__') return bubble;
-    bubble.textContent = text;
-    scrollBottom();
-    return bubble;
-  }
+        <div class="hero-visual reveal" aria-hidden="true">
+          <div class="orb"></div>
+          <div class="court-ring"></div>
+          <div class="vector"></div>
+          <div class="vector-two"></div>
+          <div class="vector-three"></div>
+          <div class="silhouette"></div>
+          <div class="floating-card card-right">
+            <h3>Acceleration gets attention</h3>
+            <p>Braking changes the quality of what happens next: balance, re-direction, timing, and recovery.</p>
+          </div>
+          <div class="floating-card card-left">
+            <h3>Basketball is constant force</h3>
+            <p>Produce it. Absorb it. Control it. Redirect it. That relationship defines elite movement.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  function scrollBottom() { msgWrap.scrollTop = msgWrap.scrollHeight; }
+    <section class="section">
+      <div class="container split">
+        <div class="reveal">
+          <span class="eyebrow">The core idea</span>
+          <h2 class="section-title">Force creates separation. Braking owns the next move.</h2>
+          <p class="section-lead">
+            The game is full of violent transitions. Burst. Stop. Shift. Recover. Rise. Land. Attack again.
+            A player who only knows how to go fast is incomplete. The player who can organize force under
+            pressure has a deeper edge — one that shows up when the floor gets crowded, the space gets tight,
+            and decisions happen in a fraction of a second.
+          </p>
+        </div>
+        <div class="feature-grid reveal">
+          <article class="card">
+            <span class="index">01</span>
+            <h3>First Step Creation</h3>
+            <p>Usable force helps the body create separation without wasted rhythm, drifting posture, or delayed attack.</p>
+          </article>
+          <article class="card">
+            <span class="index">02</span>
+            <h3>Closeout Control</h3>
+            <p>Braking quality shapes how fast a player can arrive under control instead of flying through the play.</p>
+          </article>
+          <article class="card">
+            <span class="index">03</span>
+            <h3>Landing and Rebound Position</h3>
+            <p>Absorbing force cleanly helps athletes land better, stabilize faster, and own the next action.</p>
+          </article>
+          <article class="card">
+            <span class="index">04</span>
+            <h3>Defensive Recovery</h3>
+            <p>Stopping well is not passive. It is how the body reorganizes quickly enough to recover and strike again.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-  // ── SEND MESSAGE ──────────────────────────────────────────────────────────
-  async function send() {
-    const text = input.value.trim();
-    if (!text || isLoading) return;
+    <hr class="section-divider" />
 
-    input.value = '';
-    input.style.height = 'auto';
-    prompts.style.display = 'none';
-    isLoading = true;
-    sendBtn.disabled = true;
+    <section class="section" id="braking">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">Why braking matters</span>
+          <h2 class="section-title">Stopping is not a consequence. It is a skill.</h2>
+          <p class="section-lead">
+            In basketball, braking means more than simply slowing down. It is the ability to absorb force,
+            control momentum, organize body position, and create the conditions for the next movement.
+            The best movers are not just explosive. They are disciplined in the moments where control decides value.
+          </p>
+        </div>
 
-    addMessage('user', text);
-    history.push({ role: 'user', content: text });
+        <div class="insight-grid" style="margin-top: 2rem;">
+          <article class="insight reveal">
+            <h3>Braking protects force</h3>
+            <p>Force without control leaks into extra steps, poor angles, rushed posture, and wasted advantage. Better braking keeps output useful.</p>
+          </article>
+          <article class="insight reveal">
+            <h3>Braking sharpens redirection</h3>
+            <p>The cleanest changes of direction come from athletes who can stop into position before they ask the body to go again.</p>
+          </article>
+          <article class="insight reveal">
+            <h3>Braking changes game speed</h3>
+            <p>Players who stop well look more composed because their bodies can match the timing of the game instead of chasing it.</p>
+          </article>
+        </div>
 
-    typing.classList.add('visible');
-    scrollBottom();
+        <div class="manifesto reveal" style="margin-top: 2rem;">
+          <blockquote>
+            Basketball is not only about how fast you go. It is about how well you own the stop.
+          </blockquote>
+          <p>
+            Closeouts, counters, pull-ups, finishes through contact, defensive slides, landing mechanics, second jumps,
+            and recovery steps all live inside the quality of deceleration. That is why braking deserves more than a passing mention.
+            It deserves a central place in how basketball performance is trained.
+          </p>
+          <div class="marquee">
+            <span class="pill">Body control</span>
+            <span class="pill">Redirection</span>
+            <span class="pill">Balance under speed</span>
+            <span class="pill">Repeatable movement quality</span>
+            <span class="pill">Defensive response</span>
+            <span class="pill">Recovery speed</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    const systemPrompt = chatLang === 'es' ? SYSTEM_ES : SYSTEM_EN;
+    <hr class="section-divider" />
 
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          system: systemPrompt,
-          messages: history
-        })
+    <section class="section" id="force">
+      <div class="container split">
+        <div class="reveal">
+          <span class="eyebrow">Force for basketball</span>
+          <h2 class="section-title">Force is not just strength. It is usable basketball action.</h2>
+          <p class="section-lead">
+            In basketball, force shows up in the first step, in stance integrity, in finishing through contact,
+            in vertical projection, in rebounding position, and in the ability to repeat high-value movement without losing shape.
+            The question is not whether an athlete can produce force in isolation. The question is whether that force appears on the floor in a form the game can use.
+          </p>
+        </div>
+
+        <div class="feature-grid reveal">
+          <article class="card">
+            <span class="index">A</span>
+            <h3>First-Step Presence</h3>
+            <p>Useful force helps the body create immediate pressure into space instead of taking empty steps into the defense.</p>
+          </article>
+          <article class="card">
+            <span class="index">B</span>
+            <h3>Stance Integrity</h3>
+            <p>Force supports posture under movement so the athlete can attack, react, and recover from positions that hold up under stress.</p>
+          </article>
+          <article class="card">
+            <span class="index">C</span>
+            <h3>Vertical Expression</h3>
+            <p>Projection is not just about jumping high. It is about how cleanly force is organized and returned through the system.</p>
+          </article>
+          <article class="card">
+            <span class="index">D</span>
+            <h3>Repeated Output</h3>
+            <p>Basketball is not one effort. It is repeated effort. Better force capacity helps sustain quality deeper into the possession and the game.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="section" id="method">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">The flywheel method</span>
+          <h2 class="section-title">A training method built around output, control, and return.</h2>
+          <p class="section-lead">
+            Flywheel training creates resistance that responds to the athlete’s effort. The harder the output, the greater the demand to control the return.
+            That makes the method especially relevant to basketball, where force production and force absorption are constantly linked.
+          </p>
+        </div>
+
+        <div class="insight-grid" style="margin-top: 2rem;">
+          <article class="insight reveal">
+            <h3>Resistance that answers intent</h3>
+            <p>Instead of moving through a fixed load in a fixed way, the athlete feels a relationship between what is put into the movement and what must be managed coming back.</p>
+          </article>
+          <article class="insight reveal">
+            <h3>Concentric and eccentric in plain language</h3>
+            <p>First, you drive the movement. Then, you must receive it, control it, and organize the body for what comes next. That rhythm matters in basketball.</p>
+          </article>
+          <article class="insight reveal">
+            <h3>Decelerate. Re-organize. Re-attack.</h3>
+            <p>The method rewards intent, awareness, timing, and control. It does not just ask the athlete to produce force. It asks the athlete to own it.</p>
+          </article>
+        </div>
+
+        <div class="manifesto reveal" style="margin-top: 2rem;">
+          <blockquote>
+            Better movement is not only faster movement. It is more organized movement under force.
+          </blockquote>
+          <p>
+            That is the value of this method for basketball. It connects output to control in a way that feels closer to the sport’s real demands:
+            produce, absorb, stop, redirect, and go again with purpose.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="section" id="applications">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">Basketball applications</span>
+          <h2 class="section-title">Built for the stops, shifts, contacts, and recoveries that define the game.</h2>
+          <p class="section-lead">
+            Basketball-specific performance is never one-dimensional. Different roles express force and braking through different movement demands.
+            The method scales across positions, training ages, and development stages while keeping the game at the center.
+          </p>
+        </div>
+
+        <div class="applications-grid" style="margin-top: 2rem;">
+          <article class="application reveal">
+            <h3>Guards</h3>
+            <p>Create tighter changes of direction, sharper stopping into counters, better control in pull-up positions, and more efficient recovery after burst actions.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Wings</h3>
+            <p>Develop better transition between speed and balance, stronger takeoff and landing qualities, and cleaner organization through multi-action movement.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Bigs</h3>
+            <p>Support rebounding position, body control around contact, recovery from effort, and cleaner force expression in short-space movement.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Youth Development</h3>
+            <p>Introduce athletes to force awareness, movement discipline, deceleration quality, and the value of organized effort before chaos becomes habit.</p>
+          </article>
+          <article class="application reveal">
+            <h3>In-Season Support</h3>
+            <p>Use the method to keep performance qualities alive with smart intent and clean execution, without turning everything into unnecessary volume.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Defensive Movement</h3>
+            <p>Train the ability to close space, brake under speed, recover posture, and move again without losing the next read.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Finishing Through Contact</h3>
+            <p>Improve how the body holds position, produces force into traffic, and reorganizes after impact near the rim.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Rebounding and Landing Control</h3>
+            <p>Support force absorption after elevation, better landing decisions, and faster access to the second effort.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Multi-Directional Performance</h3>
+            <p>Train movement that respects basketball’s reality: not straight-line power alone, but angles, interruptions, recoveries, and redirection.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta-band reveal">
+          <div>
+            <span class="eyebrow">Performance doctrine</span>
+            <h2>Create force. Absorb force. Redirect the game.</h2>
+            <p>
+              This is not generic training language. It is a more honest model of basketball performance — one that treats braking as a high-level advantage,
+              not an afterthought.
+            </p>
+          </div>
+          <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+            <a href="#contact" class="btn">Start the Conversation</a>
+            <a href="#faq" class="btn-secondary">Read the FAQ</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">FAQ</span>
+          <h2 class="section-title">Sharp answers for serious basketball performance questions.</h2>
+        </div>
+
+        <div class="faq-grid" style="margin-top: 2rem;">
+          <article class="faq-item reveal">
+            <h3>What is flywheel training?</h3>
+            <p>It is a resistance method where the athlete’s effort helps shape the training demand, creating a stronger relationship between output and control.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Why does braking matter in basketball?</h3>
+            <p>Because cuts, closeouts, counters, landings, recoveries, and shot preparation all depend on how well the athlete can decelerate into position.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>How is this different from traditional lifting?</h3>
+            <p>It places a stronger spotlight on the connection between producing force and then controlling the return, which is highly relevant to the sport.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Is this only about strength?</h3>
+            <p>No. It is about usable force, body organization, movement control, and the quality of what happens after the first action.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Can this support change of direction?</h3>
+            <p>Yes. Better redirection starts with better braking. The athlete has to stop into a position that allows the next action to happen cleanly.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Does this only apply to advanced athletes?</h3>
+            <p>No. The principles matter across levels. The method can scale while still teaching force awareness and movement discipline.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Can it fit into performance work year-round?</h3>
+            <p>Yes. It can support off-season development, in-season maintenance, and broader long-term movement education when programmed with clarity.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>How does force transfer to basketball movement?</h3>
+            <p>Force matters when it shows up in first steps, stance quality, contact finishes, vertical actions, landings, and repeated movement under pressure.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Why is stopping such a big deal in basketball?</h3>
+            <p>Because the stop decides what the body can do next. Good braking protects balance, timing, posture, and the quality of re-acceleration.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Can this support performance reloading?</h3>
+            <p>Yes. It can help re-establish output, control, and movement confidence inside a performance progression without overcomplicating the process.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="section">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">Future expansion</span>
+          <h2 class="section-title">Built to grow into a larger performance platform.</h2>
+          <p class="section-lead">
+            The site structure is ready for deeper education, film breakdowns, articles, athlete stories, coach insights, and a stronger long-form authority strategy.
+          </p>
+        </div>
+
+        <div class="proof-grid" style="margin-top: 2rem;">
+          <article class="proof-card reveal">
+            <h3>Articles / Insights</h3>
+            <p>Placeholder space for future writing on deceleration, movement control, basketball force, and high-level training ideas.</p>
+          </article>
+          <article class="proof-card reveal">
+            <h3>Film Breakdown</h3>
+            <p>Placeholder area for teaching through game clips, positional movement examples, and real basketball situations.</p>
+          </article>
+          <article class="proof-card reveal">
+            <h3>Program Pathways</h3>
+            <p>Placeholder for athlete, coach, team, and academy entry points without forcing generic one-size-fits-all messaging.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="section" id="contact">
+      <div class="container split">
+        <div class="reveal">
+          <span class="eyebrow">Contact / CTA</span>
+          <h2 class="section-title">For athletes, coaches, trainers, and programs ready for a smarter model.</h2>
+          <p class="section-lead">
+            The conversation starts with one question: how should basketball performance really be trained when force and braking are treated as central, not secondary?
+          </p>
+          <div class="marquee">
+            <span class="pill">Athletes</span>
+            <span class="pill">Coaches</span>
+            <span class="pill">Trainers</span>
+            <span class="pill">Programs</span>
+            <span class="pill">Academies</span>
+          </div>
+        </div>
+
+        <div class="form-card reveal">
+          <form>
+            <div class="form-grid">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" placeholder="Your name" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" />
+              </div>
+              <div class="field">
+                <label for="role">I am</label>
+                <select id="role" name="role">
+                  <option>Athlete</option>
+                  <option>Coach</option>
+                  <option>Trainer</option>
+                  <option>Program / Academy</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="focus">Primary interest</label>
+                <select id="focus" name="focus">
+                  <option>Force development</option>
+                  <option>Braking and deceleration</option>
+                  <option>Full performance model</option>
+                  <option>Basketball applications</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Tell us about your athletes, your program, or the performance questions you want to solve."></textarea>
+              </div>
+              <div class="field full">
+                <button type="submit" class="btn">Request Information</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom: 0.8rem;">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Force / Braking Basketball</span>
+        </div>
+        <p style="max-width: 62ch; margin: 0; line-height: 1.8;">
+          A premium basketball performance experience centered on force production, braking ability, movement control, and the deeper mechanics of game transfer.
+        </p>
+      </div>
+      <div class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#braking">Braking</a>
+        <a href="#force">Force</a>
+        <a href="#method">Method</a>
+        <a href="#applications">Applications</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('mobileToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    toggle?.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
       });
+    }, { threshold: 0.12 });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || 'Request failed');
-      }
-
-      const data = await res.json();
-      typing.classList.remove('visible');
-
-      const reply = data.reply || CHAT_COPY[chatLang].fallbackMsg;
-      history.push({ role: 'assistant', content: reply });
-
-      const bubble = addMessage('advisor', '__stream__');
-      let i = 0;
-      const speed = reply.length > 400 ? 8 : 14;
-      (function typeChar() {
-        if (i < reply.length) {
-          bubble.textContent += reply[i++];
-          scrollBottom();
-          setTimeout(typeChar, speed);
-        }
-      })();
-
-    } catch (err) {
-      typing.classList.remove('visible');
-      addMessage('advisor', CHAT_COPY[chatLang].errorMsg + (err.message ? ' — ' + err.message : ''));
-    }
-
-    isLoading = false;
-    sendBtn.disabled = false;
-    typing.classList.remove('visible');
-    input.focus();
-  }
-
-})();
-</script>
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
