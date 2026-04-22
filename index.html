@@ -6,221 +6,1276 @@
   <title>Flywheel Basketball Training | Force and Braking Performance</title>
   <meta name="description" content="A premium basketball performance website focused on flywheel training, force production, braking ability, and movement control for serious athletes and coaches." />
   <meta name="theme-color" content="#0a0a0d" />
-  <link rel="stylesheet" href="assets/styles.css" />
+  <meta name="keywords" content="basketball flywheel training, basketball braking, force production basketball, deceleration basketball, basketball performance training" />
+  <style>
+    :root {
+      --bg: #07080b;
+      --bg-soft: #0d1016;
+      --panel: rgba(255,255,255,0.045);
+      --panel-strong: rgba(255,255,255,0.08);
+      --text: #f5f3ee;
+      --muted: #b8bcc7;
+      --line: rgba(255,255,255,0.12);
+      --accent: #b8f516;
+      --accent-2: #7fe2ff;
+      --glow: rgba(184,245,22,0.28);
+      --shadow: 0 20px 60px rgba(0,0,0,0.38);
+      --radius: 22px;
+      --radius-sm: 16px;
+      --max: 1240px;
+      --transition: 260ms ease;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(127,226,255,0.12), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(184,245,22,0.12), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(255,255,255,0.05), transparent 40%),
+        linear-gradient(180deg, #06070a 0%, #090b10 35%, #06070a 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 120px 120px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 85%);
+      opacity: 0.28;
+      z-index: -2;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(calc(100% - 2rem), var(--max));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.76rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 42px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .section {
+      padding: 6.5rem 0;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 0.97;
+      letter-spacing: -0.05em;
+      margin: 1rem 0 1rem;
+      max-width: 12ch;
+    }
+
+    .section-lead {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 68ch;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      background: rgba(7,8,11,0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.92rem;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      position: relative;
+      background:
+        linear-gradient(140deg, rgba(184,245,22,0.22), rgba(127,226,255,0.12)),
+        rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: inset 0 0 24px rgba(255,255,255,0.06), 0 0 30px rgba(184,245,22,0.12);
+      overflow: hidden;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      border-radius: 999px;
+    }
+
+    .brand-mark::before {
+      width: 22px;
+      height: 22px;
+      border: 1px solid rgba(255,255,255,0.55);
+      opacity: 0.5;
+    }
+
+    .brand-mark::after {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      box-shadow: 0 0 18px var(--glow);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-links a {
+      color: #d6d9df;
+      font-size: 0.93rem;
+      transition: color var(--transition), opacity var(--transition);
+      opacity: 0.84;
+    }
+
+    .nav-links a:hover { color: var(--text); opacity: 1; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .btn,
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      padding: 0.95rem 1.4rem;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition), border-color var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn {
+      color: #061006;
+      background: linear-gradient(135deg, var(--accent), #d9ff71);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 18px 36px rgba(184,245,22,0.18);
+    }
+
+    .btn:hover,
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      border: 1px solid rgba(255,255,255,0.14);
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hero {
+      min-height: calc(100vh - 78px);
+      display: grid;
+      align-items: center;
+      padding: 4rem 0 3rem;
+      position: relative;
+      overflow: clip;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .hero-copy h1 {
+      font-size: clamp(3.3rem, 8vw, 7rem);
+      line-height: 0.9;
+      letter-spacing: -0.075em;
+      margin: 1rem 0 1.2rem;
+      max-width: 9.5ch;
+    }
+
+    .hero-copy p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.85;
+      max-width: 62ch;
+      margin-bottom: 1.8rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      max-width: 760px;
+    }
+
+    .stat {
+      padding: 1rem 1rem 1.05rem;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.03);
+      border-radius: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.55rem;
+    }
+
+    .stat span {
+      color: var(--text);
+      font-size: 0.96rem;
+      line-height: 1.55;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 700px;
+      display: grid;
+      place-items: center;
+    }
+
+    .orb {
+      position: absolute;
+      width: 680px;
+      height: 680px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(184,245,22,0.22), transparent 26%),
+        radial-gradient(circle at 55% 55%, rgba(127,226,255,0.16), transparent 38%),
+        radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 68%);
+      filter: blur(8px);
+      opacity: 0.95;
+    }
+
+    .court-ring,
+    .court-ring::before,
+    .court-ring::after {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      content: "";
+    }
+
+    .court-ring {
+      width: 560px;
+      height: 560px;
+      box-shadow: inset 0 0 120px rgba(255,255,255,0.04);
+    }
+
+    .court-ring::before {
+      inset: 42px;
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .court-ring::after {
+      inset: 120px;
+      border-color: rgba(127,226,255,0.14);
+    }
+
+    .vector,
+    .vector-two,
+    .vector-three {
+      position: absolute;
+      border-radius: 999px;
+      transform: rotate(-22deg);
+      filter: blur(0.2px);
+    }
+
+    .vector {
+      width: 340px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(184,245,22,0.9), transparent);
+      top: 24%;
+      right: 8%;
+      box-shadow: 0 0 16px rgba(184,245,22,0.28);
+    }
+
+    .vector-two {
+      width: 280px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(127,226,255,0.8), transparent);
+      bottom: 23%;
+      left: 5%;
+      transform: rotate(28deg);
+      box-shadow: 0 0 16px rgba(127,226,255,0.18);
+    }
+
+    .vector-three {
+      width: 200px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+      bottom: 40%;
+      right: 16%;
+      transform: rotate(92deg);
+      opacity: 0.45;
+    }
+
+    .silhouette {
+      position: relative;
+      width: min(92%, 480px);
+      aspect-ratio: 0.72;
+      border-radius: 40px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03)),
+        linear-gradient(135deg, rgba(184,245,22,0.08), rgba(127,226,255,0.07));
+      border: 1px solid rgba(255,255,255,0.11);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .silhouette::before {
+      content: "";
+      position: absolute;
+      inset: auto auto 10% 12%;
+      width: 74%;
+      height: 76%;
+      background:
+        radial-gradient(circle at 50% 12%, rgba(255,255,255,0.72) 0 10%, transparent 10.5%),
+        linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.02));
+      clip-path: polygon(50% 0%, 58% 8%, 63% 22%, 76% 32%, 85% 53%, 92% 64%, 82% 66%, 75% 53%, 66% 46%, 60% 70%, 65% 100%, 53% 100%, 48% 74%, 40% 74%, 35% 100%, 22% 100%, 30% 66%, 26% 52%, 16% 64%, 7% 60%, 18% 45%, 27% 30%, 39% 20%, 43% 7%);
+      opacity: 0.82;
+      filter: blur(0.2px);
+    }
+
+    .silhouette::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(transparent 55%, rgba(0,0,0,0.62) 92%),
+        radial-gradient(circle at 60% 32%, rgba(184,245,22,0.22), transparent 34%),
+        radial-gradient(circle at 35% 58%, rgba(127,226,255,0.18), transparent 26%);
+      z-index: -1;
+    }
+
+    .floating-card {
+      position: absolute;
+      padding: 1rem 1rem 1.05rem;
+      width: 220px;
+      border-radius: 18px;
+      background: rgba(8,10,14,0.76);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+    }
+
+    .floating-card h3 {
+      margin: 0 0 0.55rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .floating-card p {
+      margin: 0;
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .card-left { left: -2%; bottom: 10%; }
+    .card-right { right: -2%; top: 12%; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .feature-grid,
+    .applications-grid,
+    .faq-grid,
+    .insight-grid,
+    .proof-grid {
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: transform var(--transition), border-color var(--transition), background var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(184,245,22,0.28);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.035));
+    }
+
+    .card .index {
+      display: inline-flex;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #081006;
+      background: linear-gradient(135deg, var(--accent), #e0ff89);
+      margin-bottom: 1rem;
+      box-shadow: 0 10px 24px rgba(184,245,22,0.18);
+    }
+
+    .card h3,
+    .application h3,
+    .faq-item h3,
+    .proof-card h3,
+    .insight h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.03em;
+    }
+
+    .card p,
+    .application p,
+    .faq-item p,
+    .proof-card p,
+    .insight p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 0.98rem;
+    }
+
+    .manifesto {
+      border-radius: 36px;
+      padding: 2rem;
+      background:
+        radial-gradient(circle at top right, rgba(184,245,22,0.12), transparent 30%),
+        linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--shadow);
+    }
+
+    .manifesto blockquote {
+      margin: 0;
+      font-size: clamp(1.5rem, 3.5vw, 3.1rem);
+      line-height: 1.1;
+      letter-spacing: -0.055em;
+      max-width: 18ch;
+    }
+
+    .manifesto p {
+      margin-top: 1rem;
+      color: var(--muted);
+      line-height: 1.85;
+      max-width: 62ch;
+    }
+
+    .marquee {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      margin-top: 1.4rem;
+    }
+
+    .pill {
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #dde1e9;
+      font-size: 0.88rem;
+    }
+
+    .insight-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .applications-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .faq-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .proof-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .insight,
+    .application,
+    .faq-item,
+    .proof-card {
+      padding: 1.35rem;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      margin: 0;
+      border: 0;
+    }
+
+    .cta-band {
+      padding: 2rem;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(127,226,255,0.16), transparent 28%),
+        radial-gradient(circle at 15% 80%, rgba(184,245,22,0.14), transparent 32%),
+        linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .cta-band h2 {
+      margin: 0 0 0.6rem;
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      max-width: 10ch;
+    }
+
+    .cta-band p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 52ch;
+      line-height: 1.8;
+    }
+
+    .form-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.03));
+      border-radius: 28px;
+      padding: 1.8rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--shadow);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #d9dde5;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      font: inherit;
+      outline: none;
+      transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(184,245,22,0.48);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 4px rgba(184,245,22,0.08);
+    }
+
+    textarea { min-height: 150px; resize: vertical; }
+
+    footer {
+      padding: 2rem 0 3rem;
+      color: var(--muted);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+      align-items: end;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .footer-links a {
+      color: #d9dde6;
+      opacity: 0.82;
+    }
+
+    .footer-links a:hover { opacity: 1; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mobile-toggle {
+      display: none;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .split,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        min-height: 520px;
+        order: -1;
+      }
+
+      .hero-copy h1 { max-width: 11ch; }
+      .card-left { left: 2%; bottom: 2%; }
+      .card-right { right: 2%; top: 2%; }
+      .applications-grid,
+      .insight-grid,
+      .proof-grid,
+      .faq-grid,
+      .feature-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 820px) {
+      .nav {
+        flex-wrap: wrap;
+        padding: 1rem 0;
+      }
+
+      .mobile-toggle { display: inline-flex; align-items: center; justify-content: center; }
+
+      .nav-links {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.5rem 0 0.25rem;
+      }
+
+      .nav-links.open { display: flex; }
+      .nav-actions { margin-left: auto; }
+      .hero-meta,
+      .feature-grid,
+      .applications-grid,
+      .insight-grid,
+      .proof-grid,
+      .faq-grid,
+      .form-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 2rem; }
+      .hero-visual { min-height: 420px; }
+      .court-ring { width: 380px; height: 380px; }
+      .orb { width: 460px; height: 460px; }
+      .floating-card { position: relative; width: 100%; }
+      .card-left, .card-right { inset: auto; margin-top: 1rem; }
+      .cta-band { padding: 1.6rem; }
+    }
+
+    @media (max-width: 560px) {
+      .container { width: min(calc(100% - 1.2rem), var(--max)); }
+      .section { padding: 5rem 0; }
+      .hero-copy h1 { font-size: clamp(2.75rem, 12vw, 4.35rem); }
+      .section-title { font-size: clamp(2rem, 8vw, 2.9rem); }
+      .manifesto,
+      .form-card,
+      .cta-band { border-radius: 24px; }
+      .btn,
+      .btn-secondary { width: 100%; }
+      .hero-actions { display: grid; }
+      .hero-visual { min-height: 360px; }
+      .silhouette { width: 100%; }
+    }
+  </style>
 </head>
 <body>
-  
-<header class="topbar">
-  <div class="container nav">
-    <a href="index.html" class="brand" aria-label="Go to homepage">
-      <span class="brand-mark" aria-hidden="true"></span>
-      <span data-en="Force / Braking Basketball" data-es="Fuerza / Frenado en Baloncesto">Force / Braking Basketball</span>
-    </a>
-    <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">☰</button>
-    <nav class="nav-links" id="navLinks">
-      <a href="index.html" class="active" data-en="Home" data-es="Inicio">Home</a>
-      <a href="why-braking-matters.html" data-en="Why Braking Matters" data-es="Por Qué Importa Frenar">Why Braking Matters</a>
-      <a href="force-for-basketball.html" data-en="Force for Basketball" data-es="Fuerza para Baloncesto">Force for Basketball</a>
-      <a href="the-flywheel-method.html" data-en="The Flywheel Method" data-es="El Método Flywheel">The Flywheel Method</a>
-      <a href="basketball-applications.html" data-en="Applications" data-es="Aplicaciones">Applications</a>
-      <a href="faq.html" data-en="FAQ" data-es="Preguntas">FAQ</a>
-      <a href="contact.html" data-en="Contact" data-es="Contacto">Contact</a>
-    </nav>
-    <div class="nav-actions">
-      <button class="lang-toggle" type="button">Español</button>
-      <a href="contact.html" class="btn-secondary" data-en="Request Info" data-es="Solicitar Información">Request Info</a>
+  <header class="topbar">
+    <div class="container nav">
+      <a href="#home" class="brand" aria-label="Go to homepage">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Force / Braking Basketball</span>
+      </a>
+
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">☰</button>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#home">Home</a>
+        <a href="#braking">Why Braking Matters</a>
+        <a href="#force">Force for Basketball</a>
+        <a href="#method">The Flywheel Method</a>
+        <a href="#applications">Applications</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="#contact" class="btn-secondary">Request Info</a>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
   <main>
-    
-<section class="hero">
-  <div class="container hero-grid">
-    <div class="hero-copy reveal">
-      <span class="eyebrow" data-en="Basketball movement doctrine" data-es="Doctrina de movimiento en baloncesto">Basketball movement doctrine</span>
-      <h1 data-en="Force wins the gap. Braking wins the game." data-es="La fuerza gana el espacio. El frenado gana el juego.">Force wins the gap. Braking wins the game.</h1>
-      <p data-en="Basketball performance is not defined by speed alone. It is defined by how force is created, absorbed, organized, and redirected in the moments that decide separation, balance, recovery, and command. This is a sharper way to train how the game is actually played."
-         data-es="El rendimiento en baloncesto no se define solo por la velocidad. Se define por cómo se crea, se absorbe, se organiza y se redirige la fuerza en los momentos que deciden separación, balance, recuperación y control. Esta es una forma más precisa de entrenar como realmente se juega el deporte.">
-         Basketball performance is not defined by speed alone. It is defined by how force is created, absorbed, organized, and redirected in the moments that decide separation, balance, recovery, and command. This is a sharper way to train how the game is actually played.
-      </p>
-      <div class="hero-actions">
-        <a href="the-flywheel-method.html" class="btn" data-en="Explore the Method" data-es="Explora el Método">Explore the Method</a>
-        <a href="why-braking-matters.html" class="btn-secondary" data-en="Why Braking Matters" data-es="Por Qué Importa Frenar">Why Braking Matters</a>
-      </div>
-      <div class="hero-meta">
-        <div class="stat">
-          <strong data-en="Force" data-es="Fuerza">Force</strong>
-          <span data-en="Create usable basketball output for first steps, finishes, rebounds, and repeated actions."
-                data-es="Crea producción útil para primeros pasos, definiciones, rebotes y acciones repetidas en baloncesto.">
-                Create usable basketball output for first steps, finishes, rebounds, and repeated actions.
-          </span>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <span class="eyebrow">Basketball movement doctrine</span>
+          <h1>Force wins the gap. Braking wins the game.</h1>
+          <p>
+            Basketball performance is not defined by speed alone. It is defined by how force is created,
+            absorbed, organized, and redirected in the moments that decide separation, balance, recovery,
+            and command. This is a sharper way to train how the game is actually played.
+          </p>
+          <div class="hero-actions">
+            <a href="#method" class="btn">Explore the Method</a>
+            <a href="#braking" class="btn-secondary">Why Braking Matters</a>
+          </div>
+          <div class="hero-meta">
+            <div class="stat">
+              <strong>Force</strong>
+              <span>Create usable basketball output for first steps, finishes, rebounds, and repeated actions.</span>
+            </div>
+            <div class="stat">
+              <strong>Braking</strong>
+              <span>Own deceleration, absorb load, stop with control, and re-attack without wasted movement.</span>
+            </div>
+            <div class="stat">
+              <strong>Transfer</strong>
+              <span>Train movement quality that speaks directly to cuts, closeouts, landings, and recovery.</span>
+            </div>
+          </div>
         </div>
-        <div class="stat">
-          <strong data-en="Braking" data-es="Frenado">Braking</strong>
-          <span data-en="Own deceleration, absorb load, stop with control, and re-attack without wasted movement."
-                data-es="Domina la desaceleración, absorbe carga, detente con control y vuelve a atacar sin movimiento desperdiciado.">
-                Own deceleration, absorb load, stop with control, and re-attack without wasted movement.
-          </span>
+
+        <div class="hero-visual reveal" aria-hidden="true">
+          <div class="orb"></div>
+          <div class="court-ring"></div>
+          <div class="vector"></div>
+          <div class="vector-two"></div>
+          <div class="vector-three"></div>
+          <div class="silhouette"></div>
+          <div class="floating-card card-right">
+            <h3>Acceleration gets attention</h3>
+            <p>Braking changes the quality of what happens next: balance, re-direction, timing, and recovery.</p>
+          </div>
+          <div class="floating-card card-left">
+            <h3>Basketball is constant force</h3>
+            <p>Produce it. Absorb it. Control it. Redirect it. That relationship defines elite movement.</p>
+          </div>
         </div>
-        <div class="stat">
-          <strong data-en="Transfer" data-es="Transferencia">Transfer</strong>
-          <span data-en="Train movement quality that speaks directly to cuts, closeouts, landings, and recovery."
-                data-es="Entrena una calidad de movimiento que conecte directamente con cortes, closeouts, aterrizajes y recuperación.">
-                Train movement quality that speaks directly to cuts, closeouts, landings, and recovery.
-          </span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container split">
+        <div class="reveal">
+          <span class="eyebrow">The core idea</span>
+          <h2 class="section-title">Force creates separation. Braking owns the next move.</h2>
+          <p class="section-lead">
+            The game is full of violent transitions. Burst. Stop. Shift. Recover. Rise. Land. Attack again.
+            A player who only knows how to go fast is incomplete. The player who can organize force under
+            pressure has a deeper edge — one that shows up when the floor gets crowded, the space gets tight,
+            and decisions happen in a fraction of a second.
+          </p>
+        </div>
+        <div class="feature-grid reveal">
+          <article class="card">
+            <span class="index">01</span>
+            <h3>First Step Creation</h3>
+            <p>Usable force helps the body create separation without wasted rhythm, drifting posture, or delayed attack.</p>
+          </article>
+          <article class="card">
+            <span class="index">02</span>
+            <h3>Closeout Control</h3>
+            <p>Braking quality shapes how fast a player can arrive under control instead of flying through the play.</p>
+          </article>
+          <article class="card">
+            <span class="index">03</span>
+            <h3>Landing and Rebound Position</h3>
+            <p>Absorbing force cleanly helps athletes land better, stabilize faster, and own the next action.</p>
+          </article>
+          <article class="card">
+            <span class="index">04</span>
+            <h3>Defensive Recovery</h3>
+            <p>Stopping well is not passive. It is how the body reorganizes quickly enough to recover and strike again.</p>
+          </article>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="hero-visual reveal" aria-hidden="true">
-      <div class="orb"></div>
-      <div class="ring"></div>
-      <div class="vector"></div>
-      <div class="vector2"></div>
-      <div class="vector3"></div>
-      <div class="figure-card"></div>
-      <div class="float-card right">
-        <span class="mini-title" data-en="Attention" data-es="Atención">Attention</span>
-        <p data-en="Acceleration gets attention. Braking changes the quality of what happens next."
-           data-es="La aceleración llama la atención. El frenado cambia la calidad de lo que pasa después.">
-           Acceleration gets attention. Braking changes the quality of what happens next.
-        </p>
+    <hr class="section-divider" />
+
+    <section class="section" id="braking">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">Why braking matters</span>
+          <h2 class="section-title">Stopping is not a consequence. It is a skill.</h2>
+          <p class="section-lead">
+            In basketball, braking means more than simply slowing down. It is the ability to absorb force,
+            control momentum, organize body position, and create the conditions for the next movement.
+            The best movers are not just explosive. They are disciplined in the moments where control decides value.
+          </p>
+        </div>
+
+        <div class="insight-grid" style="margin-top: 2rem;">
+          <article class="insight reveal">
+            <h3>Braking protects force</h3>
+            <p>Force without control leaks into extra steps, poor angles, rushed posture, and wasted advantage. Better braking keeps output useful.</p>
+          </article>
+          <article class="insight reveal">
+            <h3>Braking sharpens redirection</h3>
+            <p>The cleanest changes of direction come from athletes who can stop into position before they ask the body to go again.</p>
+          </article>
+          <article class="insight reveal">
+            <h3>Braking changes game speed</h3>
+            <p>Players who stop well look more composed because their bodies can match the timing of the game instead of chasing it.</p>
+          </article>
+        </div>
+
+        <div class="manifesto reveal" style="margin-top: 2rem;">
+          <blockquote>
+            Basketball is not only about how fast you go. It is about how well you own the stop.
+          </blockquote>
+          <p>
+            Closeouts, counters, pull-ups, finishes through contact, defensive slides, landing mechanics, second jumps,
+            and recovery steps all live inside the quality of deceleration. That is why braking deserves more than a passing mention.
+            It deserves a central place in how basketball performance is trained.
+          </p>
+          <div class="marquee">
+            <span class="pill">Body control</span>
+            <span class="pill">Redirection</span>
+            <span class="pill">Balance under speed</span>
+            <span class="pill">Repeatable movement quality</span>
+            <span class="pill">Defensive response</span>
+            <span class="pill">Recovery speed</span>
+          </div>
+        </div>
       </div>
-      <div class="float-card left">
-        <span class="mini-title" data-en="Reality" data-es="Realidad">Reality</span>
-        <p data-en="Basketball is constant force production and force absorption."
-           data-es="El baloncesto es producción constante de fuerza y absorción constante de fuerza.">
-           Basketball is constant force production and force absorption.
-        </p>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="section" id="force">
+      <div class="container split">
+        <div class="reveal">
+          <span class="eyebrow">Force for basketball</span>
+          <h2 class="section-title">Force is not just strength. It is usable basketball action.</h2>
+          <p class="section-lead">
+            In basketball, force shows up in the first step, in stance integrity, in finishing through contact,
+            in vertical projection, in rebounding position, and in the ability to repeat high-value movement without losing shape.
+            The question is not whether an athlete can produce force in isolation. The question is whether that force appears on the floor in a form the game can use.
+          </p>
+        </div>
+
+        <div class="feature-grid reveal">
+          <article class="card">
+            <span class="index">A</span>
+            <h3>First-Step Presence</h3>
+            <p>Useful force helps the body create immediate pressure into space instead of taking empty steps into the defense.</p>
+          </article>
+          <article class="card">
+            <span class="index">B</span>
+            <h3>Stance Integrity</h3>
+            <p>Force supports posture under movement so the athlete can attack, react, and recover from positions that hold up under stress.</p>
+          </article>
+          <article class="card">
+            <span class="index">C</span>
+            <h3>Vertical Expression</h3>
+            <p>Projection is not just about jumping high. It is about how cleanly force is organized and returned through the system.</p>
+          </article>
+          <article class="card">
+            <span class="index">D</span>
+            <h3>Repeated Output</h3>
+            <p>Basketball is not one effort. It is repeated effort. Better force capacity helps sustain quality deeper into the possession and the game.</p>
+          </article>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section class="section">
-  <div class="container split">
-    <div class="reveal">
-      <span class="eyebrow" data-en="The core idea" data-es="La idea central">The core idea</span>
-      <h2 class="section-title" data-en="Force creates separation. Braking owns the next move."
-          data-es="La fuerza crea separación. El frenado domina la próxima acción.">
-          Force creates separation. Braking owns the next move.
-      </h2>
-      <p class="section-lead"
-         data-en="The game is full of violent transitions. Burst. Stop. Shift. Recover. Rise. Land. Attack again. A player who only knows how to go fast is incomplete. The player who can organize force under pressure has a deeper edge — one that shows up when the floor gets crowded, the space gets tight, and decisions happen in a fraction of a second."
-         data-es="El juego está lleno de transiciones violentas. Explota. Frena. Cambia. Recupera. Eleva. Aterriza. Ataca otra vez. Un jugador que solo sabe ir rápido está incompleto. El jugador que puede organizar la fuerza bajo presión tiene una ventaja más profunda: una que aparece cuando la cancha se llena, el espacio se reduce y las decisiones ocurren en una fracción de segundo.">
-         The game is full of violent transitions. Burst. Stop. Shift. Recover. Rise. Land. Attack again. A player who only knows how to go fast is incomplete. The player who can organize force under pressure has a deeper edge — one that shows up when the floor gets crowded, the space gets tight, and decisions happen in a fraction of a second.
-      </p>
-    </div>
-    <div class="feature-grid reveal">
-      <article class="card">
-        <span class="index">01</span>
-        <h3 data-en="First Step Creation" data-es="Creación del Primer Paso">First Step Creation</h3>
-        <p data-en="Usable force helps the body create separation without wasted rhythm, drifting posture, or delayed attack."
-           data-es="La fuerza útil ayuda al cuerpo a crear separación sin ritmo desperdiciado, postura flotando o ataque tardío.">
-           Usable force helps the body create separation without wasted rhythm, drifting posture, or delayed attack.
-        </p>
-      </article>
-      <article class="card">
-        <span class="index">02</span>
-        <h3 data-en="Closeout Control" data-es="Control del Closeout">Closeout Control</h3>
-        <p data-en="Braking quality shapes how fast a player can arrive under control instead of flying through the play."
-           data-es="La calidad del frenado define cuán rápido un jugador puede llegar con control en vez de pasarse de la jugada.">
-           Braking quality shapes how fast a player can arrive under control instead of flying through the play.
-        </p>
-      </article>
-      <article class="card">
-        <span class="index">03</span>
-        <h3 data-en="Landing and Rebound Position" data-es="Aterrizaje y Posición de Rebote">Landing and Rebound Position</h3>
-        <p data-en="Absorbing force cleanly helps athletes land better, stabilize faster, and own the next action."
-           data-es="Absorber fuerza con limpieza ayuda a aterrizar mejor, estabilizarse más rápido y dominar la próxima acción.">
-           Absorbing force cleanly helps athletes land better, stabilize faster, and own the next action.
-        </p>
-      </article>
-      <article class="card">
-        <span class="index">04</span>
-        <h3 data-en="Defensive Recovery" data-es="Recuperación Defensiva">Defensive Recovery</h3>
-        <p data-en="Stopping well is how the body reorganizes quickly enough to recover and strike again."
-           data-es="Frenar bien es cómo el cuerpo se reorganiza con suficiente rapidez para recuperar y responder otra vez.">
-           Stopping well is how the body reorganizes quickly enough to recover and strike again.
-        </p>
-      </article>
-    </div>
-  </div>
-</section>
+    <hr class="section-divider" />
 
-<hr class="section-divider" />
+    <section class="section" id="method">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">The flywheel method</span>
+          <h2 class="section-title">A training method built around output, control, and return.</h2>
+          <p class="section-lead">
+            Flywheel training creates resistance that responds to the athlete’s effort. The harder the output, the greater the demand to control the return.
+            That makes the method especially relevant to basketball, where force production and force absorption are constantly linked.
+          </p>
+        </div>
 
-<section class="section">
-  <div class="container">
-    <div class="quote-panel reveal">
-      <blockquote data-en="Basketball is not only about how fast you go. It is about how well you own the stop."
-                  data-es="El baloncesto no se trata solo de cuán rápido vas. Se trata de cuán bien dominas el frenado.">
-                  Basketball is not only about how fast you go. It is about how well you own the stop.
-      </blockquote>
-      <p data-en="Every cut, closeout, landing, rebound, finish through contact, and recovery step lives inside the relationship between force and braking."
-         data-es="Cada corte, closeout, aterrizaje, rebote, definición con contacto y paso de recuperación vive dentro de la relación entre fuerza y frenado.">
-         Every cut, closeout, landing, rebound, finish through contact, and recovery step lives inside the relationship between force and braking.
-      </p>
-      <div class="pills">
-        <span data-en="First step" data-es="Primer paso">First step</span>
-        <span data-en="Closeout" data-es="Closeout">Closeout</span>
-        <span data-en="Change of direction" data-es="Cambio de dirección">Change of direction</span>
-        <span data-en="Defensive recovery" data-es="Recuperación defensiva">Defensive recovery</span>
-        <span data-en="Landing control" data-es="Control al aterrizar">Landing control</span>
-        <span data-en="Finishing through contact" data-es="Definir con contacto">Finishing through contact</span>
+        <div class="insight-grid" style="margin-top: 2rem;">
+          <article class="insight reveal">
+            <h3>Resistance that answers intent</h3>
+            <p>Instead of moving through a fixed load in a fixed way, the athlete feels a relationship between what is put into the movement and what must be managed coming back.</p>
+          </article>
+          <article class="insight reveal">
+            <h3>Concentric and eccentric in plain language</h3>
+            <p>First, you drive the movement. Then, you must receive it, control it, and organize the body for what comes next. That rhythm matters in basketball.</p>
+          </article>
+          <article class="insight reveal">
+            <h3>Decelerate. Re-organize. Re-attack.</h3>
+            <p>The method rewards intent, awareness, timing, and control. It does not just ask the athlete to produce force. It asks the athlete to own it.</p>
+          </article>
+        </div>
+
+        <div class="manifesto reveal" style="margin-top: 2rem;">
+          <blockquote>
+            Better movement is not only faster movement. It is more organized movement under force.
+          </blockquote>
+          <p>
+            That is the value of this method for basketball. It connects output to control in a way that feels closer to the sport’s real demands:
+            produce, absorb, stop, redirect, and go again with purpose.
+          </p>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section class="section">
-  <div class="container cta-band reveal">
-    <div>
-      <span class="eyebrow" data-en="Masterpiece build" data-es="Construcción maestra">Masterpiece build</span>
-      <h2 data-en="Train force. Master braking. Change the game."
-          data-es="Entrena la fuerza. Domina el frenado. Cambia el juego.">
-          Train force. Master braking. Change the game.
-      </h2>
-      <p data-en="Move into the full system: the braking argument, force development, the flywheel method, practical applications, and a clean contact path."
-         data-es="Entra al sistema completo: el argumento del frenado, el desarrollo de fuerza, el método flywheel, las aplicaciones prácticas y una ruta clara de contacto.">
-         Move into the full system: the braking argument, force development, the flywheel method, practical applications, and a clean contact path.
-      </p>
-    </div>
-    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-      <a href="the-flywheel-method.html" class="btn" data-en="Explore the Method" data-es="Explora el Método">Explore the Method</a>
-      <a href="contact.html" class="btn-secondary" data-en="Start the Conversation" data-es="Comienza la Conversación">Start the Conversation</a>
-    </div>
-  </div>
-</section>
+    <hr class="section-divider" />
 
+    <section class="section" id="applications">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">Basketball applications</span>
+          <h2 class="section-title">Built for the stops, shifts, contacts, and recoveries that define the game.</h2>
+          <p class="section-lead">
+            Basketball-specific performance is never one-dimensional. Different roles express force and braking through different movement demands.
+            The method scales across positions, training ages, and development stages while keeping the game at the center.
+          </p>
+        </div>
+
+        <div class="applications-grid" style="margin-top: 2rem;">
+          <article class="application reveal">
+            <h3>Guards</h3>
+            <p>Create tighter changes of direction, sharper stopping into counters, better control in pull-up positions, and more efficient recovery after burst actions.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Wings</h3>
+            <p>Develop better transition between speed and balance, stronger takeoff and landing qualities, and cleaner organization through multi-action movement.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Bigs</h3>
+            <p>Support rebounding position, body control around contact, recovery from effort, and cleaner force expression in short-space movement.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Youth Development</h3>
+            <p>Introduce athletes to force awareness, movement discipline, deceleration quality, and the value of organized effort before chaos becomes habit.</p>
+          </article>
+          <article class="application reveal">
+            <h3>In-Season Support</h3>
+            <p>Use the method to keep performance qualities alive with smart intent and clean execution, without turning everything into unnecessary volume.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Defensive Movement</h3>
+            <p>Train the ability to close space, brake under speed, recover posture, and move again without losing the next read.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Finishing Through Contact</h3>
+            <p>Improve how the body holds position, produces force into traffic, and reorganizes after impact near the rim.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Rebounding and Landing Control</h3>
+            <p>Support force absorption after elevation, better landing decisions, and faster access to the second effort.</p>
+          </article>
+          <article class="application reveal">
+            <h3>Multi-Directional Performance</h3>
+            <p>Train movement that respects basketball’s reality: not straight-line power alone, but angles, interruptions, recoveries, and redirection.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta-band reveal">
+          <div>
+            <span class="eyebrow">Performance doctrine</span>
+            <h2>Create force. Absorb force. Redirect the game.</h2>
+            <p>
+              This is not generic training language. It is a more honest model of basketball performance — one that treats braking as a high-level advantage,
+              not an afterthought.
+            </p>
+          </div>
+          <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+            <a href="#contact" class="btn">Start the Conversation</a>
+            <a href="#faq" class="btn-secondary">Read the FAQ</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">FAQ</span>
+          <h2 class="section-title">Sharp answers for serious basketball performance questions.</h2>
+        </div>
+
+        <div class="faq-grid" style="margin-top: 2rem;">
+          <article class="faq-item reveal">
+            <h3>What is flywheel training?</h3>
+            <p>It is a resistance method where the athlete’s effort helps shape the training demand, creating a stronger relationship between output and control.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Why does braking matter in basketball?</h3>
+            <p>Because cuts, closeouts, counters, landings, recoveries, and shot preparation all depend on how well the athlete can decelerate into position.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>How is this different from traditional lifting?</h3>
+            <p>It places a stronger spotlight on the connection between producing force and then controlling the return, which is highly relevant to the sport.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Is this only about strength?</h3>
+            <p>No. It is about usable force, body organization, movement control, and the quality of what happens after the first action.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Can this support change of direction?</h3>
+            <p>Yes. Better redirection starts with better braking. The athlete has to stop into a position that allows the next action to happen cleanly.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Does this only apply to advanced athletes?</h3>
+            <p>No. The principles matter across levels. The method can scale while still teaching force awareness and movement discipline.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Can it fit into performance work year-round?</h3>
+            <p>Yes. It can support off-season development, in-season maintenance, and broader long-term movement education when programmed with clarity.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>How does force transfer to basketball movement?</h3>
+            <p>Force matters when it shows up in first steps, stance quality, contact finishes, vertical actions, landings, and repeated movement under pressure.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Why is stopping such a big deal in basketball?</h3>
+            <p>Because the stop decides what the body can do next. Good braking protects balance, timing, posture, and the quality of re-acceleration.</p>
+          </article>
+          <article class="faq-item reveal">
+            <h3>Can this support performance reloading?</h3>
+            <p>Yes. It can help re-establish output, control, and movement confidence inside a performance progression without overcomplicating the process.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="section">
+      <div class="container">
+        <div class="reveal">
+          <span class="eyebrow">Future expansion</span>
+          <h2 class="section-title">Built to grow into a larger performance platform.</h2>
+          <p class="section-lead">
+            The site structure is ready for deeper education, film breakdowns, articles, athlete stories, coach insights, and a stronger long-form authority strategy.
+          </p>
+        </div>
+
+        <div class="proof-grid" style="margin-top: 2rem;">
+          <article class="proof-card reveal">
+            <h3>Articles / Insights</h3>
+            <p>Placeholder space for future writing on deceleration, movement control, basketball force, and high-level training ideas.</p>
+          </article>
+          <article class="proof-card reveal">
+            <h3>Film Breakdown</h3>
+            <p>Placeholder area for teaching through game clips, positional movement examples, and real basketball situations.</p>
+          </article>
+          <article class="proof-card reveal">
+            <h3>Program Pathways</h3>
+            <p>Placeholder for athlete, coach, team, and academy entry points without forcing generic one-size-fits-all messaging.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="section" id="contact">
+      <div class="container split">
+        <div class="reveal">
+          <span class="eyebrow">Contact / CTA</span>
+          <h2 class="section-title">For athletes, coaches, trainers, and programs ready for a smarter model.</h2>
+          <p class="section-lead">
+            The conversation starts with one question: how should basketball performance really be trained when force and braking are treated as central, not secondary?
+          </p>
+          <div class="marquee">
+            <span class="pill">Athletes</span>
+            <span class="pill">Coaches</span>
+            <span class="pill">Trainers</span>
+            <span class="pill">Programs</span>
+            <span class="pill">Academies</span>
+          </div>
+        </div>
+
+        <div class="form-card reveal">
+          <form>
+            <div class="form-grid">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" placeholder="Your name" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" />
+              </div>
+              <div class="field">
+                <label for="role">I am</label>
+                <select id="role" name="role">
+                  <option>Athlete</option>
+                  <option>Coach</option>
+                  <option>Trainer</option>
+                  <option>Program / Academy</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="focus">Primary interest</label>
+                <select id="focus" name="focus">
+                  <option>Force development</option>
+                  <option>Braking and deceleration</option>
+                  <option>Full performance model</option>
+                  <option>Basketball applications</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Tell us about your athletes, your program, or the performance questions you want to solve."></textarea>
+              </div>
+              <div class="field full">
+                <button type="submit" class="btn">Request Information</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
   </main>
-  
-<footer>
-  <div class="container footer-grid">
-    <div>
-      <div class="brand" style="margin-bottom:.8rem;">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span data-en="Force / Braking Basketball" data-es="Fuerza / Frenado en Baloncesto">Force / Braking Basketball</span>
-      </div>
-      <p style="max-width:62ch; margin:0; line-height:1.8;"
-         data-en="A premium basketball performance experience centered on force production, braking ability, movement control, and the deeper mechanics of game transfer."
-         data-es="Una experiencia premium de rendimiento en baloncesto enfocada en producción de fuerza, capacidad de frenado, control del movimiento y la mecánica más profunda de la transferencia al juego.">
-         A premium basketball performance experience centered on force production, braking ability, movement control, and the deeper mechanics of game transfer.
-      </p>
-    </div>
-    <div class="footer-links">
-      <a href="index.html" data-en="Home" data-es="Inicio">Home</a>
-      <a href="why-braking-matters.html" data-en="Braking" data-es="Frenado">Braking</a>
-      <a href="force-for-basketball.html" data-en="Force" data-es="Fuerza">Force</a>
-      <a href="the-flywheel-method.html" data-en="Method" data-es="Método">Method</a>
-      <a href="basketball-applications.html" data-en="Applications" data-es="Aplicaciones">Applications</a>
-      <a href="faq.html" data-en="FAQ" data-es="Preguntas">FAQ</a>
-      <a href="contact.html" data-en="Contact" data-es="Contacto">Contact</a>
-    </div>
-  </div>
-</footer>
-<script src="assets/script.js"></script>
 
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom: 0.8rem;">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Force / Braking Basketball</span>
+        </div>
+        <p style="max-width: 62ch; margin: 0; line-height: 1.8;">
+          A premium basketball performance experience centered on force production, braking ability, movement control, and the deeper mechanics of game transfer.
+        </p>
+      </div>
+      <div class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#braking">Braking</a>
+        <a href="#force">Force</a>
+        <a href="#method">Method</a>
+        <a href="#applications">Applications</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('mobileToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    toggle?.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
