@@ -1,6 +1,3 @@
-// api/chat.js
-// Vercel Serverless Function — Force/Braking Basketball advisor (Claude-powered)
-//
 // Expects POST JSON:  { messages: [{role, content}, ...], language: "en" | "es" }
 // Returns JSON:       { reply: string }
 //
