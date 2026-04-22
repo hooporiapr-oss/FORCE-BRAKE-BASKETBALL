@@ -610,6 +610,12 @@
       box-shadow: 0 22px 42px rgba(184,245,22,0.28);
     }
 
+    .chat-fab.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.92);
+    }
+
     .chat-overlay {
       position: fixed;
       inset: 0;
@@ -1317,6 +1323,7 @@
       if (!chatPanel) return;
       chatPanel.classList.add('open');
       if (chatOverlay) chatOverlay.classList.add('open');
+      if (chatFab) chatFab.classList.add('is-hidden');
       chatPanel.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       startDynamicMessages();
@@ -1330,6 +1337,7 @@
       if (!chatPanel) return;
       chatPanel.classList.remove('open');
       if (chatOverlay) chatOverlay.classList.remove('open');
+      if (chatFab) chatFab.classList.remove('is-hidden');
       chatPanel.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
     }
