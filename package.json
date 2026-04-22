@@ -1,0 +1,13 @@
+{
+  "name": "force-braking-basketball",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Force/Braking Basketball — premium performance site with Claude-powered chat advisor.",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
