@@ -602,6 +602,210 @@
       font-size: 1.1rem;
     }
 
+    .chat-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 120;
+      width: 64px;
+      height: 64px;
+      border: 0;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--accent), #d9ff71);
+      color: #081006;
+      box-shadow: 0 18px 36px rgba(184,245,22,0.25);
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition);
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .chat-fab:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 22px 42px rgba(184,245,22,0.28);
+    }
+
+    .chat-panel {
+      position: fixed;
+      right: 22px;
+      bottom: 98px;
+      z-index: 119;
+      width: min(390px, calc(100vw - 24px));
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background:
+        radial-gradient(circle at top right, rgba(127,226,255,0.12), transparent 30%),
+        radial-gradient(circle at 15% 85%, rgba(184,245,22,0.12), transparent 30%),
+        linear-gradient(180deg, rgba(12,14,20,0.96), rgba(8,10,14,0.96));
+      box-shadow: 0 26px 60px rgba(0,0,0,0.42);
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px) scale(0.98);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .chat-panel.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .chat-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1rem 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .chat-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .chat-kicker {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .chat-title {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .chat-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-size: 1rem;
+    }
+
+    .chat-body {
+      padding: 1rem;
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .chat-bubble {
+      border-radius: 20px;
+      padding: 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.96rem;
+    }
+
+    .chat-bubble strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.98rem;
+    }
+
+    .chat-starters {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .chat-starter {
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.035);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 0.9rem 0.95rem;
+      cursor: pointer;
+      font: inherit;
+      line-height: 1.45;
+      transition: transform var(--transition), border-color var(--transition), background var(--transition);
+    }
+
+    .chat-starter:hover {
+      transform: translateY(-2px);
+      border-color: rgba(184,245,22,0.3);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .chat-input-wrap {
+      display: grid;
+      gap: 0.7rem;
+      padding-top: 0.2rem;
+    }
+
+    .chat-dynamic {
+      font-size: 0.92rem;
+      color: #dfe4ec;
+      line-height: 1.55;
+      min-height: 2.8em;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 0.7rem;
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 0.9rem 1rem;
+      border-radius: 999px;
+      font: inherit;
+      outline: none;
+    }
+
+    .chat-send {
+      border: 0;
+      border-radius: 999px;
+      padding: 0.9rem 1.05rem;
+      background: linear-gradient(135deg, var(--accent), #d9ff71);
+      color: #081006;
+      font-weight: 800;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .chat-footnote {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .chat-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3,4,7,0.66);
+      backdrop-filter: blur(8px);
+      z-index: 118;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease;
+    }
+
+    .chat-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     @media (max-width: 1080px) {
       .hero-grid,
       .split,
@@ -713,6 +917,46 @@
 
       .hero-image {
         border-radius: 20px;
+      }
+
+      .chat-fab {
+        right: 16px;
+        bottom: 16px;
+        width: 58px;
+        height: 58px;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .chat-panel {
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .chat-head {
+        padding: 1rem 1rem 0.95rem;
+      }
+
+      .chat-body {
+        padding: 1rem;
+        overflow-y: auto;
+        align-content: start;
+      }
+
+      .chat-input-row {
+        position: sticky;
+        bottom: 0;
+        background: linear-gradient(180deg, rgba(8,10,14,0), rgba(8,10,14,0.98) 28%);
+        padding-top: 0.6rem;
       }
     }
   </style>
@@ -1145,6 +1389,8 @@
     </section>
   </main>
 
+  <div class="chat-overlay" id="chatOverlay"></div>
+
   <footer>
     <div class="container footer-grid">
       <div>
@@ -1167,6 +1413,40 @@
       </div>
     </div>
   </footer>
+
+  <button class="chat-fab" id="chatFab" type="button" aria-label="Open advisor chat" data-en="Chat" data-es="Chat">✦</button>
+
+  <aside class="chat-panel" id="chatPanel" aria-hidden="true">
+    <div class="chat-head">
+      <div class="chat-title-wrap">
+        <span class="chat-kicker" data-en="World-class authority" data-es="Autoridad de clase mundial">World-class authority</span>
+        <span class="chat-title" data-en="Force Braking Basketball Advisor" data-es="Force Braking Basketball Advisor">Force Braking Basketball Advisor</span>
+      </div>
+      <button class="chat-close" id="chatClose" type="button" aria-label="Close chat">✕</button>
+    </div>
+    <div class="chat-body">
+      <div class="chat-bubble">
+        <strong data-en="Stop training around the game. Start training the hidden edge that controls it." data-es="Deja de entrenar alrededor del juego. Empieza a entrenar la ventaja oculta que lo controla.">Stop training around the game. Start training the hidden edge that controls it.</strong>
+        <span data-en="Force Braking Basketball Advisor is built to help athletes, coaches, trainers, and programs understand the real relationship between force production, braking ability, flywheel transfer, and basketball performance — and turn that into a competitive advantage." data-es="Force Braking Basketball Advisor está diseñado para ayudar a atletas, coaches, trainers y programas a entender la relación real entre la producción de fuerza, la capacidad de frenado, la transferencia del flywheel y el rendimiento en baloncesto, y convertir eso en una ventaja competitiva.">Force Braking Basketball Advisor is built to help athletes, coaches, trainers, and programs understand the real relationship between force production, braking ability, flywheel transfer, and basketball performance — and turn that into a competitive advantage.</span>
+      </div>
+
+      <div class="chat-dynamic" id="chatDynamic"></div>
+
+      <div class="chat-starters">
+        <button class="chat-starter" type="button" data-en="Show me how flywheel training creates a real braking advantage in basketball." data-es="Muéstrame cómo el entrenamiento flywheel crea una ventaja real de frenado en el baloncesto.">Show me how flywheel training creates a real braking advantage in basketball.</button>
+        <button class="chat-starter" type="button" data-en="Break down the force vs. braking difference the right way for players and coaches." data-es="Explícame bien la diferencia entre fuerza y frenado para jugadores y coaches.">Break down the force vs. braking difference the right way for players and coaches.</button>
+        <button class="chat-starter" type="button" data-en="Build me a smarter starting point for guards, wings, and bigs." data-es="Créame un punto de partida más inteligente para guards, wings y bigs.">Build me a smarter starting point for guards, wings, and bigs.</button>
+      </div>
+
+      <div class="chat-input-wrap">
+        <div class="chat-input-row">
+          <input class="chat-input" id="chatInput" type="text" data-placeholder-en="Ask your first question..." data-placeholder-es="Haz tu primera pregunta..." placeholder="Ask your first question..." />
+          <button class="chat-send" id="chatSend" type="button" data-en="Send" data-es="Enviar">Send</button>
+        </div>
+        <div class="chat-footnote" data-en="Use this advisor to start premium conversations, qualify high-intent visitors, and move athletes, coaches, and programs toward your offer with more clarity and authority." data-es="Usa este asesor para iniciar conversaciones premium, calificar visitantes de alta intención y mover atletas, coaches y programas hacia tu oferta con más claridad y autoridad.">Use this advisor to start premium conversations, qualify high-intent visitors, and move athletes, coaches, and programs toward your offer with more clarity and authority.</div>
+      </div>
+    </div>
+  </aside>
 
   <script>
     const toggle = document.getElementById('mobileToggle');
@@ -1209,6 +1489,84 @@
 
     const savedLanguage = localStorage.getItem('siteLanguage') || 'en';
     setLanguage(savedLanguage);
+
+    const chatFab = document.getElementById('chatFab');
+    const chatPanel = document.getElementById('chatPanel');
+    const chatOverlay = document.getElementById('chatOverlay');
+    const chatClose = document.getElementById('chatClose');
+    const chatDynamic = document.getElementById('chatDynamic');
+    const chatInput = document.getElementById('chatInput');
+    const chatSend = document.getElementById('chatSend');
+    const chatStarters = document.querySelectorAll('.chat-starter');
+
+    const rotatingMessages = {
+      en: [
+        'Ask the question that changes everything: what part of basketball performance are you still not training directly?',
+        'Most players chase speed. The smartest ones build force, braking control, and flywheel transfer that actually shows up in the game.',
+        'Start where the edge is real: first step, stopping power, redirection, recovery, and position-specific transfer.'
+      ],
+      es: [
+        'Haz la pregunta que lo cambia todo: ¿qué parte del rendimiento en baloncesto todavía no estás entrenando de forma directa?',
+        'La mayoría de los jugadores persigue velocidad. Los más inteligentes construyen fuerza, control de frenado y transferencia del flywheel que realmente aparece en el juego.',
+        'Empieza donde la ventaja es real: primer paso, poder de frenado, redirección, recuperación y transferencia por posición.'
+      ]
+    };
+
+    let messageIndex = 0;
+
+    function currentLang() {
+      return localStorage.getItem('siteLanguage') || 'en';
+    }
+
+    function updateDynamicMessage() {
+      const lang = currentLang();
+      chatDynamic.textContent = rotatingMessages[lang][messageIndex % rotatingMessages[lang].length];
+      messageIndex += 1;
+    }
+
+    function openChat() {
+      chatPanel.classList.add('open');
+      chatOverlay.classList.add('open');
+      chatPanel.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      updateDynamicMessage();
+    }
+
+    function closeChat() {
+      chatPanel.classList.remove('open');
+      chatOverlay.classList.remove('open');
+      chatPanel.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    chatFab?.addEventListener('click', openChat);
+    chatClose?.addEventListener('click', closeChat);
+    chatOverlay?.addEventListener('click', closeChat);
+
+    chatStarters.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (chatInput) {
+          chatInput.value = currentLang() === 'es' ? btn.dataset.es : btn.dataset.en;
+          chatInput.focus();
+        }
+      });
+    });
+
+    chatSend?.addEventListener('click', () => {
+      if (chatInput && chatInput.value.trim()) {
+        window.location.href = '#contact';
+      }
+    });
+
+    chatInput?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && chatInput.value.trim()) {
+        event.preventDefault();
+        window.location.href = '#contact';
+      }
+    });
+
+    setInterval(updateDynamicMessage, 5000);
+    updateDynamicMessage();
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
